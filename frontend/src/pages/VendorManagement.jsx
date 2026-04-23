@@ -214,15 +214,3 @@ const VendorManagement = () => {
 };
 
 export default VendorManagement;
-== null && (
-        <VendorModal
-          vendor={modal === 'add' ? null : modal}
-          onClose={() => setModal(null)}
-          onSave={handleSave}
-        />
-      )}
-    </div>
-  );
-};
-
-export default VendorManagement;
