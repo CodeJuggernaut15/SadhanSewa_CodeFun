@@ -140,7 +140,6 @@ const Sidebar = () => {
         ))}
       </div>
 
-      </div>
     </aside>
   );
 };
