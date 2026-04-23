@@ -3,722 +3,212 @@ import {
   Truck, Package, Search, Mail, Plus, MapPin,
   PhoneCall, Activity, ArrowRight, ExternalLink,
   Globe, ChevronRight, Edit2, Trash2, X, Check,
+  UserPlus, CheckCircle, RefreshCcw, ShieldCheck
 } from 'lucide-react';
 
-/*  Data */
 const INITIAL_VENDORS = [
-  {
-    id: 1,
-    name: 'Nepal Auto Parts',
-    location: 'Kathmandu',
-    contact: '+977-1-4234567',
-    category: 'Engine Components',
-    status: 'Active',
-    email: 'supply@nepalauto.com',
-    orders: 34,
-    spent: 'Rs. 1,24,000',
-    initials: 'NA',
-    avatarBg: '#dbeafe',
-    avatarColor: '#1e40af',
-  },
-  {
-    id: 2,
-    name: 'Prashi Tyres & Spares',
-    location: 'Itahari',
-    contact: '+977-21-509876',
-    category: 'Wheels & Tyres',
-    status: 'Inactive',
-    email: 'info@prashityres.com',
-    orders: 12,
-    spent: 'Rs. 48,500',
-    initials: 'PT',
-    avatarBg: '#f3f4f6',
-    avatarColor: '#6b7280',
-  },
-  {
-    id: 3,
-    name: 'Kriti Lubricants',
-    location: 'Pokhara',
-    contact: '+977-61-445566',
-    category: 'Oil & Lubricants',
-    status: 'Active',
-    email: 'sales@kritilubs.com',
-    orders: 58,
-    spent: 'Rs. 2,10,800',
-    initials: 'KL',
-    avatarBg: '#d1fae5',
-    avatarColor: '#065f46',
-  },
-  {
-    id: 4,
-    name: 'Bikash Electricals',
-    location: 'Birgunj',
-    contact: '+977-51-523344',
-    category: 'Electrical Parts',
-    status: 'Active',
-    email: 'orders@bikashelec.com',
-    orders: 27,
-    spent: 'Rs. 96,300',
-    initials: 'BE',
-    avatarBg: '#fef3c7',
-    avatarColor: '#92400e',
-  },
+  { id: 1, name: 'Nepal Auto Parts', location: 'Kathmandu', contact: '+977-1-4234567', category: 'Engine Components', status: 'Active', email: 'supply@nepalauto.com', orders: 34, spent: 'Rs. 1,24,000' },
+  { id: 2, name: 'Prashi Tyres & Spares', location: 'Itahari', contact: '+977-21-509876', category: 'Wheels & Tyres', status: 'Inactive', email: 'info@prashityres.com', orders: 12, spent: 'Rs. 48,500' },
+  { id: 3, name: 'Kriti Lubricants', location: 'Pokhara', contact: '+977-61-445566', category: 'Oil & Lubricants', status: 'Active', email: 'sales@kritilubs.com', orders: 58, spent: 'Rs. 2,10,800' }
 ];
 
-/* Styles*/
 const S = {
-  page: {
-    fontFamily: "'DM Sans', sans-serif",
-    padding: '2rem',
-    maxWidth: '1300px',
-    margin: '0 auto',
-    paddingBottom: '4rem',
-  },
-
-  /* header */
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: '2rem',
-    paddingBottom: '1.5rem',
-    borderBottom: '0.5px solid #e5e7eb',
-  },
-  headerLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    color: '#1D9E75',
-    fontWeight: 700,
-    fontSize: '11px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.1em',
-    marginBottom: '0.5rem',
-  },
-  h1: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-    fontWeight: 800,
-    lineHeight: 1.15,
-    marginBottom: '0.3rem',
-  },
-  sub: { fontSize: '14px', color: '#6b7280' },
-  addBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '7px',
-    background: '#1D9E75',
-    color: '#fff',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: "'DM Sans', sans-serif",
-    whiteSpace: 'nowrap',
-  },
-
-  /* toolbar */
-  toolbar: {
-    display: 'flex',
-    gap: '10px',
-    marginBottom: '1.5rem',
-    alignItems: 'center',
-  },
-  searchWrap: {
-    flex: 1,
-    position: 'relative',
-    maxWidth: '340px',
-  },
-  searchIcon: {
-    position: 'absolute',
-    left: '10px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-  },
-  searchInput: {
-    width: '100%',
-    padding: '9px 12px 9px 34px',
-    border: '0.5px solid #d1d5db',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontFamily: "'DM Sans', sans-serif",
-    outline: 'none',
-    boxSizing: 'border-box',
-  },
-  filterBtn: {
-    padding: '8px 14px',
-    border: '0.5px solid #e5e7eb',
-    borderRadius: '8px',
-    fontSize: '12px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: "'DM Sans', sans-serif",
-    transition: 'all 0.15s',
-  },
-
-  /* stats row */
-  statsRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '10px',
-    marginBottom: '1.5rem',
-  },
-  statCard: {
-    background: '#fff',
-    border: '0.5px solid #e5e7eb',
-    borderRadius: '10px',
-    padding: '1rem 1.2rem',
-  },
-  statNum: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: '1.4rem',
-    fontWeight: 800,
-    color: '#1D9E75',
-    lineHeight: 1,
-    marginBottom: '3px',
-  },
-  statLbl: { fontSize: '11px', color: '#6b7280', fontWeight: 500 },
-
-  /* layout */
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'minmax(0,1fr) 280px',
-    gap: '1.5rem',
-  },
-  vendorList: { display: 'flex', flexDirection: 'column', gap: '10px' },
-
-  /* vendor row card */
-  vCard: {
-    background: '#fff',
-    border: '0.5px solid #e5e7eb',
-    borderRadius: '12px',
-    padding: '1.2rem 1.4rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '14px',
-    transition: 'box-shadow 0.2s',
-    position: 'relative',
-  },
-  avatar: {
-    width: '44px',
-    height: '44px',
-    borderRadius: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontFamily: "'Syne', sans-serif",
-    fontWeight: 800,
-    fontSize: '14px',
-    flexShrink: 0,
-  },
-  vName: {
-    fontFamily: "'Syne', sans-serif",
-    fontWeight: 800,
-    fontSize: '0.95rem',
-    marginBottom: '2px',
-  },
-  vCat: { fontSize: '11px', fontWeight: 600, color: '#1D9E75' },
-  vMeta: {
-    display: 'flex',
-    gap: '16px',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  metaItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    fontSize: '12px',
-    color: '#6b7280',
-  },
-  statusBadge: {
-    fontSize: '10px',
-    fontWeight: 700,
-    padding: '3px 10px',
-    borderRadius: '999px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    flexShrink: 0,
-  },
-  actionBtns: { display: 'flex', gap: '6px', flexShrink: 0 },
-  iconBtn: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '7px',
-    border: '0.5px solid #e5e7eb',
-    background: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    transition: 'background 0.15s',
-  },
-
-  /* sidebar */
-  sidebar: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  darkCard: {
-    background: '#0a1628',
-    borderRadius: '12px',
-    padding: '1.4rem',
-    color: '#fff',
-  },
-  darkTitle: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: '0.9rem',
-    fontWeight: 800,
-    color: '#1D9E75',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '7px',
-    marginBottom: '1.2rem',
-  },
-  pulseStat: {
-    background: '#111827',
-    border: '0.5px solid #1f2937',
-    borderRadius: '8px',
-    padding: '0.9rem 1rem',
-    marginBottom: '8px',
-  },
-  pulseNum: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: '1.6rem',
-    fontWeight: 800,
-    marginBottom: '2px',
-  },
-  pulseLbl: {
-    fontSize: '10px',
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: '0.06em',
-    color: '#6b7280',
-  },
-  reorderBtn: {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '7px',
-    background: '#1D9E75',
-    color: '#fff',
-    border: 'none',
-    padding: '10px',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: "'DM Sans', sans-serif",
-    marginTop: '10px',
-  },
-  infoCard: {
-    background: '#fff',
-    border: '0.5px solid #e5e7eb',
-    borderRadius: '12px',
-    padding: '1.2rem 1.4rem',
-  },
-  infoTitle: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: '0.9rem',
-    fontWeight: 800,
-    marginBottom: '0.8rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '7px',
-  },
-
-  /* modal overlay */
-  overlay: {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(0,0,0,0.45)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-  },
-  modal: {
-    background: '#fff',
-    borderRadius: '14px',
-    padding: '1.8rem',
-    width: '100%',
-    maxWidth: '480px',
-    position: 'relative',
-  },
-  modalTitle: {
-    fontFamily: "'Syne', sans-serif",
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    marginBottom: '1.2rem',
-  },
-  mLabel: {
-    display: 'block',
-    fontSize: '11px',
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.06em',
-    color: '#374151',
-    marginBottom: '4px',
-  },
-  mInput: {
-    width: '100%',
-    padding: '8px 12px',
-    border: '0.5px solid #d1d5db',
-    borderRadius: '7px',
-    fontSize: '13px',
-    fontFamily: "'DM Sans', sans-serif",
-    outline: 'none',
-    marginBottom: '10px',
-    boxSizing: 'border-box',
-  },
-  mRow: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' },
-  mBtnRow: { display: 'flex', gap: '8px', marginTop: '4px' },
-  mCancelBtn: {
-    flex: 1,
-    padding: '9px',
-    border: '0.5px solid #e5e7eb',
-    borderRadius: '8px',
-    background: '#fff',
-    fontSize: '13px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: "'DM Sans', sans-serif",
-  },
-  mSaveBtn: {
-    flex: 1,
-    padding: '9px',
-    border: 'none',
-    borderRadius: '8px',
-    background: '#1D9E75',
-    color: '#fff',
-    fontSize: '13px',
-    fontWeight: 600,
-    cursor: 'pointer',
-    fontFamily: "'DM Sans', sans-serif",
-  },
+  page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
+  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3.5rem', paddingBottom: '2.5rem', borderBottom: '1.5px solid var(--border-color)' },
+  layout: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '3.5rem', alignItems: 'start' },
+  card: { background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '24px', overflow: 'hidden' },
+  th: { background: 'rgba(0,0,0,0.01)', padding: '1.25rem 1.5rem', textAlign: 'left', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', borderBottom: '1.5px solid var(--border-color)' },
+  td: { padding: '1.5rem 1.5rem', fontSize: '14px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
+  sidebarCard: { background: 'var(--bg-nav)', borderRadius: '32px', padding: '2.5rem', color: '#fff', position: 'sticky', top: '2.5rem' },
 };
 
-/* ─────────────────────────────────────────────────
-   Add / Edit Modal
-───────────────────────────────────────────────── */
-const VendorModal = ({ vendor, onClose, onSave }) => {
-  const [form, setForm] = useState(
-    vendor || { name: '', location: '', contact: '', category: '', email: '', status: 'Active' }
-  );
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  return (
-    <div style={S.overlay} onClick={onClose}>
-      <div style={S.modal} onClick={e => e.stopPropagation()}>
-        <button
-          onClick={onClose}
-          style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer' }}
-        >
-          <X size={18} color="#9ca3af" />
-        </button>
-
-        <h3 style={S.modalTitle}>{vendor ? 'Edit Vendor' : 'Add New Vendor'}</h3>
-
-        <label style={S.mLabel}>Vendor Name</label>
-        <input style={S.mInput} value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Nepal Auto Parts" />
-
-        <div style={S.mRow}>
-          <div>
-            <label style={S.mLabel}>Location</label>
-            <input style={S.mInput} value={form.location} onChange={e => set('location', e.target.value)} placeholder="City" />
-          </div>
-          <div>
-            <label style={S.mLabel}>Category</label>
-            <input style={S.mInput} value={form.category} onChange={e => set('category', e.target.value)} placeholder="Parts category" />
-          </div>
-        </div>
-
-        <label style={S.mLabel}>Contact Number</label>
-        <input style={S.mInput} value={form.contact} onChange={e => set('contact', e.target.value)} placeholder="+977-..." />
-
-        <label style={S.mLabel}>Email Address</label>
-        <input style={S.mInput} value={form.email} onChange={e => set('email', e.target.value)} placeholder="vendor@email.com" />
-
-        <label style={S.mLabel}>Status</label>
-        <select style={{ ...S.mInput, marginBottom: '14px' }} value={form.status} onChange={e => set('status', e.target.value)}>
-          <option>Active</option>
-          <option>Inactive</option>
-        </select>
-
-        <div style={S.mBtnRow}>
-          <button style={S.mCancelBtn} onClick={onClose}>Cancel</button>
-          <button style={S.mSaveBtn} onClick={() => onSave(form)}>
-            <Check size={14} style={{ display: 'inline', marginRight: '5px' }} />
-            {vendor ? 'Save Changes' : 'Add Vendor'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-/* Main component */
 const VendorManagement = () => {
-  const [vendors, setVendors]     = useState(INITIAL_VENDORS);
-  const [search, setSearch]       = useState('');
-  const [statusFilter, setStatus] = useState('all');
-  const [hovered, setHovered]     = useState(null);
-  const [modal, setModal]         = useState(null); // null | 'add' | vendor obj
+  const [vendors, setVendors] = useState(INITIAL_VENDORS);
+  const [search, setSearch] = useState('');
+  const [modal, setModal] = useState(null); // 'add' | 'edit'
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const filtered = vendors.filter(v => {
-    const matchSearch =
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
-      v.location.toLowerCase().includes(search.toLowerCase()) ||
-      v.category.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = statusFilter === 'all' || v.status === statusFilter;
-    return matchSearch && matchStatus;
-  });
+  const filtered = vendors.filter(v => 
+    v.name.toLowerCase().includes(search.toLowerCase()) || 
+    v.category.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const handleSave = (form) => {
-    if (modal === 'add') {
-      const avatars = ['#dbeafe:#1e40af', '#d1fae5:#065f46', '#fef3c7:#92400e', '#fce7f3:#9d174d'];
-      const [bg, color] = avatars[vendors.length % avatars.length].split(':');
-      setVendors(prev => [
-        ...prev,
-        {
-          ...form,
-          id: Date.now(),
-          orders: 0,
-          spent: 'Rs. 0',
-          initials: form.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
-          avatarBg: bg,
-          avatarColor: color,
-        },
-      ]);
-    } else {
-      setVendors(prev => prev.map(v => v.id === modal.id ? { ...v, ...form } : v));
-    }
-    setModal(null);
+  const handleSave = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setModal(null);
+      setIsSuccess(true);
+    }, 1200);
   };
 
-  const handleDelete = (id) =>
-    setVendors(prev => prev.filter(v => v.id !== id));
-
-  const activeCount   = vendors.filter(v => v.status === 'Active').length;
-  const totalOrders   = vendors.reduce((a, v) => a + v.orders, 0);
-
   return (
-    <div style={S.page}>
+    <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <Truck size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Supplier Integrated!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+              The procurement channel has been successfully validated and added to the Global Fiscal Manifest.
+            </p>
+            <button className="btn btn-primary" onClick={() => setIsSuccess(false)} style={{ padding: '12px 40px' }}><RefreshCcw size={18} /> Continue Operations</button>
+          </div>
+        </div>
+      )}
 
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
-      `}</style>
+      {modal && (
+        <div className="success-overlay" style={{ background: 'rgba(0,0,0,0.6)' }}>
+          <div className="success-card" style={{ maxWidth: '500px', textAlign: 'left', background: '#fff', color: 'var(--text-primary)' }}>
+            <h3 style={{ fontSize: '1.8rem', marginBottom: '1.5rem' }}>{modal === 'add' ? 'Integrate New Supplier' : 'Update Supplier Manifest'}</h3>
+            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '8px' }}>Company Identity</label>
+                <input className="input" required placeholder="e.g. Nepal Auto Parts" />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                <div>
+                  <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '8px' }}>Asset Category</label>
+                  <input className="input" required placeholder="Engine, Tyres, etc." />
+                </div>
+                <div>
+                  <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '8px' }}>Global Status</label>
+                  <select className="input" style={{ appearance: 'auto' }}>
+                    <option>Active</option>
+                    <option>Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '8px' }}>Contact Terminal (Email)</label>
+                <input className="input" type="email" required placeholder="supply@vendor.com" />
+              </div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '1rem' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setModal(null)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>{loading ? 'Processing...' : 'Complete Manifest'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
-      {/* ══ HEADER ══ */}
       <div style={S.header}>
         <div>
-          <div style={S.headerLabel}>
-            <Globe size={14} /> Vendor Relations
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
+            <Globe size={16} /> Global Procurement Network
           </div>
-          <h1 style={S.h1}>
-            Supplier <span style={{ color: '#1D9E75' }}>Ecosystem</span>
-          </h1>
-          <p style={S.sub}>Manage procurement channels, vendor contacts, and logistics flow.</p>
+          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Supplier <span style={{ color: 'var(--primary)' }}>Ecosystem</span></h1>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing strategic procurement channels and logistic partner relations.</p>
         </div>
-        <button style={S.addBtn} onClick={() => setModal('add')}>
-          <Plus size={15} /> Add Vendor
-        </button>
+        <button className="btn btn-primary" onClick={() => setModal('add')}><Plus size={18} /> Add New Supplier</button>
       </div>
 
-      {/* ══ STATS ══ */}
-      <div style={S.statsRow}>
-        {[
-          { label: 'Total Vendors',   value: vendors.length },
-          { label: 'Active Vendors',  value: activeCount },
-          { label: 'Total Orders',    value: totalOrders },
-          { label: 'Unsettled Balance', value: 'Rs. 85k' },
-        ].map((s, i) => (
-          <div key={i} style={S.statCard}>
-            <p style={S.statNum}>{s.value}</p>
-            <p style={S.statLbl}>{s.label}</p>
+      <div style={S.layout}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                className="input" 
+                placeholder="Search suppliers by name, category, or location..." 
+                style={{ padding: '14px 14px 14px 50px' }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button className="btn btn-outline" style={{ padding: '14px 24px' }}>Filter Results</button>
           </div>
-        ))}
-      </div>
 
-      {/* ══ TOOLBAR ══ */}
-      <div style={S.toolbar}>
-        <div style={S.searchWrap}>
-          <Search size={14} color="#9ca3af" style={S.searchIcon} />
-          <input
-            style={S.searchInput}
-            placeholder="Search vendors…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-        {['all', 'Active', 'Inactive'].map(f => (
-          <button
-            key={f}
-            style={{
-              ...S.filterBtn,
-              background: statusFilter === f ? '#1D9E75' : '#fff',
-              color: statusFilter === f ? '#fff' : '#6b7280',
-              borderColor: statusFilter === f ? '#1D9E75' : '#e5e7eb',
-            }}
-            onClick={() => setStatus(f)}
-          >
-            {f === 'all' ? 'All' : f}
-          </button>
-        ))}
-        <span style={{ fontSize: '12px', color: '#9ca3af', marginLeft: 'auto' }}>
-          {filtered.length} vendor{filtered.length !== 1 ? 's' : ''}
-        </span>
-      </div>
-
-      {/* ══ MAIN GRID ══ */}
-      <div style={S.grid}>
-
-        {/* Vendor list */}
-        <div style={S.vendorList}>
-          {filtered.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '2rem', color: '#9ca3af', fontSize: '13px', border: '0.5px dashed #e5e7eb', borderRadius: '12px' }}>
-              No vendors match your search.
-            </div>
-          )}
-
-          {filtered.map(v => (
-            <div
-              key={v.id}
-              style={{
-                ...S.vCard,
-                boxShadow: hovered === v.id ? '0 4px 20px rgba(0,0,0,0.07)' : 'none',
-                borderColor: hovered === v.id ? '#d1fae5' : '#e5e7eb',
-              }}
-              onMouseEnter={() => setHovered(v.id)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              {/* Avatar */}
-              <div style={{ ...S.avatar, background: v.avatarBg, color: v.avatarColor }}>
-                {v.initials}
-              </div>
-
-              {/* Info */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={S.vName}>{v.name}</p>
-                <p style={S.vCat}>{v.category}</p>
-              </div>
-
-              {/* Meta */}
-              <div style={S.vMeta}>
-                <span style={S.metaItem}><MapPin size={12} /> {v.location}</span>
-                <span style={S.metaItem}><PhoneCall size={12} /> {v.contact}</span>
-                <span style={S.metaItem}><Mail size={12} /> {v.email}</span>
-                <span style={S.metaItem}><Package size={12} /> {v.orders} orders</span>
-              </div>
-
-              {/* Status badge */}
-              <span style={{
-                ...S.statusBadge,
-                background: v.status === 'Active' ? '#d1fae5' : '#f3f4f6',
-                color: v.status === 'Active' ? '#065f46' : '#6b7280',
-              }}>
-                {v.status}
-              </span>
-
-              {/* Actions */}
-              <div style={S.actionBtns}>
-                <button
-                  style={S.iconBtn}
-                  title="Edit"
-                  onClick={() => setModal(v)}
-                >
-                  <Edit2 size={13} color="#6b7280" />
-                </button>
-                <button
-                  style={{ ...S.iconBtn, borderColor: '#fee2e2' }}
-                  title="Delete"
-                  onClick={() => handleDelete(v.id)}
-                >
-                  <Trash2 size={13} color="#dc2626" />
-                </button>
-                <button style={{ ...S.iconBtn, background: '#f0fdf4', borderColor: '#bbf7d0' }} title="View catalog">
-                  <ExternalLink size={13} color="#1D9E75" />
-                </button>
-              </div>
-            </div>
-          ))}
+          <div style={S.card}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={S.th}>Supplier Personnel</th>
+                  <th style={S.th}>Functional Category</th>
+                  <th style={S.th}>Gross Yield</th>
+                  <th style={S.th}>Status</th>
+                  <th style={{ ...S.th, textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map(vendor => (
+                  <tr key={vendor.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
+                    <td style={S.td}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                          {vendor.name[0]}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem' }}>{vendor.name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>{vendor.location}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={S.td}>
+                      <div className="chip" style={{ background: 'none', padding: 0 }}>
+                        <Package size={14} color="var(--primary)" opacity={0.6} />
+                        <span style={{ fontWeight: 700, color: 'var(--text-secondary)' }}>{vendor.category}</span>
+                      </div>
+                    </td>
+                    <td style={S.td}>
+                      <div style={{ fontWeight: 800, color: 'var(--primary)' }}>{vendor.spent}</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>{vendor.orders} MANIFESTS</div>
+                    </td>
+                    <td style={S.td}>
+                      <span className={`chip ${vendor.status === 'Active' ? 'chip-success' : ''}`}>
+                        {vendor.status === 'Active' ? <CheckCircle size={12} /> : <X size={12} />} {vendor.status}
+                      </span>
+                    </td>
+                    <td style={{ ...S.td, textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button className="btn btn-outline" style={{ padding: '8px' }} onClick={() => setModal('edit')}><Edit2 size={14} /></button>
+                        <button className="btn btn-outline" style={{ padding: '8px', color: '#ef4444', borderColor: '#ef444420' }}><Trash2 size={14} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        {/* Sidebar */}
-        <aside style={S.sidebar}>
-
-          {/* Supply chain pulse */}
-          <div style={S.darkCard}>
-            <h4 style={S.darkTitle}>
-              <Activity size={16} /> Supply Chain Pulse
+        <aside>
+          <div style={S.sidebarCard}>
+            <h4 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '2.5rem', letterSpacing: '0.1em' }}>
+              <Activity size={20} /> Network Pulse
             </h4>
-
-            <div style={S.pulseStat}>
-              <p style={{ ...S.pulseNum, color: '#1D9E75' }}>186</p>
-              <p style={S.pulseLbl}>Active SKUs in Flow</p>
-            </div>
-            <div style={S.pulseStat}>
-              <p style={{ ...S.pulseNum, color: '#f59e0b' }}>Rs. 85k</p>
-              <p style={S.pulseLbl}>Unsettled Balance</p>
-            </div>
-            <div style={S.pulseStat}>
-              <p style={{ ...S.pulseNum, color: '#3b82f6' }}>{totalOrders}</p>
-              <p style={S.pulseLbl}>Total Purchase Orders</p>
-            </div>
-
-            <button style={S.reorderBtn}>
-              <Mail size={14} /> Request Reorder <ArrowRight size={14} />
-            </button>
-          </div>
-
-          {/* Category breakdown */}
-          <div style={S.infoCard}>
-            <h5 style={S.infoTitle}>
-              <Package size={14} color="#1D9E75" /> Categories
-            </h5>
-            {[...new Set(vendors.map(v => v.category))].map((cat, i) => {
-              const count = vendors.filter(v => v.category === cat).length;
-              return (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '0.5px solid #f9fafb' }}>
-                  <span style={{ fontSize: '12.5px', color: '#374151' }}>{cat}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: '#1D9E75' }}>{count}</span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Quick contact */}
-          <div style={S.infoCard}>
-            <h5 style={S.infoTitle}>
-              <Truck size={14} color="#1D9E75" /> Quick Contact
-            </h5>
-            {vendors.filter(v => v.status === 'Active').slice(0, 3).map((v, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <div style={{ ...S.avatar, width: '28px', height: '28px', fontSize: '10px', borderRadius: '6px', background: v.avatarBg, color: v.avatarColor }}>
-                  {v.initials}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '12px', fontWeight: 600, marginBottom: '1px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.name}</p>
-                  <p style={{ fontSize: '10px', color: '#9ca3af' }}>{v.contact}</p>
-                </div>
-                <PhoneCall size={13} color="#1D9E75" style={{ flexShrink: 0 }} />
+            
+            <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', border: '1.5px solid rgba(255,255,255,0.1)', marginBottom: '1.5rem' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Active Procurement Flow</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 800 }}>186</span>
+                <span className="chip chip-success" style={{ padding: '4px 10px' }}>+12%</span>
               </div>
-            ))}
+            </div>
+
+            <div style={{ padding: '1.5rem', background: 'var(--primary)15', borderRadius: '20px', border: '1.5px solid var(--primary)30', marginBottom: '2.5rem' }}>
+              <h5 style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem' }}>Financial Liability</h5>
+              <div>
+                <p style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Rs. 85,000</p>
+                <p style={{ fontSize: '10px', opacity: 0.6, textTransform: 'uppercase', fontWeight: 800, marginTop: '4px' }}>Unsettled Vendor Balance</p>
+              </div>
+            </div>
+
+            <button className="btn btn-primary" style={{ width: '100%', background: '#fff', color: 'var(--bg-nav)' }}>Initialize Supply Audit <ArrowRight size={18} /></button>
           </div>
 
+          <div style={{ marginTop: '2.5rem', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '1.5rem' }}>
+            <h5 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldCheck size={18} color="var(--primary)" /> Secure Supply
+            </h5>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>All supply partners undergo mandatory structural integrity verification every 90 days.</p>
+          </div>
         </aside>
       </div>
-
-      {/* ══ MODAL ══ */}
-      {modal !== null && (
-        <VendorModal
-          vendor={modal === 'add' ? null : modal}
-          onClose={() => setModal(null)}
-          onSave={handleSave}
-        />
-      )}
     </div>
   );
 };

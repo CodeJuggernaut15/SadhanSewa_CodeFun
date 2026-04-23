@@ -56,10 +56,10 @@ const S = {
 
 const NotificationCenter = () => {
   const alerts = [
-    { id: 1, type: "Inventory", priority: "High", title: "Automatic Reorder Threshold: Synthetic Oil", desc: "System detected 4 units remaining (Feature 15). Procurement manifest PRQ-8821 suggested for replenish.", icon: Package, color: '#ef4444', time: '10:15 AM' },
-    { id: 2, type: "Liquidity", priority: "Critical", title: "Automated Credit Reminder Dispatched", desc: "Escalated reminder sent to Manish K. for Rs. 15,400 overdue balance (Feature 11).", icon: Mail, color: '#f59e0b', time: '09:30 AM' },
+    { id: 1, type: "Inventory", priority: "High", title: "Automatic Reorder Threshold: Synthetic Oil", desc: "System detected 4 units remaining. Procurement manifest PRQ-8821 suggested for replenish.", icon: Package, color: '#ef4444', time: '10:15 AM' },
+    { id: 2, type: "Liquidity", priority: "Critical", title: "Automated Credit Reminder Dispatched", desc: "Escalated reminder sent to Manish K. for Rs. 15,400 overdue balance.", icon: Mail, color: '#f59e0b', time: '09:30 AM' },
     { id: 3, type: "Telemetry", priority: "Normal", title: "Vehicle Profile Synchronization Complete", desc: "Successfully synchronized 248 diagnostic profiles across service nodes.", icon: CheckCircle, color: '#1D9E75', time: '08:45 AM' },
-    { id: 4, type: "Security", priority: "Critical", title: "System Audit: Admin Role Verification", desc: "Mandatory bi-weekly security audit of administrative access privileges (Feature 2).", icon: ShieldAlert, color: '#ef4444', time: 'Yesterday' }
+    { id: 4, type: "Security", priority: "Critical", title: "System Audit: Admin Role Verification", desc: "Mandatory bi-weekly security audit of administrative access privileges.", icon: ShieldAlert, color: '#ef4444', time: 'Yesterday' }
   ];
 
   return (
@@ -120,7 +120,7 @@ const NotificationCenter = () => {
              
              {[
                { l: 'Inventory Health', v: '06', d: 'RELOAD REQUIRED', p: 60, c: '#ef4444' },
-               { l: 'Liquidity Risk', v: 'Rs. 54k', d: 'OVERDUE > 45D', p: 35, c: '#ef4444' }
+               { l: 'Liquidity Risk', v: 'Rs. 54,000', d: 'OVERDUE > 45D', p: 35, c: '#ef4444' }
              ].map((s, i) => (
                <div key={i} style={{ marginBottom: '2rem' }}>
                   <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>{s.l}</p>
@@ -136,7 +136,7 @@ const NotificationCenter = () => {
 
              <div style={{ marginTop: '3rem', padding: '2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '24px', border: '1.5px solid rgba(255,255,255,0.06)' }}>
                 <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                   "Automatic email dispatch is currently synchronization with the Customer Hub (Feature 11)."
+                   "Automatic email dispatch is currently synchronization with the Customer Hub."
                 </p>
                 <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                    System Integrity Logs <ArrowRight size={14} />

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  History, Search, Filter, FileText, Download,
-  Tag, ShieldCheck, Mail, ChevronDown, TrendingUp,
-  Clock, AlertCircle, Car, Receipt, ArrowRight
+  History, Search, Filter, Download,
+  Tag, ShieldCheck, TrendingUp,
+  Clock, AlertCircle, Car, Receipt, ArrowRight, CheckCircle, RefreshCcw
 } from 'lucide-react';
 
 const TRANSACTIONS = [
@@ -24,25 +24,52 @@ const S = {
 const CustomerHistory = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('all');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const filtered = TRANSACTIONS.filter(t => 
     (t.name.toLowerCase().includes(search.toLowerCase()) || t.id.toLowerCase().includes(search.toLowerCase())) &&
     (filter === 'all' || t.type.toLowerCase() === filter || t.status.toLowerCase() === filter)
   );
 
+  const handleExport = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setIsSuccess(true);
+    }, 1500);
+  };
+
   return (
     <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <Download size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Audit Exported!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+              The comprehensive transaction manifest has been compiled and downloaded as a secure PDF document.
+            </p>
+            <button className="btn btn-primary" onClick={() => setIsSuccess(false)} style={{ padding: '12px 40px' }}><RefreshCcw size={18} /> Acknowledge</button>
+          </div>
+        </div>
+      )}
+
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <History size={16} /> Central Audit Repository
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Transaction <span style={{ color: 'var(--primary)' }}>History</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Retrieving chronological records of all sales, services, and diagnostic events (Feature 8/14).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Retrieving chronological records of all sales, services, and diagnostic events.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn btn-outline"><Filter size={18} /> Optimization Filter</button>
-          <button className="btn btn-primary"><Download size={18} /> Export Audit Log</button>
+          <button className="btn btn-primary" onClick={handleExport} disabled={loading}>
+            {loading ? 'Exporting...' : <><Download size={18} /> Export Audit Log</>}
+          </button>
         </div>
       </div>
 
@@ -68,17 +95,15 @@ const CustomerHistory = () => {
       <div style={S.card}>
         <div style={{ padding: '1.25rem 2rem', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
            <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Omni-Channel Log</h3>
-           <div style={{ display: 'flex', gap: '12px' }}>
-              <div style={{ position: 'relative' }}>
-                 <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                 <input 
-                    className="input" 
-                    placeholder="Search by ID or part name..." 
-                    style={{ padding: '10px 10px 10px 38px', width: '280px', fontSize: '13px' }}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                 />
-              </div>
+           <div style={{ position: 'relative' }}>
+              <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+              <input 
+                className="input" 
+                placeholder="Search by ID or part name..." 
+                style={{ padding: '10px 10px 10px 38px', width: '320px', fontSize: '13px' }}
+                value={search}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
            </div>
         </div>
 
@@ -95,7 +120,7 @@ const CustomerHistory = () => {
           </thead>
           <tbody>
             {filtered.map(item => (
-              <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }} className="hover:bg-slate-50">
+              <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
                 <td style={{ padding: '1.5rem 2rem' }}>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800, color: 'var(--text-primary)' }}>
                       <Tag size={14} color="var(--primary)" /> {item.id}
@@ -104,7 +129,7 @@ const CustomerHistory = () => {
                 </td>
                 <td style={{ padding: '1.5rem 2rem' }}>
                    <p style={{ fontSize: '14px', fontWeight: 700, marginBottom: '4px' }}>{item.name}</p>
-                   <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', color: item.type === 'Sale' ? '#8b5cf6' : '#f59e0b', background: item.type === 'Sale' ? '#8b5cf610' : '#f59e0b10', padding: '3px 8px', borderRadius: '4px' }}>{item.type}</span>
+                   <span className="chip" style={{ fontSize: '9px', background: item.type === 'Sale' ? '#8b5cf610' : '#f59e0b10', color: item.type === 'Sale' ? '#8b5cf6' : '#f59e0b' }}>{item.type}</span>
                 </td>
                 <td style={{ padding: '1.5rem 2rem', fontSize: '13px', color: 'var(--text-secondary)' }}>
                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -113,23 +138,17 @@ const CustomerHistory = () => {
                 </td>
                 <td style={{ padding: '1.5rem 2rem', fontWeight: 800, fontSize: '1.1rem' }}>Rs. {item.amount.toLocaleString()}</td>
                 <td style={{ padding: '1.5rem 2rem' }}>
-                   <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: item.status === 'Paid' ? 'var(--primary)' : '#ef4444', background: item.status === 'Paid' ? 'var(--primary)10' : '#ef444410', padding: '6px 12px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                   <span className={`chip ${item.status === 'Paid' ? 'chip-success' : 'chip-error'}`}>
                       <ShieldCheck size={12} /> {item.status}
                    </span>
                 </td>
                 <td style={{ padding: '1.5rem 2rem', textAlign: 'right' }}>
-                   <button style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '8px 16px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}>Details</button>
+                   <button className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '12px' }}>Details</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        
-        <div style={{ padding: '1.25rem 2rem', background: '#f8fafc', display: 'flex', justifyContent: 'center' }}>
-           <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-              Load older archives <ChevronDown size={14} />
-           </button>
-        </div>
       </div>
 
       <div style={{ marginTop: '3rem', background: 'var(--bg-nav)', borderRadius: '24px', padding: '2.5rem', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -139,7 +158,7 @@ const CustomerHistory = () => {
             </div>
             <div>
                <h4 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>Loyalty Ecosystem Active</h4>
-               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>Feature 9: Automated 10% efficiency discount active for high-volume transactions.</p>
+               <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.6)' }}>Automated 10% efficiency discount active for high-volume transactions.</p>
             </div>
          </div>
          <button className="btn btn-primary">Check Reward Status <ArrowRight size={18} /></button>

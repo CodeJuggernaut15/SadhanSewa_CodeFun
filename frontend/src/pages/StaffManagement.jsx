@@ -1,5 +1,5 @@
-import React from 'react';
-import { UserPlus, Shield, UserCheck, Key, Filter, Search, MoreVertical, Briefcase, Mail, Phone, ChevronRight, Activity, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { UserPlus, Shield, Key, Filter, Search, MoreVertical, Briefcase, ChevronRight, Activity, ArrowRight, CheckCircle, RefreshCcw, UserCheck } from 'lucide-react';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -13,23 +13,51 @@ const S = {
 };
 
 const StaffManagement = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const staffMembers = [
     { id: 1, name: "Bishal Tamang", role: "Inventory Lead", status: "Active", access: "Admin", email: "bishal@autovault.com", phone: "+977 9841234567" },
     { id: 2, name: "Paushan Chaudhary", role: "Customer Specialist", status: "Active", access: "Staff", email: "paushan@autovault.com", phone: "+977 9801234567" },
     { id: 3, name: "Kriti Bista", role: "Sales Associate", status: "On Leave", access: "Staff", email: "kriti@autovault.com", phone: "+977 9811234567" }
   ];
 
+  const handleRegister = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setIsSuccess(true);
+    }, 1200);
+  };
+
   return (
     <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <UserCheck size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Personnel Registered!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+              The new personnel has been successfully integrated into the system with active functional credentials and security privileges.
+            </p>
+            <button className="btn btn-primary" onClick={() => setIsSuccess(false)} style={{ padding: '12px 40px' }}><RefreshCcw size={18} /> Continue Audit</button>
+          </div>
+        </div>
+      )}
+
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <Shield size={16} /> Executive Personnel Control
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Staff</span> Catalog</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing functional credentials and privilege hierarchies (Feature 2).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing functional credentials and privilege hierarchies.</p>
         </div>
-        <button className="btn btn-primary"><UserPlus size={18} /> Register Personnel</button>
+        <button className="btn btn-primary" onClick={handleRegister} disabled={loading}>
+          {loading ? 'Processing...' : <><UserPlus size={18} /> Register Personnel</>}
+        </button>
       </div>
 
       <div style={S.layout}>
@@ -73,7 +101,7 @@ const StaffManagement = () => {
                      </div>
                   </td>
                   <td style={S.td}>
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: member.access === 'Admin' ? 'var(--primary)' : 'var(--text-muted)', background: member.access === 'Admin' ? 'var(--primary)10' : '#f1f5f9', padding: '6px 12px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <span className={`chip ${member.access === 'Admin' ? 'chip-success' : ''}`} style={{ padding: '6px 12px' }}>
                        <Key size={12} /> {member.access} LEVEL
                     </span>
                   </td>
@@ -102,7 +130,7 @@ const StaffManagement = () => {
                 <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Last Authentication</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                    <span style={{ fontSize: '14px', fontWeight: 800 }}>Admin @nelson</span>
-                   <span style={{ fontSize: '9px', fontWeight: 800, background: 'var(--primary)', color: '#fff', padding: '4px 10px', borderRadius: '6px' }}>ACTIVE</span>
+                   <span className="chip chip-success" style={{ padding: '4px 10px', borderRadius: '6px' }}>ACTIVE</span>
                 </div>
              </div>
 

@@ -3,7 +3,7 @@ import {
   TrendingUp, Users, Truck, DollarSign,
   PieChart, BarChart3, ArrowUpRight,
   Download, Package, AlertTriangle,
-  ShieldCheck, CreditCard, Activity, Globe, Zap, ArrowRight, Clock
+  ShieldCheck, CreditCard, Activity, Globe, Zap, ArrowRight, Clock, CheckCircle
 } from 'lucide-react';
 
 const REVENUE_DATA = {
@@ -38,10 +38,19 @@ const S = {
   td: { padding: '1.25rem 1.5rem', fontSize: '13px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
 };
 
+import { Link } from 'react-router-dom';
+
 const AdminDashboard = () => {
   const [period, setPeriod] = useState('Monthly');
+  const [isExporting, setIsExporting] = useState(false);
+  
   const data = REVENUE_DATA[period];
   const max = Math.max(...data);
+
+  const handleExport = () => {
+    setIsExporting(true);
+    setTimeout(() => setIsExporting(false), 2000);
+  };
 
   return (
     <div style={S.page} className="page-transition">
@@ -51,16 +60,18 @@ const AdminDashboard = () => {
             <Activity size={16} /> Global Fiscal Intelligence
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Executive <span style={{ color: 'var(--primary)' }}>Control</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Mission-critical financial health and operational oversight (Feature 4/11/15).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Mission-critical financial health and operational oversight.</p>
         </div>
-        <button className="btn btn-primary"><Download size={18} /> Export Fiscal Audit</button>
+        <button className="btn btn-primary" onClick={handleExport} disabled={isExporting}>
+          {isExporting ? 'Generating Audit...' : <><Download size={18} /> Export Fiscal Audit</>}
+        </button>
       </div>
 
       <div style={S.statsGrid}>
         {[
-          { l: 'Gross Revenue Flow', v: 'Rs. 458k', c: '+12%', i: DollarSign, bg: '#10b981' },
+          { l: 'Gross Revenue Flow', v: 'Rs. 458,000', c: '+12%', i: DollarSign, bg: '#10b981' },
           { l: 'Operational Nodes', v: '12 Staff', c: 'Stable', i: Users, bg: '#3b82f6' },
-          { l: 'Liquidity Risks', v: 'Rs. 24k', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
+          { l: 'Liquidity Risks', v: 'Rs. 24,000', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
           { l: 'Supply Partners', v: '08 Vendors', c: 'Active', i: Truck, bg: '#8b5cf6' }
         ].map((s, i) => (
           <div key={i} className="card" style={{ padding: '1.5rem 2rem', background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px' }}>
@@ -80,7 +91,7 @@ const AdminDashboard = () => {
                <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
                <div style={{ display: 'flex', gap: '8px' }}>
                   {['Daily', 'Monthly', 'Yearly'].map(t => (
-                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer' }}>{t}</button>
+                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: '0.3s' }}>{t}</button>
                   ))}
                </div>
             </div>
@@ -99,25 +110,25 @@ const AdminDashboard = () => {
 
          <div style={S.darkCard}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}><TrendingUp size={20} /> Profit Allocation</h4>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets (Feature 4).</p>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets.</p>
             
             {[
-              { l: 'Service Margins', p: 45, c: 'var(--primary)' },
-              { l: 'Retail Markups', p: 22, c: '#3b82f6' },
-              { l: 'Overhead Offset', p: 18, c: '#f59e0b' },
-              { l: 'Net Profit Yield', p: 15, c: '#8b5cf6' }
+              { l: 'Service Margins', p: 45, v: 'Rs. 180,000', c: 'var(--primary)' },
+              { l: 'Retail Markups', p: 22, v: 'Rs. 92,000', c: '#3b82f6' },
+              { l: 'Overhead Offset', p: 18, v: 'Rs. 74,000', c: '#f59e0b' },
+              { l: 'Net Profit Yield', p: 15, v: 'Rs. 62,000', c: '#8b5cf6' }
             ].map((r, i) => (
               <div key={i} style={{ marginBottom: '1.5rem' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>
                     <span style={{ fontWeight: 600, opacity: 0.7 }}>{r.l}</span>
-                    <span style={{ fontWeight: 800, color: r.c }}>{r.p}%</span>
+                    <span style={{ fontWeight: 800, color: r.c }}>{r.v}</span>
                  </div>
                  <div style={{ width: '100%', height: '5px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
                     <div style={{ width: `${r.p}%`, height: '100%', background: r.c }}></div>
                  </div>
               </div>
             ))}
-            <button className="btn btn-outline" style={{ width: '100%', padding: '14px', border: '1.5px solid rgba(255,255,255,0.1)', color: '#fff', marginTop: '2.5rem' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></button>
+            <Link to="/admin/financial-reports" className="btn btn-primary" style={{ width: '100%', padding: '14px', background: '#fff', color: 'var(--bg-nav)', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></Link>
          </div>
       </div>
 
@@ -140,7 +151,9 @@ const AdminDashboard = () => {
                        <td style={S.td}>{tx.customer}</td>
                        <td style={S.td}><span style={{ fontWeight: 800 }}>{tx.amount}</span></td>
                        <td style={S.td}>
-                          <span style={{ fontSize: '9px', fontWeight: 800, background: tx.status === 'Paid' ? 'var(--primary)10' : tx.status === 'Pending' ? '#f59e0b10' : '#ef444410', color: tx.status === 'Paid' ? 'var(--primary)' : tx.status === 'Pending' ? '#f59e0b' : '#ef4444', padding: '4px 10px', borderRadius: '4px', textTransform: 'uppercase' }}>{tx.status}</span>
+                          <span className={`chip ${tx.status === 'Paid' ? 'chip-success' : ''}`}>
+                             {tx.status === 'Paid' ? <CheckCircle size={12} /> : tx.status === 'Pending' ? <Clock size={12} /> : <AlertTriangle size={12} />} {tx.status}
+                          </span>
                        </td>
                     </tr>
                   ))}
@@ -150,7 +163,7 @@ const AdminDashboard = () => {
 
          <div style={{ background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem', fontWeight: 800, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '10px' }}><AlertTriangle size={20} /> Stock Breaches</h3>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Automatic threshold triggers detected for high-demand assets (Feature 15).</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Automatic threshold triggers detected for high-demand assets.</p>
             {LOW_STOCK.map((item, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0', borderBottom: '1px solid var(--border-color)' }}>
                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -160,11 +173,11 @@ const AdminDashboard = () => {
                  <span style={{ fontSize: '10px', fontWeight: 800, color: item.stock <= 4 ? '#ef4444' : '#f59e0b' }}>{item.stock} LEFT</span>
               </div>
             ))}
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: '2rem' }}>Replenish Assets <Truck size={18} /></button>
+            <Link to="/admin/purchase-invoices" className="btn btn-primary" style={{ width: '100%', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>Replenish Assets <Truck size={18} /></Link>
          </div>
       </div>
     </div>
   );
 };
 
-export default AdminDashboard;
+export default AdminDashboard;
