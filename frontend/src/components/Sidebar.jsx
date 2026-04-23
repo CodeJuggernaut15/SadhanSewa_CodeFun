@@ -140,25 +140,6 @@ const Sidebar = () => {
         ))}
       </div>
 
-      <div style={{ padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.05)', background: 'rgba(255,255,255,0.01)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.25rem' }}>
-          <div style={{ 
-            width: '38px', height: '38px', borderRadius: '10px', 
-            background: 'linear-gradient(135deg, #1D9E75 0%, #0f172a 100%)', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', 
-            fontWeight: 800, fontSize: '12px' 
-          }}>PB</div>
-          <div>
-            <p style={{ fontSize: '12px', fontWeight: 700, margin: 0 }}>Prashiddhika B.</p>
-            <p style={{ fontSize: '10px', color: '#64748b', fontWeight: 600, margin: 0 }}>{role}</p>
-          </div>
-        </div>
-        <button style={{ 
-          display: 'flex', alignItems: 'center', gap: '8px', background: 'none', border: 'none', 
-          color: '#ef4444', fontSize: '11px', fontWeight: 800, cursor: 'pointer', padding: 0, opacity: 0.8
-        }}>
-          <LogOut size={14} /> LOGOUT
-        </button>
       </div>
     </aside>
   );
