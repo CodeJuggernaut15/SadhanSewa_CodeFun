@@ -80,7 +80,7 @@ const CustomerShop = () => {
              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--primary)15', padding: '6px 12px', borderRadius: '10px', border: '1px solid var(--primary)30' }}>
                    <Tag size={14} color="var(--primary)" />
-                   <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Loyalty Applied: 10% OFF</span>
+                   <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>Loyalty: 10% OFF (Orders > Rs. 5,000)</span>
                 </div>
                 <select className="input" style={{ width: '180px', fontSize: '13px', appearance: 'auto' }}>
                    <option>Most Relevant</option>

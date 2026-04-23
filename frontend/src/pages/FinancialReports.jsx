@@ -108,9 +108,16 @@ const FinancialReports = () => {
 
         <aside>
           <div style={{ ...S.card, background: 'var(--bg-nav)', color: '#fff' }}>
-             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 <Calendar size={20} /> Report Period
              </h4>
+
+             <div style={{ display: 'flex', gap: '8px', marginBottom: '2rem' }}>
+                {['Daily', 'Monthly', 'Yearly'].map(p => (
+                  <button key={p} className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '10px', flex: 1, borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)' }}>{p}</button>
+                ))}
+             </div>
+             
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <label style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, marginBottom: '8px', display: 'block', textTransform: 'uppercase' }}>Commencement Date</label>
