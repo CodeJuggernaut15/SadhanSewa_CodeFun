@@ -1,5 +1,8 @@
-import React from 'react';
-import { Users, TrendingUp, DollarSign, UserCheck, Search, Filter, Mail, ArrowRight, UserPlus, Star, LayoutGrid, List, ChevronRight, AlertCircle, ShieldAlert, Activity, ArrowUpRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { 
+  Users, TrendingUp, Star, Mail, ArrowRight, Activity, 
+  ArrowUpRight, ShieldAlert, AlertCircle, CheckCircle, RefreshCcw, Bell
+} from 'lucide-react';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -13,6 +16,10 @@ const S = {
 };
 
 const CustomerInsights = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const topSpenders = [
     { id: 1, name: "Nelson Rai", vehicle: "Toyota Prado", spent: 125000, visits: 8, loyalty: "Platinum" },
     { id: 2, name: "Prashiddhika B.", vehicle: "Nissan Leaf", spent: 85200, visits: 6, loyalty: "Gold" },
@@ -20,21 +27,45 @@ const CustomerInsights = () => {
   ];
 
   const creditAlerts = [
-    { id: "C-102", name: "Paushan Chaudhary", amount: 15400, age: "45 Days", status: "Overdue" },
-    { id: "C-115", name: "Rupesh Dahal", amount: 8200, age: "12 Days", status: "Pending" }
+    { id: "C-102", name: "Paushan Chaudhary", amount: 15400, age: "45 Days", status: "Overdue", email: "p.chaudhary@gmail.com" },
+    { id: "C-115", name: "Rupesh Dahal", amount: 8200, age: "12 Days", status: "Pending", email: "rupesh.d@outlook.com" }
   ];
+
+  const handleNotify = (email) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSuccessMsg(`Remittance manifest successfully dispatched to ${email || 'all delinquent accounts'} via SMTP protocol.`);
+      setIsSuccess(true);
+    }, 1500);
+  };
 
   return (
     <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <CheckCircle size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Notifications Sent!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>{successMsg}</p>
+            <button className="btn btn-primary" onClick={() => setIsSuccess(false)} style={{ padding: '12px 40px' }}><RefreshCcw size={18} /> Resume Audit</button>
+          </div>
+        </div>
+      )}
+
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <Activity size={16} /> Consumer Intelligence Terminal
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Behavioral <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment (Feature 4).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment (Feature 9).</p>
         </div>
-        <button className="btn btn-outline" style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405' }}><Mail size={18} /> Notify Delinquents</button>
+        <button className="btn btn-outline" onClick={() => handleNotify()} disabled={loading} style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405' }}>
+          {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents (Feature 15)</>}
+        </button>
       </div>
 
       <div style={S.layout}>
@@ -64,8 +95,8 @@ const CustomerInsights = () => {
                     <td style={S.td}><span style={{ fontWeight: 700, opacity: 0.7 }}>{user.visits} Visits</span></td>
                     <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rs. {(user.spent / 1000).toFixed(1)}k</span></td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
-                       <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', background: user.loyalty === 'Platinum' ? 'var(--bg-nav)' : user.loyalty === 'Gold' ? 'var(--primary)15' : '#f1f5f9', color: user.loyalty === 'Platinum' ? '#fff' : user.loyalty === 'Gold' ? 'var(--primary)' : 'var(--text-muted)', padding: '6px 14px', borderRadius: '8px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
-                          <Star size={12} fill={user.loyalty === 'Platinum' ? '#fff' : 'none'} /> {user.loyalty}
+                       <span className={`chip ${user.loyalty === 'Platinum' ? 'chip-success' : 'chip-warning'}`} style={{ padding: '6px 14px' }}>
+                          <Star size={12} fill="currentColor" /> {user.loyalty}
                        </span>
                     </td>
                   </tr>
@@ -90,10 +121,10 @@ const CustomerInsights = () => {
         <aside>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444' }}><ShieldAlert size={20} /> Overdue Risk</h3>
           {creditAlerts.map(alert => (
-            <div key={alert.id} style={S.riskCard} className="hover:border-primary group">
+            <div key={alert.id} style={S.riskCard} className="hover:border-primary group card">
                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                   <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>MANIFEST: {alert.id}</span>
-                  <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', background: alert.status === 'Overdue' ? '#ef444415' : '#f59e0b15', color: alert.status === 'Overdue' ? '#ef4444' : '#f59e0b', padding: '4px 12px', borderRadius: '6px' }}>{alert.status}</span>
+                  <span className={`chip ${alert.status === 'Overdue' ? 'chip-error' : 'chip-warning'}`}>{alert.status}</span>
                </div>
                <h4 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{alert.name}</h4>
                <p style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ef4444', margin: '8px 0' }}>Rs. {alert.amount.toLocaleString()}</p>
@@ -101,7 +132,9 @@ const CustomerInsights = () => {
                   <span style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, textTransform: 'uppercase' }}>DEBT AGE</span>
                   <span style={{ fontSize: '14px', fontWeight: 800 }}>{alert.age}</span>
                </div>
-               <button className="btn btn-outline" style={{ width: '100%', marginTop: '1.5rem', padding: '12px', fontSize: '12px' }}><Mail size={16} /> Dispatch Remittance</button>
+               <button className="btn btn-outline" onClick={() => handleNotify(alert.email)} disabled={loading} style={{ width: '100%', marginTop: '1.5rem', padding: '12px', fontSize: '12px' }}>
+                  {loading ? 'Sending...' : <><Mail size={16} /> Dispatch Remittance</>}
+               </button>
             </div>
           ))}
 
