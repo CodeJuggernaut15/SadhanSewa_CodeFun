@@ -4,7 +4,7 @@ import {
   ShieldCheck, ShoppingCart, Plus, Car,
   CheckCircle, ChevronRight,
   Package, MessageSquare,
-  TrendingUp, Users, Send, Activity
+  TrendingUp, Users, Send, Activity, RefreshCcw, MapPin
 } from 'lucide-react';
 
 const APPOINTMENTS = [
@@ -32,154 +32,183 @@ const S = {
   sidebarCard: { background: 'var(--bg-nav)', borderRadius: '32px', padding: '2.5rem', color: '#fff', position: 'sticky', top: '2.5rem' },
 };
 
-const BookingListView = () => (
-  <div className="page-transition">
-    <button className="btn btn-outline" style={{ width: '100%', borderStyle: 'dashed', marginBottom: '2rem', padding: '1.5rem', fontSize: '13px' }}>
-      <Plus size={18} color="var(--primary)" /> Initialize New Structural Service Appointment (Feature 8)
-    </button>
-
-    {APPOINTMENTS.map(app => (
-      <div key={app.id} style={{ ...S.card, padding: '2rem', marginBottom: '1.25rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{app.initials}</div>
-            <div>
-              <h4 style={{ fontSize: '1.1rem', margin: 0 }}>{app.customer}</h4>
-              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}><span style={{ color: 'var(--primary)', fontWeight: 700 }}>{app.vehicle}</span> · {app.plate}</p>
-            </div>
-          </div>
-          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', background: app.status === 'Confirmed' ? 'var(--primary)10' : '#f59e0b10', color: app.status === 'Confirmed' ? 'var(--primary)' : '#f59e0b', padding: '6px 14px', borderRadius: '8px' }}>{app.status}</span>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', background: 'rgba(0,0,0,0.02)', padding: '1.5rem', borderRadius: '16px', border: '1.5px solid var(--border-color)', marginBottom: '1.5rem' }}>
-           {[
-             { l: 'TEMPORAL SYNC', v: `${app.date} @ ${app.time}`, i: Clock },
-             { l: 'SERVICE PROTOCOL', v: app.service, i: Wrench },
-             { l: 'ASSIGNED ENGINEER', v: app.mechanic, i: Activity }
-           ].map((det, i) => (
-             <div key={i}>
-                <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>{det.l}</p>
-                <p style={{ fontSize: '12px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><det.i size={14} color="var(--primary)" /> {det.v}</p>
-             </div>
-           ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <button className="btn btn-outline" style={{ flex: 1 }}>Modify</button>
-          <button className="btn btn-primary" style={{ flex: 2 }}>Execute Full Audit <ChevronRight size={18} /></button>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-const PartRequestForm = () => (
-  <div style={S.card} className="page-transition">
-    <div style={{ background: 'var(--bg-nav)', padding: '2rem 2.5rem', display: 'flex', gap: '20px', alignItems: 'center' }}>
-       <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={28} /></div>
-       <div>
-          <h3 style={{ fontSize: '1.25rem', margin: 0, color: '#fff' }}>Component Sourcing Terminal</h3>
-          <p style={{ fontSize: '13px', margin: '4px 0 0', color: 'rgba(255,255,255,0.5)' }}>External procurement request for specialized vehicle assets.</p>
-       </div>
-    </div>
-    <div style={{ padding: '3.5rem' }}>
-       <div style={{ marginBottom: '2rem' }}>
-          <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Structural Component Identity</label>
-          <input className="input" placeholder="e.g. 2024 Toyota RAV4 Performance Air Intake" />
-       </div>
-       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
-          <div>
-             <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Manufacturer Code</label>
-             <input className="input" placeholder="SKU Connectivity" />
-          </div>
-          <div>
-             <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Liquidity Budget (Rs.)</label>
-             <input className="input" type="number" placeholder="Estimated Manifest Value" />
-          </div>
-       </div>
-       <button className="btn btn-primary" style={{ width: '100%', padding: '16px' }}>Submit Multi-tier Request (Feature 4) <ArrowRight size={20} /></button>
-    </div>
-  </div>
-);
-
-const ServiceReviewView = () => (
-  <div className="page-transition">
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
-       {[
-         { l: 'ECOSYSTEM RATING', v: '4.6 / 5', i: Star, c: '#f59e0b' },
-         { l: 'VALIDATED REVIEWS', v: '71 ENTRIES', i: Users, c: 'var(--primary)' },
-         { l: 'RETENTION YIELD', v: '68%', i: Activity, c: 'var(--primary)' }
-       ].map((s, i) => (
-         <div key={i} style={{ ...S.card, padding: '1.75rem', display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.c}10`, color: s.c, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.i size={22} /></div>
-            <div>
-               <h4 style={{ fontSize: '1.25rem', margin: 0 }}>{s.v}</h4>
-               <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', margin: '4px 0 0', textTransform: 'uppercase' }}>{s.l}</p>
-            </div>
-         </div>
-       ))}
-    </div>
-
-    <div style={{ ...S.card, padding: '3.5rem', marginBottom: '2rem' }}>
-       <h3 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', fontWeight: 800 }}>Publish Experience Feedback (Feature 14)</h3>
-       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem', marginBottom: '2.5rem' }}>
-          <div>
-             <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Service Category</label>
-             <select className="input" style={{ appearance: 'auto' }}>
-                <option>Brake Pad Replacement</option>
-                <option>Full Engine Service</option>
-             </select>
-          </div>
-          <div>
-             <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Aesthetic Satisfaction</label>
-             <div style={{ display: 'flex', gap: '10px' }}>
-                {[1,2,3,4,5].map(s => <Star key={s} size={28} fill={s <= 4 ? '#f59e0b' : 'none'} color={s <= 4 ? '#f59e0b' : 'var(--border-color)'} />)}
-             </div>
-          </div>
-       </div>
-       <textarea className="input" style={{ minHeight: '140px', marginBottom: '2.5rem' }} placeholder="Provide granular feedback regarding platform efficiency or service quality..." />
-       <button className="btn btn-primary" style={{ width: '100%', padding: '16px' }}><MessageSquare size={18} /> Broadcast Review</button>
-    </div>
-
-    {REVIEWS.map(r => (
-      <div key={r.id} style={{ ...S.card, padding: '2rem', marginBottom: '1rem' }}>
-         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-               <div style={{ width: 44, height: 44, borderRadius: 50, background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{r.initials}</div>
-               <div>
-                  <h4 style={{ margin: 0, fontSize: '1rem' }}>{r.name}</h4>
-                  <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)' }}>{r.date}</p>
-               </div>
-            </div>
-            <div style={{ display: 'flex', gap: '4px' }}>
-               {[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= r.rating ? '#f59e0b' : 'none'} color={s <= r.rating ? '#f59e0b' : 'var(--border-color)'} />)}
-            </div>
-         </div>
-         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>{r.text}</p>
-      </div>
-    ))}
-  </div>
-);
-
 const Appointments = () => {
   const [activeTab, setActiveTab] = useState('bookings');
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleAction = (msg) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSuccessMsg(msg);
+      setIsSuccess(true);
+    }, 1200);
+  };
+
+  const BookingListView = () => (
+    <div className="page-transition">
+      <button className="btn btn-outline" onClick={() => handleAction('Your service appointment has been queued and is awaiting engineer confirmation.')} style={{ width: '100%', borderStyle: 'dashed', marginBottom: '2rem', padding: '1.5rem', fontSize: '13px' }}>
+        <Plus size={18} color="var(--primary)" /> Initialize New Structural Service Appointment (Feature 13)
+      </button>
+
+      {APPOINTMENTS.map(app => (
+        <div key={app.id} style={{ ...S.card, padding: '2rem', marginBottom: '1.25rem' }} className="hover:border-primary card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{app.initials}</div>
+              <div>
+                <h4 style={{ fontSize: '1.1rem', margin: 0 }}>{app.customer}</h4>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}><span style={{ color: 'var(--primary)', fontWeight: 700 }}>{app.vehicle}</span> · {app.plate}</p>
+              </div>
+            </div>
+            <span className={`chip ${app.status === 'Confirmed' ? 'chip-success' : 'chip-warning'}`}>{app.status}</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', background: 'rgba(0,0,0,0.02)', padding: '1.5rem', borderRadius: '16px', border: '1.5px solid var(--border-color)', marginBottom: '1.5rem' }}>
+             {[
+               { l: 'TEMPORAL SYNC', v: `${app.date} @ ${app.time}`, i: Clock },
+               { l: 'SERVICE PROTOCOL', v: app.service, i: Wrench },
+               { l: 'ASSIGNED ENGINEER', v: app.mechanic, i: Activity }
+             ].map((det, i) => (
+               <div key={i}>
+                  <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>{det.l}</p>
+                  <p style={{ fontSize: '12px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}><det.i size={14} color="var(--primary)" /> {det.v}</p>
+               </div>
+             ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button className="btn btn-outline" style={{ flex: 1 }}>Modify</button>
+            <button className="btn btn-primary" style={{ flex: 2 }}>Execute Full Audit <ChevronRight size={18} /></button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const PartRequestForm = () => (
+    <div style={S.card} className="page-transition">
+      <div style={{ background: 'var(--bg-nav)', padding: '2rem 2.5rem', display: 'flex', gap: '20px', alignItems: 'center' }}>
+         <div style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={28} /></div>
+         <div>
+            <h3 style={{ fontSize: '1.25rem', margin: 0, color: '#fff' }}>Component Sourcing Terminal</h3>
+            <p style={{ fontSize: '13px', margin: '4px 0 0', color: 'rgba(255,255,255,0.5)' }}>External procurement request for specialized vehicle assets.</p>
+         </div>
+      </div>
+      <div style={{ padding: '3.5rem' }}>
+         <div style={{ marginBottom: '2rem' }}>
+            <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Structural Component Identity</label>
+            <input className="input" placeholder="e.g. 2024 Toyota RAV4 Performance Air Intake" />
+         </div>
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+            <div>
+               <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Manufacturer Code</label>
+               <input className="input" placeholder="SKU Connectivity" />
+            </div>
+            <div>
+               <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Liquidity Budget (Rs.)</label>
+               <input className="input" type="number" placeholder="Estimated Manifest Value" />
+            </div>
+         </div>
+         <button className="btn btn-primary" disabled={loading} onClick={() => handleAction('Your part request for specialized procurement has been submitted to the Admin.')} style={{ width: '100%', padding: '16px' }}>
+            {loading ? 'Processing...' : <>Submit Multi-tier Request (Feature 13) <ArrowRight size={20} /></>}
+         </button>
+      </div>
+    </div>
+  );
+
+  const ServiceReviewView = () => (
+    <div className="page-transition">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+         {[
+           { l: 'ECOSYSTEM RATING', v: '4.6 / 5', i: Star, c: '#f59e0b' },
+           { l: 'VALIDATED REVIEWS', v: '71 ENTRIES', i: Users, c: 'var(--primary)' },
+           { l: 'RETENTION YIELD', v: '68%', i: Activity, c: 'var(--primary)' }
+         ].map((s, i) => (
+           <div key={i} style={{ ...S.card, padding: '1.75rem', display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.c}10`, color: s.c, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.i size={22} /></div>
+              <div>
+                 <h4 style={{ fontSize: '1.25rem', margin: 0 }}>{s.v}</h4>
+                 <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--text-muted)', margin: '4px 0 0', textTransform: 'uppercase' }}>{s.l}</p>
+              </div>
+           </div>
+         ))}
+      </div>
+
+      <div style={{ ...S.card, padding: '3.5rem', marginBottom: '2rem' }}>
+         <h3 style={{ fontSize: '1.25rem', marginBottom: '2.5rem', fontWeight: 800 }}>Publish Experience Feedback (Feature 13)</h3>
+         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2.5rem', marginBottom: '2.5rem' }}>
+            <div>
+               <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Service Category</label>
+               <select className="input" style={{ appearance: 'auto' }}>
+                  <option>Brake Pad Replacement</option>
+                  <option>Full Engine Service</option>
+               </select>
+            </div>
+            <div>
+               <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Aesthetic Satisfaction</label>
+               <div style={{ display: 'flex', gap: '10px' }}>
+                  {[1,2,3,4,5].map(s => <Star key={s} size={28} fill={s <= 4 ? '#f59e0b' : 'none'} color={s <= 4 ? '#f59e0b' : 'var(--border-color)'} />)}
+               </div>
+            </div>
+         </div>
+         <textarea className="input" style={{ minHeight: '140px', marginBottom: '2.5rem' }} placeholder="Provide granular feedback regarding platform efficiency or service quality..." />
+         <button className="btn btn-primary" disabled={loading} onClick={() => handleAction('Your review has been broadcasted to the ecosystem. Thank you for your feedback!')} style={{ width: '100%', padding: '16px' }}>
+            {loading ? 'Processing...' : <><MessageSquare size={18} /> Broadcast Review</>}
+         </button>
+      </div>
+
+      {REVIEWS.map(r => (
+        <div key={r.id} style={{ ...S.card, padding: '2rem', marginBottom: '1rem' }} className="card">
+           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                 <div style={{ width: 44, height: 44, borderRadius: 50, background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{r.initials}</div>
+                 <div>
+                    <h4 style={{ margin: 0, fontSize: '1rem' }}>{r.name}</h4>
+                    <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)' }}>{r.date}</p>
+                 </div>
+              </div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                 {[1,2,3,4,5].map(s => <Star key={s} size={14} fill={s <= r.rating ? '#f59e0b' : 'none'} color={s <= r.rating ? '#f59e0b' : 'var(--border-color)'} />)}
+              </div>
+           </div>
+           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7, margin: 0 }}>{r.text}</p>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <CheckCircle size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Action Successful!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>{successMsg}</p>
+            <button className="btn btn-primary" onClick={() => setIsSuccess(false)} style={{ padding: '12px 40px' }}><RefreshCcw size={18} /> Acknowledge</button>
+          </div>
+        </div>
+      )}
+
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <Calendar size={16} /> Operational Lifecycle Hub
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Service <span style={{ color: 'var(--primary)' }}>Schedule</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing vehicle service workflows and consumer feedback loops (Feature 8/14).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing vehicle service workflows and consumer feedback loops (Feature 13).</p>
         </div>
 
         <div style={{ display: 'flex', background: 'rgba(0,0,0,0.03)', padding: '6px', borderRadius: '18px', border: '1.5px solid var(--border-color)' }}>
           {[
             { id: 'bookings', label: 'Bookings', i: Calendar },
             { id: 'requests', label: 'Part Requests', i: Package },
-            { id: 'reviews', label: 'Ecosystem Reviews', i: Star }
+            { id: 'reviews', label: 'Reviews', i: Star }
           ].map(t => (
             <button key={t.id} onClick={() => setActiveTab(t.id)} style={{ padding: '10px 22px', borderRadius: '14px', border: 'none', background: activeTab === t.id ? 'var(--primary)' : 'transparent', color: activeTab === t.id ? '#fff' : 'var(--text-muted)', fontWeight: 800, fontSize: '12px', cursor: 'pointer', transition: 'all 0.3s' }}>
               <t.i size={16} /> {t.label}
@@ -202,6 +231,7 @@ const Appointments = () => {
                 <p style={{ fontSize: '9px', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px', textTransform: 'uppercase' }}>Confirmed Session</p>
                 <h5 style={{ fontSize: '1.1rem', margin: '0 0 6px' }}>Full Engine Service</h5>
                 <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>Apr 10 · 10:30 AM</p>
+                <p style={{ fontSize: '11px', color: 'var(--primary)', marginTop: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}><MapPin size={12} /> Service Bay 04</p>
              </div>
 
              <div style={{ padding: '1.75rem', background: 'var(--primary)15', borderRadius: '24px', border: '1.5px solid var(--primary)30' }}>
