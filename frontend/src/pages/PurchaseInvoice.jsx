@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Plus, Trash2, Truck, ShieldCheck, Mail, Send, ArrowRight, FileText, Package, ChevronRight, CheckCircle, Search, Clock } from 'lucide-react';
+import { 
+  ShoppingCart, Plus, Trash2, Truck, ShieldCheck, Mail, Send, 
+  ArrowRight, FileText, Package, ChevronRight, CheckCircle, Search, 
+  Clock, RefreshCcw, Download, Printer, X 
+} from 'lucide-react';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -16,22 +20,52 @@ const PurchaseInvoice = () => {
   const [items, setItems] = useState([
     { id: 1, name: "Nepal Auto Parts", detail: "Synthetic Engine Oil (5L)", qyt: 10, price: 4500 }
   ]);
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const total = items.reduce((acc, curr) => acc + (curr.qyt * curr.price), 0);
 
+  const handleFinalize = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setIsSuccess(true);
+    }, 1500);
+  };
+
   return (
     <div style={S.page} className="page-transition">
+      {isSuccess && (
+        <div className="success-overlay">
+          <div className="success-card">
+            <div className="icon-circle">
+              <CheckCircle size={40} />
+            </div>
+            <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Manifest Finalized!</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
+               Procurement order **PRQ-8821** has been synchronized. Global stock levels have been incremented by {items.reduce((a,b) => a+b.qyt, 0)} units.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+               <button className="btn btn-outline" onClick={() => setIsSuccess(false)}><Printer size={18} /> Print Manifest PDF</button>
+               <button className="btn btn-primary" onClick={() => setIsSuccess(false)}><RefreshCcw size={18} /> New Session</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <FileText size={16} /> Asset Procurement Portal
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Purchase <span style={{ color: 'var(--primary)' }}>Manifest</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Formally initiating procurement orders for stock replenishment (Feature 4).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Formally initiating procurement orders for stock replenishment.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn btn-outline"><Mail size={18} /> Vendor Direct Order</button>
-          <button className="btn btn-primary"><Send size={18} /> Finalize Session</button>
+          <button className="btn btn-primary" onClick={handleFinalize} disabled={loading}>
+            {loading ? 'Synchronizing...' : <><Send size={18} /> Finalize Session</>}
+          </button>
         </div>
       </div>
 
@@ -50,13 +84,14 @@ const PurchaseInvoice = () => {
                    <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Primary Supplier</label>
                    <select className="input" style={{ appearance: 'auto' }}>
                       <option>Select active vendor...</option>
-                      <option>Nepal Auto Parts</option>
+                      <option selected>Nepal Auto Parts</option>
                       <option>Prashi Tyres & Spares</option>
+                      <option>Kriti Lubricants</option>
                    </select>
                 </div>
                 <div>
                    <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Expected Intake Date</label>
-                   <input type="date" className="input" />
+                   <input type="date" className="input" defaultValue="2026-04-25" />
                 </div>
              </div>
           </div>
@@ -80,7 +115,7 @@ const PurchaseInvoice = () => {
                 </thead>
                 <tbody>
                    {items.map(item => (
-                      <tr key={item.id}>
+                      <tr key={item.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
                          <td style={S.td}>
                             <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.1rem' }}>{item.detail}</div>
                             <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginTop: '4px' }}>{item.name}</div>
@@ -116,7 +151,7 @@ const PurchaseInvoice = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                  <div>
                     <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Net Manifest Total</p>
-                    <h2 style={{ fontSize: '3rem', fontWeight: 800, color: '#fff' }}>Rs. {total}</h2>
+                    <h2 style={{ fontSize: '3rem', fontWeight: 800, color: '#fff' }}>Rs. {total.toLocaleString()}</h2>
                     <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.1)', marginTop: '12px', borderRadius: '10px', overflow: 'hidden' }}>
                        <div style={{ width: '100%', height: '100%', background: 'var(--primary)' }}></div>
                     </div>
@@ -125,7 +160,7 @@ const PurchaseInvoice = () => {
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '1.5rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, textTransform: 'uppercase' }}>Asset Bulk</span>
-                       <span style={{ fontSize: '14px', fontWeight: 800 }}>Rs. {total}</span>
+                       <span style={{ fontSize: '14px', fontWeight: 800 }}>Rs. {total.toLocaleString()}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                        <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 800, textTransform: 'uppercase' }}>Intake Scale</span>
@@ -137,12 +172,12 @@ const PurchaseInvoice = () => {
                     </div>
                  </div>
 
-                 <button className="btn btn-primary" style={{ width: '100%', padding: '16px', fontSize: '14px', marginTop: '2.5rem' }}>
-                    Finalize Procurement <ChevronRight size={20} />
+                 <button className="btn btn-primary" onClick={handleFinalize} style={{ width: '100%', padding: '16px', fontSize: '14px', marginTop: '2.5rem', background: '#fff', color: 'var(--bg-nav)' }}>
+                    {loading ? 'Processing...' : <><CheckCircle size={20} /> Finalize Procurement</>}
                  </button>
                  
                  <p style={{ fontSize: '11px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontWeight: 700, textTransform: 'uppercase', lineHeight: 1.6 }}>
-                    This action will synchronize the intake manifest across global telemetry nodes (Feature 4).
+                    This action will synchronize the intake manifest across global telemetry nodes.
                  </p>
               </div>
            </div>

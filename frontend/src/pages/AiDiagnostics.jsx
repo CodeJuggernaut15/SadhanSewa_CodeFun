@@ -32,7 +32,7 @@ const AiDiagnostics = () => {
             <Activity size={16} /> Advanced Vehicle Telemetry
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>AI <span style={{ color: 'var(--primary)' }}>Diagnostics</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Predictive maintenance powered by real-time failure analysis (Feature 15).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Predictive maintenance powered by real-time failure analysis.</p>
         </div>
         <div style={{ display: 'flex', gap: '15px' }}>
            <div style={{ background: 'rgba(29, 158, 117, 0.1)', color: 'var(--primary)', padding: '10px 20px', borderRadius: '12px', fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
