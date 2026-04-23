@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, TrendingUp, Star, Mail, ArrowRight, Activity, 
-  ArrowUpRight, ShieldAlert, AlertCircle, CheckCircle, RefreshCcw, Bell
+  ArrowUpRight, ShieldAlert, AlertCircle, CheckCircle, RefreshCcw, Bell, Search
 } from 'lucide-react';
 
 const S = {
@@ -63,9 +63,15 @@ const CustomerInsights = () => {
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Behavioral <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
           <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment.</p>
         </div>
-        <button className="btn btn-outline" onClick={() => handleNotify()} disabled={loading} style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405' }}>
-          {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents</>}
-        </button>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-end' }}>
+          <div style={{ position: 'relative', width: '350px' }}>
+             <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+             <input className="input" placeholder="Search by Name, Phone, ID, or Plate..." style={{ paddingLeft: '50px', paddingRight: '16px' }} />
+          </div>
+          <button className="btn btn-outline" onClick={() => handleNotify()} disabled={loading} style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405', height: 'fit-content' }}>
+            {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents</>}
+          </button>
+        </div>
       </div>
 
       <div style={S.layout}>
