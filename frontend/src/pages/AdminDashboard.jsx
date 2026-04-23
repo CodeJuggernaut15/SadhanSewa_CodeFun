@@ -69,9 +69,9 @@ const AdminDashboard = () => {
 
       <div style={S.statsGrid}>
         {[
-          { l: 'Gross Revenue Flow', v: 'Rs. 458k', c: '+12%', i: DollarSign, bg: '#10b981' },
+          { l: 'Gross Revenue Flow', v: 'Rs. 458,000', c: '+12%', i: DollarSign, bg: '#10b981' },
           { l: 'Operational Nodes', v: '12 Staff', c: 'Stable', i: Users, bg: '#3b82f6' },
-          { l: 'Liquidity Risks', v: 'Rs. 24k', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
+          { l: 'Liquidity Risks', v: 'Rs. 24,000', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
           { l: 'Supply Partners', v: '08 Vendors', c: 'Active', i: Truck, bg: '#8b5cf6' }
         ].map((s, i) => (
           <div key={i} className="card" style={{ padding: '1.5rem 2rem', background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px' }}>
@@ -113,10 +113,10 @@ const AdminDashboard = () => {
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets.</p>
             
             {[
-              { l: 'Service Margins', p: 45, v: 'Rs. 180k', c: 'var(--primary)' },
-              { l: 'Retail Markups', p: 22, v: 'Rs. 92k', c: '#3b82f6' },
-              { l: 'Overhead Offset', p: 18, v: 'Rs. 74k', c: '#f59e0b' },
-              { l: 'Net Profit Yield', p: 15, v: 'Rs. 62k', c: '#8b5cf6' }
+              { l: 'Service Margins', p: 45, v: 'Rs. 180,000', c: 'var(--primary)' },
+              { l: 'Retail Markups', p: 22, v: 'Rs. 92,000', c: '#3b82f6' },
+              { l: 'Overhead Offset', p: 18, v: 'Rs. 74,000', c: '#f59e0b' },
+              { l: 'Net Profit Yield', p: 15, v: 'Rs. 62,000', c: '#8b5cf6' }
             ].map((r, i) => (
               <div key={i} style={{ marginBottom: '1.5rem' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '13px' }}>

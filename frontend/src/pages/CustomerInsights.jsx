@@ -99,7 +99,7 @@ const CustomerInsights = () => {
                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginTop: '4px' }}>{user.vehicle}</div>
                     </td>
                     <td style={S.td}><span style={{ fontWeight: 700, opacity: 0.7 }}>{user.visits} Visits</span></td>
-                    <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rs. {(user.spent / 1000).toFixed(1)}k</span></td>
+                    <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rs. {user.spent.toLocaleString()}</span></td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
                        <span className={`chip ${user.loyalty === 'Platinum' ? 'chip-success' : 'chip-warning'}`} style={{ padding: '6px 14px' }}>
                           <Star size={12} fill="currentColor" /> {user.loyalty}

@@ -193,7 +193,7 @@ const VendorManagement = () => {
             <div style={{ padding: '1.5rem', background: 'var(--primary)15', borderRadius: '20px', border: '1.5px solid var(--primary)30', marginBottom: '2.5rem' }}>
               <h5 style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem' }}>Financial Liability</h5>
               <div>
-                <p style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Rs. 85k</p>
+                <p style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>Rs. 85,000</p>
                 <p style={{ fontSize: '10px', opacity: 0.6, textTransform: 'uppercase', fontWeight: 800, marginTop: '4px' }}>Unsettled Vendor Balance</p>
               </div>
             </div>

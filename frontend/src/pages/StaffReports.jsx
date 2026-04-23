@@ -151,7 +151,7 @@ const StaffReports = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                  {[
                    { l: 'Retention Rate', v: '84%', i: TrendingUp, c: 'var(--primary)' },
-                   { l: 'Credit Exposure', v: 'Rs. 42k', i: AlertTriangle, c: '#ef4444' },
+                   { l: 'Credit Exposure', v: 'Rs. 42,000', i: AlertTriangle, c: '#ef4444' },
                    { l: 'Loyalty Growth', v: '+24%', i: Star, c: '#3b82f6' }
                  ].map((s, i) => (
                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

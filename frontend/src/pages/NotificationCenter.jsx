@@ -120,7 +120,7 @@ const NotificationCenter = () => {
              
              {[
                { l: 'Inventory Health', v: '06', d: 'RELOAD REQUIRED', p: 60, c: '#ef4444' },
-               { l: 'Liquidity Risk', v: 'Rs. 54k', d: 'OVERDUE > 45D', p: 35, c: '#ef4444' }
+               { l: 'Liquidity Risk', v: 'Rs. 54,000', d: 'OVERDUE > 45D', p: 35, c: '#ef4444' }
              ].map((s, i) => (
                <div key={i} style={{ marginBottom: '2rem' }}>
                   <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>{s.l}</p>
