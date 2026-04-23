@@ -106,7 +106,7 @@ const SalesAndInvoice = () => {
             <ShoppingCart size={16} /> Retail Settlement Interface
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Point of <span style={{ color: 'var(--primary)' }}>Sale (POS)</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Executing real-time parts liquidation and digital manifest generation (Feature 7).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Executing real-time parts liquidation and digital manifest generation.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn btn-outline"><Printer size={18} /> Print Draft</button>
@@ -221,7 +221,7 @@ const SalesAndInvoice = () => {
           <div style={S.summaryCard}>
              <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '4px' }}>Review Checkout</h3>
-                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Session ID: #VX-8892</p>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2rem' }}>Smart loyalty logic detected high-volume intent. A 10% efficiency discount has been applied to the gross total.</p>
              </div>
 
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>

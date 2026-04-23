@@ -50,7 +50,7 @@ const CustomerSelfRegister = () => {
             <Globe size={32} />
           </div>
           <h1 style={{ fontSize: '2.2rem', marginBottom: '8px' }}>Join the <span style={{ color: 'var(--primary)' }}>Ecosystem</span></h1>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Initialize your vehicle profile and activate real-time telemetry (Feature 12).</p>
+          <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Initialize your vehicle profile and activate real-time telemetry.</p>
         </div>
 
         <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

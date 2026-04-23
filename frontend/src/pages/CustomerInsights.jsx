@@ -61,10 +61,10 @@ const CustomerInsights = () => {
             <Activity size={16} /> Consumer Intelligence Terminal
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Behavioral <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment (Feature 9).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment.</p>
         </div>
         <button className="btn btn-outline" onClick={() => handleNotify()} disabled={loading} style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405' }}>
-          {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents (Feature 15)</>}
+          {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents</>}
         </button>
       </div>
 
@@ -110,7 +110,7 @@ const CustomerInsights = () => {
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '1.5rem', letterSpacing: '0.12em' }}>Algorithmic Projection</div>
                 <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.1 }}>Sustained <span style={{ color: 'var(--primary)' }}>Growth Flow</span></h2>
                 <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.6)', maxWidth: '450px', lineHeight: 1.7, marginBottom: '3rem' }}>
-                   Systematic part liquidation and retention strategies (Feature 9) have resulted in 15% upward trajectory across the Emerald Loyalty syndicate.
+                   Systematic part liquidation and retention strategies have resulted in 15% upward trajectory across the Emerald Loyalty syndicate.
                 </p>
                 <button className="btn btn-primary" style={{ padding: '16px 36px', fontSize: '14px' }}>Execute Structural Growth Audit <ArrowRight size={20} /></button>
              </div>
@@ -142,7 +142,7 @@ const CustomerInsights = () => {
              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '1rem', color: 'var(--primary)' }}>
                 <AlertCircle size={20} /> <h4 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Staff Directive</h4>
              </div>
-             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Automatic credit verification (Feature 15) suggests manual outreach for clients exceeding the 30-day liquidity threshold. Real-time audit logs are synced with the Admin control center.</p>
+             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Automatic credit verification suggests manual outreach for clients exceeding the 30-day liquidity threshold. Real-time audit logs are synced with the Admin control center.</p>
              <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginTop: '1.5rem' }}>Review Data Integrity <ArrowUpRight size={16} /></button>
           </div>
         </aside>

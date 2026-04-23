@@ -201,7 +201,7 @@ const Appointments = () => {
             <Calendar size={16} /> Operational Lifecycle Hub
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Service <span style={{ color: 'var(--primary)' }}>Schedule</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing vehicle service workflows and consumer feedback loops (Feature 13).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing vehicle service workflows and consumer feedback loops.</p>
         </div>
 
         <div style={{ display: 'flex', background: 'rgba(0,0,0,0.03)', padding: '6px', borderRadius: '18px', border: '1.5px solid var(--border-color)' }}>

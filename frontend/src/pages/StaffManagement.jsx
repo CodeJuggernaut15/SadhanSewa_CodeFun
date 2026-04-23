@@ -53,7 +53,7 @@ const StaffManagement = () => {
             <Shield size={16} /> Executive Personnel Control
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Staff</span> Catalog</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing functional credentials and privilege hierarchies (Feature 2).</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing functional credentials and privilege hierarchies.</p>
         </div>
         <button className="btn btn-primary" onClick={handleRegister} disabled={loading}>
           {loading ? 'Processing...' : <><UserPlus size={18} /> Register Personnel</>}
