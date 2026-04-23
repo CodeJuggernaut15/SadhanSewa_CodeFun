@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, TrendingUp, AlertTriangle, 
-  Download, Filter, ArrowUpRight, Search, 
+  Download, Filter, ArrowUpRight, Search, ArrowRight,
   CheckCircle, Clock, PieChart, BarChart3, Star 
 } from 'lucide-react';
 
