@@ -38,6 +38,8 @@ const S = {
   td: { padding: '1.25rem 1.5rem', fontSize: '13px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
 };
 
+import { Link } from 'react-router-dom';
+
 const AdminDashboard = () => {
   const [period, setPeriod] = useState('Monthly');
   const [isExporting, setIsExporting] = useState(false);
@@ -126,7 +128,7 @@ const AdminDashboard = () => {
                  </div>
               </div>
             ))}
-            <button className="btn btn-primary" style={{ width: '100%', padding: '14px', background: '#fff', color: 'var(--bg-nav)', marginTop: '2.5rem' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></button>
+            <Link to="/admin/financial-reports" className="btn btn-primary" style={{ width: '100%', padding: '14px', background: '#fff', color: 'var(--bg-nav)', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></Link>
          </div>
       </div>
 
@@ -171,7 +173,7 @@ const AdminDashboard = () => {
                  <span style={{ fontSize: '10px', fontWeight: 800, color: item.stock <= 4 ? '#ef4444' : '#f59e0b' }}>{item.stock} LEFT</span>
               </div>
             ))}
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: '2.5rem' }}>Replenish Assets <Truck size={18} /></button>
+            <Link to="/admin/purchase-invoices" className="btn btn-primary" style={{ width: '100%', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>Replenish Assets <Truck size={18} /></Link>
          </div>
       </div>
     </div>

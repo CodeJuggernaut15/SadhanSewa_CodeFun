@@ -16,6 +16,14 @@ import PartsManagement from './pages/PartsManagement';
 import PurchaseInvoice from './pages/PurchaseInvoice';
 import AiDiagnostics from './pages/AiDiagnostics';
 
+// New Pages
+import StaffDashboard from './pages/StaffDashboard';
+import CustomerDashboard from './pages/CustomerDashboard';
+import CustomerProfile from './pages/CustomerProfile';
+import FinancialReports from './pages/FinancialReports';
+import StaffReports from './pages/StaffReports';
+import CustomerShop from './pages/CustomerShop';
+
 function App() {
   return (
     <BrowserRouter>
@@ -23,22 +31,39 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="register" element={<CustomerSelfRegister />} />
-          <Route path="appointments" element={<Appointments />} />
-          <Route path="history" element={<CustomerHistory />} />
-          <Route path="staff">
-            <Route path="register" element={<StaffCustomerRegistration />} />
-            <Route path="sales" element={<SalesAndInvoice />} />
-            <Route path="insights" element={<CustomerInsights />} />
-          </Route>
+          
+          {/* Admin Section */}
           <Route path="admin">
-            <Route index element={<AdminDashboard />} />
-            <Route path="staff" element={<StaffManagement />} />
-            <Route path="vendors" element={<VendorManagement />} />
-            <Route path="parts" element={<PartsManagement />} />
-            <Route path="procurement" element={<PurchaseInvoice />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="financial-reports" element={<FinancialReports />} />
+            <Route path="staff-management" element={<StaffManagement />} />
+            <Route path="parts-management" element={<PartsManagement />} />
+            <Route path="purchase-invoices" element={<PurchaseInvoice />} />
+            <Route path="vendor-management" element={<VendorManagement />} />
             <Route path="diagnostics" element={<AiDiagnostics />} />
             <Route path="notifications" element={<NotificationCenter />} />
           </Route>
+
+          {/* Staff Section */}
+          <Route path="staff">
+            <Route path="dashboard" element={<StaffDashboard />} />
+            <Route path="customer-registration" element={<StaffCustomerRegistration />} />
+            <Route path="customers" element={<CustomerInsights />} />
+            <Route path="sales" element={<SalesAndInvoice />} />
+            <Route path="reports" element={<StaffReports />} />
+          </Route>
+
+          {/* Customer Section */}
+          <Route path="customer">
+            <Route path="dashboard" element={<CustomerDashboard />} />
+            <Route path="profile" element={<CustomerProfile />} />
+            <Route path="appointments" element={<Appointments />} />
+            <Route path="parts-request" element={<Appointments />} /> {/* Integrated in Appointments */}
+            <Route path="reviews" element={<Appointments />} /> {/* Integrated in Appointments */}
+            <Route path="history" element={<CustomerHistory />} />
+            <Route path="shop" element={<CustomerShop />} />
+          </Route>
+
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
