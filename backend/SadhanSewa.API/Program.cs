@@ -7,6 +7,7 @@ using SadhanSewa.API.Data;
 using SadhanSewa.API.Middleware;
 using SadhanSewa.API.Services.Auth;
 using SadhanSewa.API.Services.PurchaseInvoice;
+using SadhanSewa.API.Services.Vendor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +95,7 @@ builder.Services.AddCors(options =>
 // Application services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 
 // ── Middleware pipeline ─────────────────────────────────────
 
