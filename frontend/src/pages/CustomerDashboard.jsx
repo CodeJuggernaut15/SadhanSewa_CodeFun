@@ -2,11 +2,16 @@ import React from 'react';
 import { 
   User, Car, AlertTriangle, Calendar, 
   History, ShoppingBag, ArrowRight, Zap, 
-  CheckCircle, Clock, ShieldCheck, CreditCard, Tag, Star, Award, TrendingUp
+  CheckCircle, Clock, ShieldCheck, CreditCard, Tag, Star, Award, TrendingUp,
+  Mail
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+import { useAuth } from '../context/AuthContext';
+
 const CustomerDashboard = () => {
+  const { user } = useAuth();
+  
   return (
     <div className="container page-transition" style={{ padding: '3rem 2rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' }}>
       <div className="page-header" style={{ marginBottom: '3rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -14,7 +19,7 @@ const CustomerDashboard = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <User size={16} /> Customer Experience portal
           </div>
-          <h1 className="page-title">Welcome Back, <span style={{ color: 'var(--primary)' }}>Prashiddhika</span></h1>
+          <h1 className="page-title">Welcome Back, <span style={{ color: 'var(--primary)' }}>{user?.fullName || 'Valued Customer'}</span></h1>
           <p className="page-subtitle">Your vehicle's health and service history at a glance.</p>
         </div>
         <Link to="/customer/appointments" className="btn btn-primary"><Calendar size={18} /> Book Appointment</Link>
