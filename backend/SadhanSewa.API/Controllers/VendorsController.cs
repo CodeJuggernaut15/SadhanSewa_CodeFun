@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SadhanSewa.API.DTOs;
 using SadhanSewa.API.DTOs.PurchaseInvoice;
@@ -9,6 +10,7 @@ namespace SadhanSewa.API.Controllers;
 /// Exposes vendor endpoints required by purchase invoices.
 /// </summary>
 [ApiController]
+[Authorize(Roles = "Admin,Staff")]
 [Route("api/vendors")]
 public class VendorsController(IPurchaseInvoiceService purchaseInvoiceService) : ControllerBase
 {

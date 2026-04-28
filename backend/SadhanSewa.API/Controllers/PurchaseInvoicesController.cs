@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SadhanSewa.API.DTOs;
 using SadhanSewa.API.DTOs.PurchaseInvoice;
@@ -9,6 +11,7 @@ namespace SadhanSewa.API.Controllers;
 /// Exposes purchase invoice API endpoints.
 /// </summary>
 [ApiController]
+[Authorize(Roles = "Admin")]
 [Route("api/purchase-invoices")]
 public class PurchaseInvoicesController(IPurchaseInvoiceService purchaseInvoiceService) : ControllerBase
 {
@@ -52,7 +55,7 @@ public class PurchaseInvoicesController(IPurchaseInvoiceService purchaseInvoiceS
     {
         var errors = PurchaseInvoiceValidator.ValidateCreate(dto);
         if (errors is not null) return BadRequest(ApiResponse<int>.Fail("Validation failed.", errors));
-        const int createdByUserId = 1;
+        var createdByUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var id = await purchaseInvoiceService.CreateAsync(dto, createdByUserId);
         return CreatedAtAction(nameof(GetByIdAsync), new { id }, ApiResponse<int>.Ok(id, "Purchase invoice created."));
     }

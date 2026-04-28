@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SadhanSewa.API.Data;
@@ -6,6 +7,7 @@ using SadhanSewa.API.DTOs;
 namespace SadhanSewa.API.Controllers
 {
     [ApiController]
+    [Authorize(Roles = "Admin")]
     [Route("api/financial-reports")]
     public class FinancialReportsController : ControllerBase
     {
@@ -71,7 +73,7 @@ namespace SadhanSewa.API.Controllers
                         Type = "Parts Procurement",
                         Amount = $"Rs. {purchase.TotalAmount:N0}",
                         Margin = "N/A",
-                        Status = purchase.Status
+                        Status = purchase.Status.ToString()
                     });
                 }
 

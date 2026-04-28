@@ -5,8 +5,7 @@ import {
   FileText, ArrowUpRight, Search,
   RefreshCcw, CheckCircle, PieChart
 } from 'lucide-react';
-
-const API_BASE = 'http://localhost:5000';
+import { useAuth } from '../context/AuthContext';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -19,6 +18,7 @@ const S = {
 };
 
 const FinancialReports = () => {
+  const { authFetch } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [period, setPeriod] = useState('monthly');
@@ -40,7 +40,7 @@ const FinancialReports = () => {
       let query = `period=${period}`;
       if (startDate && endDate) query += `&startDate=${startDate}&endDate=${endDate}`;
 
-      const res = await fetch(`${API_BASE}/api/financial-reports?${query}`);
+      const res = await authFetch(`/api/financial-reports?${query}`);
       if (!res.ok) throw new Error(`Error ${res.status}`);
 
       const data = await res.json();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -11,15 +11,7 @@ namespace SadhanSewa.API.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "Status",
-                table: "PurchaseInvoices",
-                type: "integer",
-                maxLength: 20,
-                nullable: false,
-                oldClrType: typeof(string),
-                oldType: "character varying(20)",
-                oldMaxLength: 20);
+            migrationBuilder.Sql("ALTER TABLE \"PurchaseInvoices\" ALTER COLUMN \"Status\" TYPE integer USING 0;");
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ExpectedIntakeDate",

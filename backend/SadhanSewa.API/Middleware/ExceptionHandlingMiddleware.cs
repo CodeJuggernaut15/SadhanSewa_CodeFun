@@ -16,6 +16,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         {
             await next(context);
         }
+        catch (UnauthorizedAccessException ex)
+        {
+            await WriteProblemAsync(context, 401, "Unauthorized", ex.Message, ex, isWarning: true);
+        }
         catch (KeyNotFoundException ex)
         {
             await WriteProblemAsync(context, 404, "Resource not found", ex.Message, ex, isWarning: true);

@@ -17,7 +17,7 @@ namespace SadhanSewa.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "10.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -350,21 +350,21 @@ namespace SadhanSewa.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(3306),
+                            CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(7318),
                             Description = "Full system control — manage staff, vendors, inventory, and generate financial reports",
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(4883),
+                            CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(8487),
                             Description = "Handle customer registrations, part sales, invoicing, and customer reports",
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(4887),
+                            CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(8490),
                             Description = "Self-register, book appointments, track history, and receive AI alerts",
                             Name = "Customer"
                         });
@@ -505,6 +505,19 @@ namespace SadhanSewa.API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin@sadhansewa.com",
+                            FullName = "System Administrator",
+                            IsActive = true,
+                            PasswordHash = "$2a$11$dQzjTqlrGG2yxgady5kHCevD3Gd5n/Xk8cZY2r5x.xleP2Ci6EboG",
+                            RoleId = 1,
+                            UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                        });
                 });
 
             modelBuilder.Entity("SadhanSewa.API.Models.Vehicle", b =>

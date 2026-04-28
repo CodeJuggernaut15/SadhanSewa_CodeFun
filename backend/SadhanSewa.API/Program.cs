@@ -1,22 +1,20 @@
-using Microsoft.OpenApi.Models;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SadhanSewa.API.Data;
 using SadhanSewa.API.Middleware;
+using SadhanSewa.API.Services.Auth;
 using SadhanSewa.API.Services.PurchaseInvoice;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ── Services ────────────────────────────────────────────────
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
-builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
-
-
-// ? Add controllers
 builder.Services.AddControllers();
 
-// ? Swagger / OpenAPI
+// Swagger with JWT support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -25,15 +23,63 @@ builder.Services.AddSwaggerGen(c =>
         Title = "SadhanSewa.API",
         Version = "v1"
     });
+
+    // Add JWT "Authorize" button to Swagger UI
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
-// ? Database
-
+// Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ? CORS (IMPORTANT for frontend)
+// JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
@@ -45,15 +91,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Application services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+
+// ── Middleware pipeline ─────────────────────────────────────
+
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI();
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.MapControllers();
 
-app.MapGet("/", () => "SadhanSewa API is running");
-
-// ? Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -65,11 +112,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors("FrontendPolicy"); // ? Enable CORS
+app.UseCors("FrontendPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapGet("/", () => "SadhanSewa API is running");
 
+app.MapControllers();
 
 app.Run();
