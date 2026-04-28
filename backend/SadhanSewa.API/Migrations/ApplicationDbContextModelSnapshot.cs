@@ -17,7 +17,7 @@ namespace SadhanSewa.API.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.7")
+                .HasAnnotation("ProductVersion", "9.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -213,16 +213,26 @@ namespace SadhanSewa.API.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("ExpectedIntakeDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("SessionCode")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<int>("Status")
+                        .HasMaxLength(20)
+                        .HasColumnType("integer");
+
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(12,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("VendorId")
                         .HasColumnType("integer");
@@ -244,6 +254,9 @@ namespace SadhanSewa.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsLowStockAlert")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("PartId")
                         .HasColumnType("integer");
 
@@ -255,6 +268,11 @@ namespace SadhanSewa.API.Migrations
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("VendorName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
@@ -332,21 +350,21 @@ namespace SadhanSewa.API.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 4, 25, 19, 27, 36, 512, DateTimeKind.Utc).AddTicks(2476),
+                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(3306),
                             Description = "Full system control — manage staff, vendors, inventory, and generate financial reports",
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 4, 25, 19, 27, 36, 512, DateTimeKind.Utc).AddTicks(3616),
+                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(4883),
                             Description = "Handle customer registrations, part sales, invoicing, and customer reports",
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 4, 25, 19, 27, 36, 512, DateTimeKind.Utc).AddTicks(3619),
+                            CreatedAt = new DateTime(2026, 4, 26, 13, 48, 57, 984, DateTimeKind.Utc).AddTicks(4887),
                             Description = "Self-register, book appointments, track history, and receive AI alerts",
                             Name = "Customer"
                         });

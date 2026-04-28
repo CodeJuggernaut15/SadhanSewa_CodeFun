@@ -1,9 +1,17 @@
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using SadhanSewa.API.Data;
+using SadhanSewa.API.Middleware;
+using SadhanSewa.API.Services.PurchaseInvoice;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+
 
 // ? Add controllers
 builder.Services.AddControllers();
@@ -20,9 +28,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // ? Database
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // ? CORS (IMPORTANT for frontend)
 builder.Services.AddCors(options =>
@@ -37,6 +46,12 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.MapControllers();
+
+app.MapGet("/", () => "SadhanSewa API is running");
 
 // ? Middleware
 if (app.Environment.IsDevelopment())
@@ -55,5 +70,6 @@ app.UseCors("FrontendPolicy"); // ? Enable CORS
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();
