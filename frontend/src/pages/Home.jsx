@@ -1,3 +1,5 @@
+// This is the landing page of VehicleCore. 
+// It's designed to give visitors a clear idea of what our platform does and who it's for.
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -6,6 +8,8 @@ import {
   Search, Mail, FileText, Star, Briefcase, Award
 } from 'lucide-react';
 
+// Style objects for the landing page. 
+// We're using a clean, modern look with plenty of whitespace and clear typography.
 const S = {
   container: {
     paddingBottom: '8rem',
@@ -97,6 +101,7 @@ const Home = () => {
   return (
     <div style={S.container} className="page-transition">
       {/* Hero Section */}
+      {/* Hero Section: The first thing people see. We want it to be bold and clear. */}
       <section style={S.hero}>
         <div style={S.badge}>
           <span style={{width: 8, height: 8, borderRadius: '50%', background: '#1D9E75'}}></span>
@@ -116,6 +121,7 @@ const Home = () => {
       </section>
 
       {/* Stats Summary */}
+      {/* Stats Summary: Some quick numbers to build trust and show scale. */}
       <div style={S.statsRow}>
         {[
           { v: '3', l: 'User roles', desc: 'Admin, Staff, Customer' },
@@ -131,6 +137,7 @@ const Home = () => {
       </div>
 
       {/* User Roles Section */}
+      {/* User Roles Section: Explaining how different people will use the app. */}
       <section style={S.sectionHeader}>
         <p style={{fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>User Roles</p>
         <h2 style={{fontSize: '2.5rem', fontWeight: 800}}>Built for every<br/><span style={{color: '#1D9E75'}}>team member</span></h2>
@@ -156,6 +163,7 @@ const Home = () => {
       </div>
 
       {/* Everything You Need Section */}
+      {/* Features List: A breakdown of all the cool stuff the app can do. */}
       <section style={S.sectionHeader}>
         <p style={{fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Features</p>
         <h2 style={{fontSize: '2.5rem', fontWeight: 800}}>Everything <span style={{color: '#1D9E75'}}>you need</span></h2>
@@ -183,6 +191,7 @@ const Home = () => {
       </div>
 
       {/* AI Diagnostics Banner */}
+      {/* AI Diagnostics: Highlighting the smart tech under the hood. */}
       <div style={{
         background: 'rgba(29, 158, 117, 0.05)',
         borderRadius: '32px',
@@ -223,6 +232,7 @@ const Home = () => {
       </div>
 
       {/* Loyalty Banner */}
+      {/* Loyalty and Discounts: Incentivizing returning customers. */}
       <div style={{
         background: 'linear-gradient(135deg, #1D9E75 0%, #065f46 100%)',
         borderRadius: '32px',

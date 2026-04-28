@@ -1,3 +1,5 @@
+// Welcome to the Admin Dashboard! 
+// This is the brain of the operation where admins can see everything from revenue to stock levels.
 import React, { useState } from 'react';
 import {
   TrendingUp, Users, Truck, DollarSign,
@@ -6,6 +8,8 @@ import {
   ShieldCheck, CreditCard, Activity, Globe, Zap, ArrowRight, Clock, CheckCircle
 } from 'lucide-react';
 
+// Mock data for the charts. In a real app, this would come from an API.
+// We've got daily, monthly, and yearly snapshots to help track growth.
 const REVENUE_DATA = {
   Daily: [3200, 4100, 2800, 5300, 4700, 6100, 5500, 4900, 6800, 5200, 7100, 6400],
   Monthly: [28000, 34000, 29000, 42000, 38000, 51000, 47000, 43000, 58000, 49000, 62000, 55000],
@@ -14,6 +18,8 @@ const REVENUE_DATA = {
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
+// A quick look at what's been happening recently.
+// It's helpful to see who's buying what and if they've paid yet.
 const RECENT_TRANSACTIONS = [
   { id: 'INV-0091', customer: 'Prashiddhika Bhattarai', part: 'Brake Pad Set', amount: 'Rs. 3,200', status: 'Paid', date: 'Today' },
   { id: 'INV-0090', customer: 'Kriti Bista', part: 'Engine Oil Filter', amount: 'Rs. 850', status: 'Pending', date: 'Today' },
@@ -22,6 +28,8 @@ const RECENT_TRANSACTIONS = [
   { id: 'INV-0087', customer: 'Paushan Chaudhary', part: 'Timing Belt', amount: 'Rs. 4,700', status: 'Paid', date: '3d ago' },
 ];
 
+// These are the parts we're running low on. 
+// The system flags them so we don't run out of essential stock.
 const LOW_STOCK = [
   { part: 'Air Filter (Honda)', stock: 4, threshold: 10 },
   { part: 'Clutch Plate (Bajaj)', stock: 7, threshold: 10 },
@@ -41,12 +49,15 @@ const S = {
 import { Link } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  // We keep track of which time period the user wants to see (Day, Month, Year).
   const [period, setPeriod] = useState('Monthly');
+  // Just a little state to show a loading message when the user clicks 'Export'.
   const [isExporting, setIsExporting] = useState(false);
   
   const data = REVENUE_DATA[period];
   const max = Math.max(...data);
 
+  // Simulates a file download. In a real scenario, this might trigger a PDF generation.
   const handleExport = () => {
     setIsExporting(true);
     setTimeout(() => setIsExporting(false), 2000);
@@ -54,6 +65,7 @@ const AdminDashboard = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header Section: Gives the admin a high-level overview and an export action. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -67,6 +79,7 @@ const AdminDashboard = () => {
         </button>
       </div>
 
+      {/* Key Metrics: Quick numbers on revenue, staff, debt, and vendors. */}
       <div style={S.statsGrid}>
         {[
           { l: 'Gross Revenue Flow', v: 'Rs. 458,000', c: '+12%', i: DollarSign, bg: '#10b981' },
@@ -85,7 +98,9 @@ const AdminDashboard = () => {
         ))}
       </div>
 
+      {/* Revenue Charts and Profit Breakdown. */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
+         {/* Main Chart: Shows trends over time. */}
          <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
                <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
@@ -108,6 +123,7 @@ const AdminDashboard = () => {
             </div>
          </div>
 
+         {/* Profit Allocation: Shows where the money is coming from. */}
          <div style={S.darkCard}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}><TrendingUp size={20} /> Profit Allocation</h4>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets.</p>
@@ -132,7 +148,9 @@ const AdminDashboard = () => {
          </div>
       </div>
 
+      {/* Bottom Row: Transactions and Stock Warnings. */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '2rem' }}>
+         {/* Transaction History Table. */}
          <div style={S.card}>
             <h3 style={{ fontSize: '1.1rem', margin: '0 0 2rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px' }}><Clock size={20} color="var(--primary)" /> Recent Manifest Settlements</h3>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -161,6 +179,7 @@ const AdminDashboard = () => {
             </table>
          </div>
 
+         {/* Stock Alerts: Let's the admin know what needs ordering. */}
          <div style={{ background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem' }}>
             <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem', fontWeight: 800, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '10px' }}><AlertTriangle size={20} /> Stock Breaches</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Automatic threshold triggers detected for high-demand assets.</p>

@@ -1,3 +1,5 @@
+// This page is for customers to book service appointments, request parts, and leave reviews.
+// It's like a central hub for all customer interactions with the shop.
 import React, { useState } from 'react';
 import {
   Calendar as CalendarIcon, Clock, Wrench, Star, ArrowRight,
@@ -8,6 +10,7 @@ import {
   ChevronLeft, Info, Search, Filter, Trash2
 } from 'lucide-react';
 
+// This is a list of sample appointments currently in the system.
 const APPOINTMENTS = [
   { id: 1, customer: 'Prashiddhika B.', initials: 'PB', vehicle: 'Toyota Fortuner', plate: 'Ba 1 Pa 1234', service: 'Full Engine Service', date: 'Apr 10, 2026', time: '10:30 AM', status: 'Confirmed', mechanic: 'Rajan K.' },
   { id: 2, customer: 'Kriti Bista', initials: 'KB', vehicle: 'Honda Civic', plate: 'Pr 3-001', service: 'Brake Pad Replacement', date: 'Apr 12, 2026', time: '02:15 PM', status: 'Pending', mechanic: 'Suman T.' },
@@ -35,6 +38,7 @@ const Appointments = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // This function handles actions like booking an appointment or submitting a review.
   const handleAction = (msg) => {
     setLoading(true);
     setTimeout(() => {
@@ -215,6 +219,7 @@ const Appointments = () => {
         </div>
       )}
 
+      {/* Header: Shows the title and a tab bar to switch between Bookings, Requests, and Reviews. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>

@@ -1,3 +1,5 @@
+// This is the main file that controls where everything goes on the website.
+// It sets up the "routes" which are like the different addresses for each page.
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
@@ -32,7 +34,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="register" element={<CustomerSelfRegister />} />
           
-          {/* Admin Section */}
+          {/* Admin Section: Pages only the owner or manager should see. */}
           <Route path="admin">
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="financial-reports" element={<FinancialReports />} />
@@ -44,7 +46,7 @@ function App() {
             <Route path="notifications" element={<NotificationCenter />} />
           </Route>
 
-          {/* Staff Section */}
+          {/* Staff Section: Pages for the workers to register customers and sell parts. */}
           <Route path="staff">
             <Route path="dashboard" element={<StaffDashboard />} />
             <Route path="customer-registration" element={<StaffCustomerRegistration />} />
@@ -53,7 +55,7 @@ function App() {
             <Route path="reports" element={<StaffReports />} />
           </Route>
 
-          {/* Customer Section */}
+          {/* Customer Section: Pages for the car owners to see their own history and health. */}
           <Route path="customer">
             <Route path="dashboard" element={<CustomerDashboard />} />
             <Route path="profile" element={<CustomerProfile />} />

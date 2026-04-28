@@ -1,3 +1,5 @@
+// This file defines the main structure of the website.
+// It includes the sidebar on the left and a space for pages to appear on the right.
 import React from 'react';
 import Sidebar from './Sidebar';
 import { Outlet } from 'react-router-dom';
@@ -9,10 +11,10 @@ import { Outlet } from 'react-router-dom';
 const Layout = () => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)' }}>
-      {/* Fixed Sidebar Component */}
+      {/* The Sidebar component stays on the left side of the screen. */}
       <Sidebar />
       
-      {/* Main Content Scrollable Area */}
+      {/* This is the main area where all the pages (like Dashboard or History) are shown. */}
       <main style={{ 
         flex: 1, 
         marginLeft: '275px', // Matches the new sidebar width

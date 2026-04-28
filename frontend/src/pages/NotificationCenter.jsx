@@ -1,3 +1,5 @@
+// This is where all the system alerts live. 
+// It keeps everyone informed about inventory, payments, and system health.
 import React from 'react';
 import { Bell, AlertTriangle, Mail, ShieldAlert, Package, CheckCircle, Clock, Settings, ArrowRight, Zap, Activity, Info } from 'lucide-react';
 
@@ -55,6 +57,8 @@ const S = {
 };
 
 const NotificationCenter = () => {
+  // A few sample alerts to show how the system categorizes information.
+  // We've got everything from low-priority updates to critical security audits.
   const alerts = [
     { id: 1, type: "Inventory", priority: "High", title: "Automatic Reorder Threshold: Synthetic Oil", desc: "System detected 4 units remaining. Procurement manifest PRQ-8821 suggested for replenish.", icon: Package, color: '#ef4444', time: '10:15 AM' },
     { id: 2, type: "Liquidity", priority: "Critical", title: "Automated Credit Reminder Dispatched", desc: "Escalated reminder sent to Manish K. for Rs. 15,400 overdue balance.", icon: Mail, color: '#f59e0b', time: '09:30 AM' },
@@ -78,6 +82,7 @@ const NotificationCenter = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '3.5rem' }}>
+        {/* List of alerts: Each one has a priority, a description, and actions the user can take. */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
            {alerts.map(alert => (
              <div key={alert.id} style={S.alertCard} className="hover:border-primary group">

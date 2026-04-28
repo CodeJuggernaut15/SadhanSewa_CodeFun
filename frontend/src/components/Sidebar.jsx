@@ -1,3 +1,5 @@
+// The Sidebar is the main navigation hub for the entire application. 
+// It dynamically changes what links are visible based on whether you're an Admin, Staff, or Customer.
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -11,8 +13,10 @@ import {
 
 const Sidebar = () => {
   const location = useLocation();
-  const [role, setRole] = useState('Admin'); // Mock role for demonstration
+  // For the demo, we have a role switcher. In a real app, this would be determined after login.
+  const [role, setRole] = useState('Admin'); 
   
+  // Helper to check if a link is the one currently being viewed.
   const isActive = (path) => location.pathname === path;
 
   const adminMenu = [
@@ -62,6 +66,8 @@ const Sidebar = () => {
     ]}
   ];
 
+  // We pick the menu to show based on the user's role. 
+  // It ensures everyone only sees what they're allowed to access.
   const currentMenu = role === 'Admin' ? adminMenu : role === 'Staff' ? staffMenu : customerMenu;
 
   return (
@@ -70,7 +76,7 @@ const Sidebar = () => {
       position: 'fixed', left: 0, top: 0, borderRight: '1px solid rgba(255,255,255,0.05)',
       display: 'flex', flexDirection: 'column', zIndex: 1000, boxShadow: '10px 0 30px rgba(0,0,0,0.1)'
     }}>
-      {/* Role Switcher (Demo Only) */}
+      {/* Role Switcher: Only here so we can easily test different views during development. */}
       <div style={{ padding: '1rem', background: '#1D9E7510', borderBottom: '1px solid #1D9E7520', display: 'flex', gap: '8px', justifyContent: 'center' }}>
         {['Admin', 'Staff', 'Customer'].map(r => (
           <button 
@@ -108,6 +114,7 @@ const Sidebar = () => {
         </Link>
       </div>
 
+      {/* Navigation Groups: Iterates through the menu sections and creates links. */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '2rem 1.15rem' }} className="custom-scrollbar">
         {currentMenu.map((group, i) => (
           <div key={i} style={{ marginBottom: '2.2rem' }}>

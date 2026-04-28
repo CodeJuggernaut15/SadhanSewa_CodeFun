@@ -1,3 +1,5 @@
+// This is the dashboard where customers can see their vehicle status.
+// It shows things like upcoming services, health alerts, and loyalty points.
 import React from 'react';
 import { 
   User, Car, AlertTriangle, Calendar, 
@@ -18,6 +20,7 @@ const S = {
 const CustomerDashboard = () => {
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Greets the customer and shows a button to book a service. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -32,6 +35,7 @@ const CustomerDashboard = () => {
       <div style={S.layout}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {/* AI Insights Banner */}
+          {/* AI Alert: A warning box that tells the customer if a part needs fixing soon. */}
           <div style={{ ...S.card, background: 'rgba(29, 158, 117, 0.05)', border: '1.5px solid rgba(29, 158, 117, 0.1)', display: 'flex', gap: '2rem', alignItems: 'center' }}>
             <div style={{ width: 64, height: 64, borderRadius: 20, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Zap size={32} />
@@ -92,6 +96,7 @@ const CustomerDashboard = () => {
         </div>
 
         <aside>
+          {/* Payment Alert: Reminds the customer if they still owe money. */}
           <div style={{ ...S.card, background: '#ef444408', borderColor: '#ef444420' }}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ef4444', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <AlertTriangle size={20} /> Fiscal Alert

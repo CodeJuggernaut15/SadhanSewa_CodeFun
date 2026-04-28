@@ -1,3 +1,5 @@
+// This page shows how much money the business is making. 
+// It helps the owner see profits, costs, and any unpaid customer bills.
 import React, { useState } from 'react';
 import { 
   BarChart3, Calendar, Download, Filter, 
@@ -20,6 +22,7 @@ const FinancialReports = () => {
   const [loading, setLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
+  // This function simulates creating a PDF report for the owner to download.
   const handleExport = () => {
     setIsExporting(true);
     setTimeout(() => setIsExporting(false), 2000);
@@ -34,6 +37,7 @@ const FinancialReports = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Shows the page title and the export button. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -47,11 +51,12 @@ const FinancialReports = () => {
         </button>
       </div>
 
+      {/* Summary Cards: Quick view of total money, profit percentage, and debt. */}
       <div style={S.statsGrid}>
         {[
-          { l: 'Total Revenue (Period)', v: 'Rs. 124,900', c: '+12.5%', i: TrendingUp, color: 'var(--primary)' },
-          { l: 'Avg. Profit Margin', v: '32.8%', c: 'Healthy', i: PieChart, color: '#3b82f6' },
-          { l: 'Outstanding Credit', v: 'Rs. 24,500', c: 'High Risk', i: TrendingDown, color: '#ef4444' }
+          { l: 'Total Revenue (Period)', v: 'Rs. 124,900', i: TrendingUp, color: 'var(--primary)', c: '+12.5%' },
+          { l: 'Avg. Profit Margin', v: '32.8%', i: PieChart, color: '#3b82f6', c: 'Healthy' },
+          { l: 'Outstanding Credit', v: 'Rs. 24,500', i: TrendingDown, color: '#ef4444', c: 'High Risk' }
         ].map((s, i) => (
           <div key={i} style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
@@ -66,6 +71,7 @@ const FinancialReports = () => {
 
       <div style={S.grid}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Detailed Audit Table: Lists every money-related event in order. */}
           <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
                <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>Audit Timeline</h3>

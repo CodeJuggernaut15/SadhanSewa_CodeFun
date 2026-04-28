@@ -1,3 +1,5 @@
+// This is the dashboard for the shop staff.
+// It helps them manage daily tasks, see recent sales, and search for customers.
 import React from 'react';
 import { 
   Users, ShoppingCart, Search, TrendingUp, 
@@ -24,6 +26,7 @@ const StaffDashboard = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Shows the title and buttons to quickly register a customer or start a sale. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -38,6 +41,7 @@ const StaffDashboard = () => {
         </div>
       </div>
 
+      {/* Stats Grid: Quick numbers for sales, transactions, and new customers today. */}
       <div style={S.grid}>
         {[
           { l: "Today's Sales", v: 'Rs. 42,800', c: '+15%', i: DollarSign, color: 'var(--primary)' },

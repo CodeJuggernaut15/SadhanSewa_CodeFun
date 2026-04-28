@@ -1,3 +1,5 @@
+// This page is for managing the people who work here.
+// Admins can see a list of all staff and their roles.
 import React, { useState } from 'react';
 import { UserPlus, Shield, Key, Filter, Search, MoreVertical, Briefcase, ChevronRight, Activity, ArrowRight, CheckCircle, RefreshCcw, UserCheck } from 'lucide-react';
 
@@ -16,12 +18,14 @@ const StaffManagement = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // This is a list of people currently working in the system.
   const staffMembers = [
     { id: 1, name: "Bishal Tamang", role: "Inventory Lead", status: "Active", access: "Admin", email: "bishal@autovault.com", phone: "+977 9841234567" },
     { id: 2, name: "Paushan Chaudhary", role: "Customer Specialist", status: "Active", access: "Staff", email: "paushan@autovault.com", phone: "+977 9801234567" },
     { id: 3, name: "Kriti Bista", role: "Sales Associate", status: "On Leave", access: "Staff", email: "kriti@autovault.com", phone: "+977 9811234567" }
   ];
 
+  // This function simulates adding a new staff member.
   const handleRegister = () => {
     setLoading(true);
     setTimeout(() => {
@@ -47,6 +51,7 @@ const StaffManagement = () => {
         </div>
       )}
 
+      {/* Page Header: Shows the title and a button to add new staff. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -61,6 +66,7 @@ const StaffManagement = () => {
       </div>
 
       <div style={S.layout}>
+        {/* Staff Table: Lists all employees with their role, access level, and status. */}
         <div style={S.card}>
           <div style={{ padding: '1.25rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
              <div style={{ position: 'relative' }}>

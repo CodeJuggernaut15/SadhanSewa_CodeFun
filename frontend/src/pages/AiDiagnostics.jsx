@@ -1,3 +1,5 @@
+// This page uses AI to check if a vehicle has any problems. 
+// It predicts when parts might fail so they can be fixed early.
 import React, { useState } from 'react';
 import {
   ShieldAlert, Activity, Gauge, Zap, BrainCircuit,
@@ -5,6 +7,8 @@ import {
   ThermometerSun, Battery, Disc, Droplets, ChevronRight, Search
 } from 'lucide-react';
 
+// This is a list of components being checked by the AI.
+// It shows their health and what might happen in the future.
 const DIAGNOSTICS = [
   { id: 1, component: 'Brake System', icon: Disc, health: 15, status: 'Critical', trend: 'Rapid Wear', prediction: 'Failure expected within 250 KM. Immediate inspection required.', lastChecked: '3 days ago', mileage: '42,810 KM', badgeBg: '#fee2e2', badgeColor: '#991b1b', barColor: '#ef4444', iconBg: '#fee2e2', iconColor: '#dc2626' },
   { id: 2, component: 'Battery Voltage', icon: Battery, health: 45, status: 'Warning', trend: 'Degrading', prediction: 'Potential startup failure in cold weather within 2 weeks.', lastChecked: '1 week ago', mileage: '42,810 KM', badgeBg: '#fef3c7', badgeColor: '#92400e', barColor: '#f59e0b', iconBg: '#fef3c7', iconColor: '#d97706' },
@@ -26,6 +30,7 @@ const AiDiagnostics = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Shows the title and status of the AI system. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -43,6 +48,7 @@ const AiDiagnostics = () => {
       </div>
 
       <div style={S.grid}>
+        {/* Diagnostics List: Shows each part's health and what the AI predicts. */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {DIAGNOSTICS.map(item => (
             <div key={item.id} style={S.diagCard} className="hover:border-primary group">

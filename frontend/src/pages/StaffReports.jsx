@@ -1,3 +1,5 @@
+// This page is the "Intelligence Hub" where staff can see who their best customers are, 
+// who comes in regularly, and who might still owe some money.
 import React, { useState } from 'react';
 import { 
   Users, TrendingUp, AlertTriangle, 
@@ -15,8 +17,10 @@ const S = {
 };
 
 const StaffReports = () => {
+  // We use tabs to switch between different customer lists.
   const [activeTab, setActiveTab] = useState('High Spenders');
 
+  // A few lists of mock data to show how the reports look.
   const highSpenders = [
     { name: 'Prashiddhika Bhattarai', total: 'Rs. 124,500', frequency: '12 orders', loyalty: 'Gold' },
     { name: 'Aarav Sharma', total: 'Rs. 98,200', frequency: '8 orders', loyalty: 'Silver' },
@@ -24,8 +28,8 @@ const StaffReports = () => {
   ];
 
   const regularCustomers = [
-    { name: 'Sita Thapa', lastVisit: 'Yesterday', totalVisits: '42', status: 'Active' },
-    { name: 'Ram Bahadur', lastVisit: '3 days ago', totalVisits: '28', status: 'Active' },
+    { name: 'Kriti Bista', lastVisit: 'Yesterday', totalVisits: '42', status: 'Active' },
+    { name: 'Prashiddhika Bhattarai', lastVisit: '3 days ago', totalVisits: '28', status: 'Active' },
     { name: 'Gita Rai', lastVisit: '1 week ago', totalVisits: '35', status: 'Inactive' },
   ];
 
@@ -37,10 +41,11 @@ const StaffReports = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Setting the stage for the customer data we're about to see. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
-            <Users size={16} /> Intelligence Hub
+            <Activity size={16} /> Intelligence Hub
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Customer <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
           <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Analytical overview of customer behavior and fiscal loyalty.</p>
@@ -82,6 +87,7 @@ const StaffReports = () => {
                </div>
             </div>
 
+            {/* The main table. It changes its columns based on which tab is active. */}
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                <thead>
                   <tr>
@@ -145,6 +151,7 @@ const StaffReports = () => {
           </div>
         </div>
 
+        {/* Sidebar: Some quick numbers on retention and risk. */}
         <aside>
            <div style={S.card}>
               <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Summary Metrics</h4>

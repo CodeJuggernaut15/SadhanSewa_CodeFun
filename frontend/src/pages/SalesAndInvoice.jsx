@@ -1,3 +1,5 @@
+// This is the Point of Sale (POS) page.
+// Staff use this to sell parts to customers and create invoices.
 import React, { useState } from 'react';
 import { 
   ShoppingCart, Search, Trash2, Printer, Mail, 
@@ -17,6 +19,7 @@ const S = {
 };
 
 const SalesAndInvoice = () => {
+  // This is the list of parts we have in our shop to sell.
   const [partsInventory] = useState([
     { id: 1, name: 'Engine Oil (5L)', price: 4500, stock: 25, category: 'Maintenance', sku: 'EO-001' },
     { id: 2, name: 'Brake Pads - Rear', price: 1200, stock: 15, category: 'Braking', sku: 'BP-502' },
@@ -32,6 +35,7 @@ const SalesAndInvoice = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Adds an item to the shopping cart.
   const addToCart = (part) => {
     const existing = cart.find(item => item.id === part.id);
     if (existing) {
@@ -100,6 +104,7 @@ const SalesAndInvoice = () => {
         </div>
       )}
 
+      {/* Header: Shows the title and buttons to finish or print the sale. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -127,6 +132,7 @@ const SalesAndInvoice = () => {
              </div>
           </div>
 
+          {/* Component Catalog: A gallery of parts staff can click to add to the cart. */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '3.5rem' }}>
              {filteredParts.map(part => (
                <div key={part.id} style={S.partCard} className="hover:border-primary group card">
@@ -147,6 +153,7 @@ const SalesAndInvoice = () => {
              ))}
           </div>
 
+          {/* Active Manifest: A list of items currently in the cart for this sale. */}
           <div style={S.card}>
              <div style={{ padding: '1.5rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Active Manifest Table</h3>

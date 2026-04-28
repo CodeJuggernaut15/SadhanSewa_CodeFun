@@ -1,9 +1,12 @@
+// This page is for managing the vehicle parts in our store.
+// It helps staff track how many parts are in stock and their prices.
 import React, { useState } from 'react';
 import { 
   Package, Search, Filter, Plus, Edit2, Trash2, ShieldCheck, 
   Box, TrendingDown, ArrowRight, Clock, Tag, CheckCircle, RefreshCcw, X 
 } from 'lucide-react';
 
+// This is a sample list of parts available in the inventory.
 const INITIAL_PARTS = [
   { id: "P-001", name: "Engine Air Filter", category: "Filtration", stock: 12, price: 850, status: "Healthy" },
   { id: "P-042", name: "Brake Pads (Premium)", category: "Braking", stock: 4, price: 2400, status: "Critical" },
@@ -33,6 +36,7 @@ const PartsManagement = () => {
     p.id.toLowerCase().includes(search.toLowerCase())
   );
 
+  // This function saves the details of a new or updated part.
   const handleSave = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -92,6 +96,7 @@ const PartsManagement = () => {
         </div>
       )}
 
+      {/* Header: Shows the title and a button to add a new part to the list. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -119,6 +124,7 @@ const PartsManagement = () => {
             <button className="btn btn-outline" style={{ padding: '14px 24px' }}>Filter Results</button>
           </div>
 
+          {/* Inventory Table: Lists all parts with their ID, name, stock level, and price. */}
           <div style={S.card}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>

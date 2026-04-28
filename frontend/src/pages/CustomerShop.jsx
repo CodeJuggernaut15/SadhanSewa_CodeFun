@@ -1,3 +1,5 @@
+// This is the shop page where customers can look at and buy parts for their vehicles.
+// It includes a list of parts, filters to find them easily, and a shopping cart.
 import React, { useState } from 'react';
 import { 
   ShoppingBag, Search, Filter, Plus, 
@@ -19,6 +21,7 @@ const S = {
 const CustomerShop = () => {
   const [cartCount, setCartCount] = useState(0);
 
+  // This is a list of parts available for customers to buy.
   const parts = [
     { id: 1, name: 'Premium Brake Pads', category: 'Braking', price: '2,400', rating: 4.8, stock: 'In Stock' },
     { id: 2, name: 'Synthetic Oil (5L)', category: 'Lubricants', price: '4,500', rating: 4.9, stock: 'In Stock' },
@@ -30,6 +33,7 @@ const CustomerShop = () => {
 
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Shows the shop title and the shopping cart button with an item count. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -47,6 +51,7 @@ const CustomerShop = () => {
       </div>
 
       <div style={S.layout}>
+        {/* Sidebar: Contains filters to help users find specific parts by name or category. */}
         <aside>
           <div style={S.filterCard}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Filter Catalog</h4>
@@ -90,6 +95,7 @@ const CustomerShop = () => {
              </div>
           </div>
 
+          {/* Product Grid: Displays all parts in card format with prices and "Add to Cart" buttons. */}
           <div style={S.productGrid}>
             {parts.map(part => {
               const originalPrice = parseInt(part.price.replace(',', ''));

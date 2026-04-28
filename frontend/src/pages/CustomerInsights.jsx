@@ -1,3 +1,5 @@
+// This page shows how customers are behaving. 
+// It helps staff see who spends the most and who still owes money.
 import React, { useState } from 'react';
 import { 
   Users, TrendingUp, Star, Mail, ArrowRight, Activity, 
@@ -26,11 +28,13 @@ const CustomerInsights = () => {
     { id: 3, name: "Bishal Tamang", vehicle: "Honda CB650R", spent: 45000, visits: 3, loyalty: "Silver" }
   ];
 
+  // This is a list of people who haven't paid their bills yet.
   const creditAlerts = [
     { id: "C-102", name: "Paushan Chaudhary", amount: 15400, age: "45 Days", status: "Overdue", email: "p.chaudhary@gmail.com" },
     { id: "C-115", name: "Rupesh Dahal", amount: 8200, age: "12 Days", status: "Pending", email: "rupesh.d@outlook.com" }
   ];
 
+  // This function sends a reminder to customers who need to pay.
   const handleNotify = (email) => {
     setLoading(true);
     setTimeout(() => {
@@ -55,6 +59,7 @@ const CustomerInsights = () => {
         </div>
       )}
 
+      {/* Page Header: Shows the title and a search bar to find customers quickly. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -76,6 +81,7 @@ const CustomerInsights = () => {
 
       <div style={S.layout}>
         <div>
+          {/* Top Customers Table: Shows people who visit often and spend more. */}
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px' }}><Star size={20} color="var(--primary)" /> Priority Asset Holders</h3>
           <div style={S.card}>
             <div style={{ padding: '1.25rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -124,6 +130,7 @@ const CustomerInsights = () => {
           </div>
         </div>
 
+        {/* Overdue Risk Sidebar: Highlights customers with unpaid balances. */}
         <aside>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444' }}><ShieldAlert size={20} /> Overdue Risk</h3>
           {creditAlerts.map(alert => (

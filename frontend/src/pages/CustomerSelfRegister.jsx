@@ -1,3 +1,5 @@
+// This page is for new customers to sign up by themselves.
+// They can create their own account and add their vehicle details here.
 import React, { useState } from 'react';
 import { ShieldCheck, ArrowRight, CheckCircle2, Globe, Activity, RefreshCcw, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,6 +17,7 @@ const CustomerSelfRegister = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // This function handles the registration when the user clicks the button.
   const handleRegister = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -53,6 +56,7 @@ const CustomerSelfRegister = () => {
           <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Initialize your vehicle profile and activate real-time telemetry.</p>
         </div>
 
+        {/* Registration Form: Where the user types their name, email, and vehicle info. */}
         <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div style={S.grid}>
             <div>

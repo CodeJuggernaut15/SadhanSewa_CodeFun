@@ -1,3 +1,5 @@
+// This page is for ordering new parts from suppliers (vendors).
+// It's like a shopping list for the store to restock its items.
 import React, { useState } from 'react';
 import { 
   ShoppingCart, Plus, Trash2, Truck, ShieldCheck, Mail, Send, 
@@ -17,6 +19,7 @@ const S = {
 };
 
 const PurchaseInvoice = () => {
+  // This is a list of items we want to buy from a vendor.
   const [items, setItems] = useState([
     { id: 1, name: "Nepal Auto Parts", detail: "Synthetic Engine Oil (5L)", qyt: 10, price: 4500 }
   ]);
@@ -25,6 +28,7 @@ const PurchaseInvoice = () => {
 
   const total = items.reduce((acc, curr) => acc + (curr.qyt * curr.price), 0);
 
+  // This function finishes the order and updates our stock levels.
   const handleFinalize = () => {
     setLoading(true);
     setTimeout(() => {
@@ -53,6 +57,7 @@ const PurchaseInvoice = () => {
         </div>
       )}
 
+      {/* Header: Shows the title and buttons to finish or email the order. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -96,6 +101,7 @@ const PurchaseInvoice = () => {
              </div>
           </div>
 
+          {/* Order Table: Lists all the parts we are ordering and their costs. */}
           <div style={S.card}>
              <div style={{ padding: '1.5rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={S.sectionTitle}>
@@ -186,5 +192,4 @@ const PurchaseInvoice = () => {
     </div>
   );
 };
-
 export default PurchaseInvoice;

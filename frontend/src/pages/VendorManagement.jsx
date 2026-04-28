@@ -1,3 +1,5 @@
+// This page is for managing the suppliers (vendors) we buy parts from.
+// It helps the owner track contact details and how much money is spent with each vendor.
 import React, { useState } from 'react';
 import {
   Truck, Package, Search, Mail, Plus, MapPin,
@@ -6,6 +8,7 @@ import {
   UserPlus, CheckCircle, RefreshCcw, ShieldCheck
 } from 'lucide-react';
 
+// This is a sample list of vendors that supply parts to the shop.
 const INITIAL_VENDORS = [
   { id: 1, name: 'Nepal Auto Parts', location: 'Kathmandu', contact: '+977-1-4234567', category: 'Engine Components', status: 'Active', email: 'supply@nepalauto.com', orders: 34, spent: 'Rs. 1,24,000' },
   { id: 2, name: 'Prashi Tyres & Spares', location: 'Itahari', contact: '+977-21-509876', category: 'Wheels & Tyres', status: 'Inactive', email: 'info@prashityres.com', orders: 12, spent: 'Rs. 48,500' },
@@ -96,6 +99,7 @@ const VendorManagement = () => {
         </div>
       )}
 
+      {/* Header: Shows the title and a button to add a new supplier to the system. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -123,6 +127,7 @@ const VendorManagement = () => {
             <button className="btn btn-outline" style={{ padding: '14px 24px' }}>Filter Results</button>
           </div>
 
+          {/* Supplier Table: Lists all vendors with their location, category, and spending history. */}
           <div style={S.card}>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>

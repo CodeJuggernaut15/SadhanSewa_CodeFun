@@ -1,3 +1,5 @@
+// This page is where customers can change their personal info.
+// They can update their name, email, vehicle details, and password here.
 import React from 'react';
 import { 
   User, Mail, Phone, MapPin, 
@@ -20,6 +22,7 @@ const S = {
 const CustomerProfile = () => {
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Shows the title and a brief description of the settings page. */}
       <div style={S.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
           <Settings size={16} /> Identity Management
@@ -34,6 +37,7 @@ const CustomerProfile = () => {
           <div style={S.cameraBtn}><Camera size={18} /></div>
         </div>
 
+        {/* Personal Details: Form to update name, email, phone, and address. */}
         <div style={S.card}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '12px' }}>
             <User size={20} color="var(--primary)" /> Personal Credentials
@@ -60,6 +64,7 @@ const CustomerProfile = () => {
         </div>
       </div>
 
+      {/* Vehicle Registry: Shows the cars the customer has registered in the system. */}
       <div style={S.section}>
         <div style={S.card}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>

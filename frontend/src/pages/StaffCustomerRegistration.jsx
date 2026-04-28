@@ -1,3 +1,5 @@
+// This page is for staff to register new customers and their vehicles.
+// It's like a digital form that saves customer details to the system.
 import React from 'react';
 import { UserPlus, Hash, Smartphone, CarFront, Info, ShieldCheck, ClipboardCheck, ArrowRight, RotateCcw, Activity } from 'lucide-react';
 
@@ -14,6 +16,7 @@ const S = {
 const StaffCustomerRegistration = () => {
   return (
     <div style={S.page} className="page-transition">
+      {/* Header: Tells the staff they are in the customer registration area. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -27,8 +30,10 @@ const StaffCustomerRegistration = () => {
         </div>
       </div>
 
+      {/* Registration Form: Where the actual information is typed in. */}
       <div style={S.card}>
         <form>
+           {/* Section 1: Basic customer details like name and phone. */}
           <h3 style={S.sectionTitle}>
             <ShieldCheck size={22} color="var(--primary)" /> Portfolio Information
           </h3>
@@ -43,6 +48,7 @@ const StaffCustomerRegistration = () => {
             </div>
           </div>
 
+           {/* Section 2: Vehicle details like license plate and type. */}
           <h3 style={{ ...S.sectionTitle, marginTop: '4rem' }}>
             <CarFront size={22} color="var(--primary)" /> Vehicle Profile Telemetry
           </h3>
@@ -66,6 +72,7 @@ const StaffCustomerRegistration = () => {
             </div>
           </div>
 
+          {/* Form Actions: Buttons to clear the form or save the data. */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '4rem', paddingTop: '2rem', borderTop: '1.5px solid var(--border-color)' }}>
             <button type="button" className="btn btn-outline" style={{ padding: '12px 30px' }}><RotateCcw size={18} /> Clear Session</button>
             <button type="submit" className="btn btn-primary" style={{ padding: '12px 40px' }}>Register & Synchronize <ArrowRight size={18} /></button>

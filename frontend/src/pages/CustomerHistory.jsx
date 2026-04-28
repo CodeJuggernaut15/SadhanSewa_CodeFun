@@ -1,3 +1,5 @@
+// This page shows all the past purchases and services for a customer.
+// It's like a history book of everything they've done at our shop.
 import React, { useState } from 'react';
 import {
   History, Search, Filter, Download,
@@ -5,6 +7,7 @@ import {
   Clock, AlertCircle, Car, Receipt, ArrowRight, CheckCircle, RefreshCcw
 } from 'lucide-react';
 
+// This is a list of sample transactions (sales and services).
 const TRANSACTIONS = [
   { id: 'INV-1020', date: 'Apr 01, 2026', name: 'Synthetic Engine Oil (5L)', vehicle: 'Toyota Fortuner · Ba 1 Pa 1234', amount: 4500, status: 'Paid', type: 'Sale' },
   { id: 'SRV-509', date: 'Mar 28, 2026', name: 'Vehicle Diagnostics & Brake Check', vehicle: 'Toyota Fortuner · Ba 1 Pa 1234', amount: 1200, status: 'Paid', type: 'Service' },
@@ -32,6 +35,7 @@ const CustomerHistory = () => {
     (filter === 'all' || t.type.toLowerCase() === filter || t.status.toLowerCase() === filter)
   );
 
+  // This function simulates downloading the history as a PDF.
   const handleExport = () => {
     setLoading(true);
     setTimeout(() => {
@@ -57,6 +61,7 @@ const CustomerHistory = () => {
         </div>
       )}
 
+      {/* Page Header: Shows the title and buttons for filtering or exporting data. */}
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
@@ -73,6 +78,7 @@ const CustomerHistory = () => {
         </div>
       </div>
 
+      {/* Summary Cards: Quick numbers like total spent and record count. */}
       <div style={S.summaryGrid}>
         {[
           { label: 'Total Value Flow', value: 'Rs. 12,150', icon: TrendingUp, color: '#10b981' },
@@ -92,6 +98,7 @@ const CustomerHistory = () => {
         ))}
       </div>
 
+      {/* History Table: Lists each transaction with its details and status. */}
       <div style={S.card}>
         <div style={{ padding: '1.25rem 2rem', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
            <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Omni-Channel Log</h3>
@@ -102,7 +109,7 @@ const CustomerHistory = () => {
                 placeholder="Search by ID or part name..." 
                 style={{ padding: '10px 10px 10px 38px', width: '320px', fontSize: '13px' }}
                 value={search}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
               />
            </div>
         </div>
