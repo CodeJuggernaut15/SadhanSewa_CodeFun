@@ -67,6 +67,20 @@ namespace SadhanSewa.API.Data
                 .HasForeignKey(p => p.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PurchaseInvoice>()
+                .Property(p => p.SessionCode)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            modelBuilder.Entity<PurchaseInvoice>()
+                .Property(p => p.Status)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<PurchaseInvoiceItem>()
+                .Property(i => i.VendorName)
+                .HasMaxLength(200)
+                .IsRequired();
+
             // Seed default roles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Name = "Admin", Description = "Full system control — manage staff, vendors, inventory, and generate financial reports" },

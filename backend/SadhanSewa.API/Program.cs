@@ -1,17 +1,26 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using SadhanSewa.API.Data;
+using SadhanSewa.API.Middleware;
+using SadhanSewa.API.Services.PurchaseInvoice;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
+builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
-           .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 
-app.Run();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.MapControllers();
 
+app.MapGet("/", () => "SadhanSewa API is running");
+
+app.Run();
