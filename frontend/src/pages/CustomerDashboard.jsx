@@ -2,37 +2,28 @@ import React from 'react';
 import { 
   User, Car, AlertTriangle, Calendar, 
   History, ShoppingBag, ArrowRight, Zap, 
-  CheckCircle, Clock, ShieldCheck, CreditCard, Tag, Star
+  CheckCircle, Clock, ShieldCheck, CreditCard, Tag, Star, Award, TrendingUp
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const S = {
-  page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3.5rem', paddingBottom: '2.5rem', borderBottom: '1.5px solid var(--border-color)' },
-  layout: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '3.5rem' },
-  card: { background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem', transition: 'all 0.3s ease' },
-  profileSection: { display: 'flex', gap: '2rem', alignItems: 'center', marginBottom: '3rem' },
-  avatar: { width: '80px', height: '80px', borderRadius: '24px', background: 'var(--primary)10', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-};
-
 const CustomerDashboard = () => {
   return (
-    <div style={S.page} className="page-transition">
-      <div style={S.header}>
+    <div className="container page-transition" style={{ padding: '3rem 2rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' }}>
+      <div className="page-header" style={{ marginBottom: '3rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <User size={16} /> Customer Experience portal
           </div>
-          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Welcome Back, <span style={{ color: 'var(--primary)' }}>Prashiddhika</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Your vehicle's health and service history at a glance.</p>
+          <h1 className="page-title">Welcome Back, <span style={{ color: 'var(--primary)' }}>Prashiddhika</span></h1>
+          <p className="page-subtitle">Your vehicle's health and service history at a glance.</p>
         </div>
-        <button className="btn btn-primary"><Calendar size={18} /> Book Appointment</button>
+        <Link to="/customer/appointments" className="btn btn-primary"><Calendar size={18} /> Book Appointment</Link>
       </div>
 
-      <div style={S.layout}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div className="grid-layout">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
           {/* AI Insights Banner */}
-          <div style={{ ...S.card, background: 'rgba(29, 158, 117, 0.05)', border: '1.5px solid rgba(29, 158, 117, 0.1)', display: 'flex', gap: '2rem', alignItems: 'center' }}>
+          <div className="glass-card" style={{ background: 'rgba(29, 158, 117, 0.05)', display: 'flex', gap: '2rem', alignItems: 'center', borderLeft: '4px solid var(--primary)' }}>
             <div style={{ width: 64, height: 64, borderRadius: 20, background: 'var(--primary)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Zap size={32} />
             </div>
@@ -41,15 +32,15 @@ const CustomerDashboard = () => {
               <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
                 Our telemetry analysis suggests that your **Brake Pads** may reach a critical wear level within the next 300 KM. We recommend a proactive inspection.
               </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <button className="btn btn-primary" style={{ padding: '8px 24px', fontSize: '12px' }}>Book Inspection</button>
                 <button className="btn btn-outline" style={{ padding: '8px 24px', fontSize: '12px' }}>View Analysis</button>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-            <div style={S.card}>
+          <div className="grid-cols-2">
+            <div className="card">
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Car size={20} color="var(--primary)" /> Registered Vehicle
               </h4>
@@ -67,9 +58,12 @@ const CustomerDashboard = () => {
                   <span style={{ fontSize: '12px', fontWeight: 800 }}>12 Mar 2026</span>
                 </div>
               </div>
+              <Link to="/customer/history" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 800, color: 'var(--primary)', marginTop: '1.5rem' }}>
+                View Full History <ArrowRight size={14} />
+              </Link>
             </div>
 
-            <div style={S.card}>
+            <div className="card">
               <h4 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <History size={20} color="var(--primary)" /> Recent Activity
               </h4>
@@ -91,8 +85,32 @@ const CustomerDashboard = () => {
           </div>
         </div>
 
-        <aside>
-          <div style={{ ...S.card, background: '#ef444408', borderColor: '#ef444420' }}>
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          {/* Loyalty Program UI */}
+          <div className="loyalty-card">
+            <div className="loyalty-tier-badge">
+              <Award size={14} /> Gold Member
+            </div>
+            <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '0.5rem' }}>850 <span style={{ fontSize: '14px', fontWeight: 500, opacity: 0.7 }}>PTS</span></h2>
+            <p style={{ fontSize: '12px', opacity: 0.7, marginBottom: '1.5rem' }}>150 points until Platinum Tier</p>
+            
+            <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', marginBottom: '2rem' }}>
+              <div style={{ width: '85%', height: '100%', background: 'var(--primary)', boxShadow: '0 0 15px var(--primary)' }}></div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px' }}>
+                <TrendingUp size={16} color="var(--primary)" />
+                <span style={{ fontSize: '12px', fontWeight: 700 }}>10% Service Discount Active</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '12px' }}>
+                <Tag size={16} color="var(--primary)" />
+                <span style={{ fontSize: '12px', fontWeight: 700 }}>Free Interior Detailing Available</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="card" style={{ background: '#ef444408', borderColor: '#ef444420' }}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: '#ef4444', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <AlertTriangle size={20} /> Fiscal Alert
             </h4>
@@ -106,32 +124,11 @@ const CustomerDashboard = () => {
             <button className="btn btn-primary" style={{ width: '100%', background: '#ef4444', borderColor: '#ef4444' }}>Clear Balance Now <ArrowRight size={18} /></button>
           </div>
 
-          <div style={{ ...S.card, marginTop: '1.5rem', background: 'var(--bg-nav)', color: '#fff' }}>
-            <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase' }}>
-              <Star size={18} /> Loyalty Program
-            </h4>
-            <div style={{ marginBottom: '2rem' }}>
-               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '11px', opacity: 0.6, fontWeight: 800 }}>POINTS BALANCE</span>
-                  <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--primary)' }}>850 PTS</span>
-               </div>
-               <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
-                  <div style={{ width: '85%', height: '100%', background: 'var(--primary)' }}></div>
-               </div>
-            </div>
-            <div style={{ background: 'var(--primary)20', padding: '15px', borderRadius: '16px', border: '1.5px solid var(--primary)40' }}>
-               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                  <Tag size={16} color="var(--primary)" />
-                  <span style={{ fontSize: '13px', fontWeight: 800 }}>Gold Member Benefit</span>
-               </div>
-               <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: 0 }}>Automatic **10% discount** applied to all retail assets and service fees.</p>
-            </div>
-          </div>
-
-          <div style={{ ...S.card, marginTop: '1.5rem' }}>
+          <div className="card">
             <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Quick Links</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {[
+                { l: 'Contact Support', i: Mail, p: '/customer/contact' },
                 { l: 'Service History', i: History, p: '/customer/history' },
                 { l: 'Available Parts', i: ShoppingBag, p: '/customer/shop' },
                 { l: 'Account Settings', i: User, p: '/customer/profile' }

@@ -1,6 +1,7 @@
 import React from 'react';
 import Sidebar from './Sidebar';
-import { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
+import { Outlet, Link } from 'react-router-dom';
 
 /**
  * Modern High-Aesthetic Dashboard Layout
@@ -18,8 +19,12 @@ const Layout = () => {
         marginLeft: '275px', // Matches the new sidebar width
         minHeight: '100vh',
         background: 'var(--bg-main)',
-        position: 'relative'
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column'
       }}>
+        {/* Top Navbar */}
+        <Navbar />
         {/* Decorative Grid Pattern for Dark Mode */}
         <div style={{ 
           position: 'fixed', 
@@ -53,6 +58,7 @@ const Layout = () => {
             <div style={{ display: 'flex', gap: '2.5rem' }}>
               <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Privacy Policy</a>
               <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Service Terms</a>
+              <Link to="/contact" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Contact Us</Link>
             </div>
           </div>
         </footer>
