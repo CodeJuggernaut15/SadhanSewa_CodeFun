@@ -1,35 +1,58 @@
+using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SadhanSewa.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ? Add controllers
 builder.Services.AddControllers();
 
+// ? Swagger / OpenAPI
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "SadhanSewa.API",
+        Version = "v1"
+    });
+});
+
+// ? Database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
            .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
-builder.Services.AddOpenApi();
-
+// ? CORS (IMPORTANT for frontend)
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
 
+// ? Middleware
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SadhanSewa.API v1");
+    });
 }
 
-app.UseCors("AllowFrontend");
+app.UseHttpsRedirection();
+
+app.UseCors("FrontendPolicy"); // ? Enable CORS
+
+app.UseAuthorization();
 
 app.MapControllers();
 
