@@ -17,6 +17,8 @@ import NotificationCenter from './pages/NotificationCenter';
 import PartsManagement from './pages/PartsManagement';
 import PurchaseInvoice from './pages/PurchaseInvoice';
 import AiDiagnostics from './pages/AiDiagnostics';
+import { NotificationProvider } from './context/NotificationContext';
+import Notification from './components/Notification';
 
 // New Pages
 import StaffDashboard from './pages/StaffDashboard';
@@ -25,14 +27,18 @@ import CustomerProfile from './pages/CustomerProfile';
 import FinancialReports from './pages/FinancialReports';
 import StaffReports from './pages/StaffReports';
 import CustomerShop from './pages/CustomerShop';
+import CustomerContact from './pages/CustomerContact';
 
 function App() {
   return (
-    <BrowserRouter>
+    <NotificationProvider>
+      <Notification />
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="register" element={<CustomerSelfRegister />} />
+          <Route path="contact" element={<CustomerContact />} />
           
           {/* Admin Section: Pages only the owner or manager should see. */}
           <Route path="admin">
@@ -64,12 +70,14 @@ function App() {
             <Route path="reviews" element={<Appointments />} /> {/* Integrated in Appointments */}
             <Route path="history" element={<CustomerHistory />} />
             <Route path="shop" element={<CustomerShop />} />
+            <Route path="contact" element={<CustomerContact />} />
           </Route>
 
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </NotificationProvider>
   );
 }
 

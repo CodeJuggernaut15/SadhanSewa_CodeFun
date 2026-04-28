@@ -8,7 +8,7 @@ import {
   TrendingUp, Bell, Users, Truck,
   LogOut, Package, FileText, Zap,
   BarChart3, Settings, ShoppingBag, Star,
-  Activity, ShieldAlert, CreditCard
+  Activity, ShieldAlert, CreditCard, Mail
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -56,6 +56,9 @@ const Sidebar = () => {
     { title: "Experience", links: [
       { name: "My Dashboard", path: "/customer/dashboard", icon: Shield },
       { name: "Identity Settings", path: "/customer/profile", icon: Settings },
+    ]},
+    { title: "Communication", links: [
+      { name: "Contact Support", path: "/customer/contact", icon: Mail },
     ]},
     { title: "Services", links: [
       { name: "Book Appointment", path: "/customer/appointments", icon: Calendar },
