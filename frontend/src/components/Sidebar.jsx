@@ -81,21 +81,6 @@ const Sidebar = () => {
       position: 'fixed', left: 0, top: 0, borderRight: '1px solid rgba(255,255,255,0.05)',
       display: 'flex', flexDirection: 'column', zIndex: 1000, boxShadow: '10px 0 30px rgba(0,0,0,0.1)'
     }}>
-      {/* User Role Badge */}
-      {isAuthenticated && (
-        <div style={{ padding: '0.75rem 1rem', background: '#1D9E7510', borderBottom: '1px solid #1D9E7520', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{ 
-            fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px',
-            background: '#1D9E75', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em'
-          }}>
-            {role}
-          </span>
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
-            {user?.fullName}
-          </span>
-        </div>
-      )}
-
       {/* BRANDING */}
       <div style={{ padding: '1.5rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <Link to="/" style={{ 
@@ -104,13 +89,13 @@ const Sidebar = () => {
           border: '1.5px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
         }}>
           <div style={{ 
-            background: '#1D9E75', width: '44px', height: '44px', borderRadius: '12px', 
-            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(29, 158, 117, 0.4)',
+            background: 'var(--primary-gradient)', width: '44px', height: '44px', borderRadius: '12px', 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px var(--primary-glow)',
           }}>
             <Shield size={24} color="white" strokeWidth={2.5} />
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 1 }}>
-            VEHICLE<span style={{color: '#1D9E75'}}>CORE</span>
+            VEHICLE<span style={{color: 'var(--primary)'}}>CORE</span>
           </span>
         </Link>
       </div>

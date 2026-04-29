@@ -83,20 +83,26 @@ const NotificationCenter = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '3.5rem' }}>
         {/* List of alerts: Each one has a priority, a description, and actions the user can take. */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
            {alerts.map(alert => (
-             <div key={alert.id} style={S.alertCard} className="hover:border-primary group">
-                <div style={{ ...S.iconBox, background: `${alert.color}10`, color: alert.color }}>
+             <div key={alert.id} className="card" style={{ padding: '2rem', display: 'flex', gap: '2rem', border: '1px solid var(--border-color)' }}>
+                <div style={{ 
+                  ...S.iconBox, 
+                  background: alert.priority === 'Critical' ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : `linear-gradient(135deg, ${alert.color} 0%, ${alert.color}cc 100%)`,
+                  color: '#fff',
+                  boxShadow: `0 8px 20px ${alert.color}30`
+                }}>
                    <alert.icon size={28} />
                 </div>
                 <div style={{ flex: 1 }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                         <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{alert.type}</span>
+                         <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{alert.type}</span>
                          <span style={{
                            ...S.badge,
-                           background: alert.priority === 'Critical' ? '#ef4444' : alert.priority === 'High' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(0,0,0,0.03)',
-                           color: alert.priority === 'Critical' ? '#fff' : alert.priority === 'High' ? '#ef4444' : 'var(--text-secondary)'
+                           background: alert.priority === 'Critical' ? 'rgba(239, 68, 68, 0.1)' : alert.priority === 'High' ? 'rgba(239, 68, 68, 0.05)' : 'rgba(0,0,0,0.03)',
+                           color: alert.priority === 'Critical' || alert.priority === 'High' ? '#ef4444' : 'var(--text-secondary)',
+                           border: alert.priority === 'Critical' ? '1px solid rgba(239, 68, 68, 0.2)' : 'none'
                          }}>
                             {alert.priority} Priority
                          </span>
@@ -105,12 +111,12 @@ const NotificationCenter = () => {
                          <Clock size={14} /> {alert.time}
                       </div>
                    </div>
-                   <h4 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '8px' }}>{alert.title}</h4>
-                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem' }}>{alert.desc}</p>
+                   <h4 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', letterSpacing: '-0.3px' }}>{alert.title}</h4>
+                   <p style={{ fontSize: '14.5px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem' }}>{alert.desc}</p>
                    
                    <div style={{ display: 'flex', gap: '12px' }}>
-                      <button className="btn btn-primary" style={{ padding: '8px 24px', fontSize: '12px' }}>Acknowledge</button>
-                      <button className="btn btn-outline" style={{ padding: '8px 24px', fontSize: '12px' }}>Dispatch Protocol</button>
+                      <button className="btn btn-primary" style={{ padding: '8px 24px', fontSize: '12px', borderRadius: '10px' }}>Acknowledge</button>
+                      <button className="btn btn-outline" style={{ padding: '8px 24px', fontSize: '12px', borderRadius: '10px' }}>Dispatch Protocol</button>
                    </div>
                 </div>
              </div>

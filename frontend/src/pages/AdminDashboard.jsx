@@ -82,18 +82,18 @@ const AdminDashboard = () => {
       {/* Key Metrics: Quick numbers on revenue, staff, debt, and vendors. */}
       <div style={S.statsGrid}>
         {[
-          { l: 'Gross Revenue Flow', v: 'Rs. 458,000', c: '+12%', i: DollarSign, bg: '#10b981' },
-          { l: 'Operational Nodes', v: '12 Staff', c: 'Stable', i: Users, bg: '#3b82f6' },
-          { l: 'Liquidity Risks', v: 'Rs. 24,000', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
-          { l: 'Supply Partners', v: '08 Vendors', c: 'Active', i: Truck, bg: '#8b5cf6' }
+          { l: 'Gross Revenue Flow', v: 'Rs. 458,000', c: '+12%', i: DollarSign, bg: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', glow: 'rgba(16, 185, 129, 0.2)' },
+          { l: 'Operational Nodes', v: '12 Staff', c: 'Stable', i: Users, bg: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', glow: 'rgba(59, 130, 246, 0.2)' },
+          { l: 'Liquidity Risks', v: 'Rs. 24,000', c: '+2.1%', i: CreditCard, bg: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)', glow: 'rgba(239, 68, 68, 0.2)' },
+          { l: 'Supply Partners', v: '08 Vendors', c: 'Active', i: Truck, bg: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', glow: 'rgba(139, 92, 246, 0.2)' }
         ].map((s, i) => (
-          <div key={i} className="card" style={{ padding: '1.5rem 2rem', background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px' }}>
-             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.bg}10`, color: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.i size={22} /></div>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: s.c.startsWith('+') ? '#10b981' : '#64748b', background: s.c.startsWith('+') ? '#10b98110' : '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>{s.c}</span>
+          <div key={i} className="card" style={{ padding: '1.75rem 2rem', position: 'relative', overflow: 'hidden' }}>
+             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 20px ${s.glow}` }}><s.i size={24} /></div>
+                <span style={{ fontSize: '10px', fontWeight: 800, color: s.c.startsWith('+') ? '#10b981' : '#64748b', background: s.c.startsWith('+') ? '#10b98110' : '#f1f5f9', padding: '4px 10px', borderRadius: '6px', height: 'fit-content' }}>{s.c}</span>
              </div>
-             <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.l}</p>
-             <p style={{ fontSize: '1.6rem', fontWeight: 800, margin: '4px 0' }}>{s.v}</p>
+             <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>{s.l}</p>
+             <p style={{ fontSize: '1.75rem', fontWeight: 800, margin: 0, letterSpacing: '-0.5px' }}>{s.v}</p>
           </div>
         ))}
       </div>
@@ -101,21 +101,21 @@ const AdminDashboard = () => {
       {/* Revenue Charts and Profit Breakdown. */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
          {/* Main Chart: Shows trends over time. */}
-         <div style={S.card}>
+         <div className="glass-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-               <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
-               <div style={{ display: 'flex', gap: '8px' }}>
+               <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
+               <div style={{ display: 'flex', background: 'rgba(0,0,0,0.03)', padding: '4px', borderRadius: '12px' }}>
                   {['Daily', 'Monthly', 'Yearly'].map(t => (
-                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: '0.3s' }}>{t}</button>
+                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'transparent', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: '0.3s' }}>{t}</button>
                   ))}
                </div>
             </div>
-            <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', gap: '12px', paddingBottom: '2.5rem' }}>
+            <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', gap: '16px', paddingBottom: '2rem' }}>
                {data.map((v, i) => {
                  const pct = (v / max) * 100;
                  return (
                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', justifyContent: 'flex-end', gap: '12px' }}>
-                      <div className="hover:scale-y-105" style={{ width: '100%', height: `${pct}%`, background: i === data.length - 1 ? 'var(--primary)' : 'rgba(29, 158, 117, 0.15)', borderRadius: '6px 6px 2px 2px', transition: 'all 0.4s ease' }}></div>
+                      <div className="hover:scale-y-105" style={{ width: '100%', height: `${pct}%`, background: i === data.length - 1 ? 'var(--primary-gradient)' : 'rgba(16, 185, 129, 0.1)', borderRadius: '10px 10px 4px 4px', transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)' }}></div>
                       <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)' }}>{MONTHS[i]}</span>
                    </div>
                  );
