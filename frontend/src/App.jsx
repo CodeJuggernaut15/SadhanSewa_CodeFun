@@ -1,9 +1,9 @@
-// This is the main file that controls where everything goes on the website.
-// It sets up the "routes" which are like the different addresses for each page.
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import Login from './pages/Login';
 import CustomerSelfRegister from './pages/CustomerSelfRegister';
 import StaffCustomerRegistration from './pages/StaffCustomerRegistration';
 import SalesAndInvoice from './pages/SalesAndInvoice';
@@ -18,6 +18,7 @@ import PartsManagement from './pages/PartsManagement';
 import PurchaseInvoice from './pages/PurchaseInvoice';
 import AiDiagnostics from './pages/AiDiagnostics';
 import { NotificationProvider } from './context/NotificationContext';
+import { AuthProvider } from './context/AuthContext';
 import Notification from './components/Notification';
 
 // New Pages
@@ -31,46 +32,125 @@ import CustomerContact from './pages/CustomerContact';
 
 function App() {
   return (
+    <AuthProvider>
     <NotificationProvider>
       <Notification />
       <BrowserRouter>
       <Routes>
+        {/* Public standalone pages (no sidebar/navbar) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<CustomerSelfRegister />} />
+
+        {/* Dashboard layout with sidebar */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="register" element={<CustomerSelfRegister />} />
           <Route path="contact" element={<CustomerContact />} />
           
-          {/* Admin Section: Pages only the owner or manager should see. */}
+          {/* Admin Section — Admin only */}
           <Route path="admin">
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="financial-reports" element={<FinancialReports />} />
-            <Route path="staff-management" element={<StaffManagement />} />
-            <Route path="parts-management" element={<PartsManagement />} />
-            <Route path="purchase-invoices" element={<PurchaseInvoice />} />
-            <Route path="vendor-management" element={<VendorManagement />} />
-            <Route path="diagnostics" element={<AiDiagnostics />} />
-            <Route path="notifications" element={<NotificationCenter />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="financial-reports" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <FinancialReports />
+              </ProtectedRoute>
+            } />
+            <Route path="staff-management" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <StaffManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="parts-management" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <PartsManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="purchase-invoices" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <PurchaseInvoice />
+              </ProtectedRoute>
+            } />
+            <Route path="vendor-management" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <VendorManagement />
+              </ProtectedRoute>
+            } />
+            <Route path="diagnostics" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <AiDiagnostics />
+              </ProtectedRoute>
+            } />
+            <Route path="notifications" element={
+              <ProtectedRoute allowedRoles={['Admin']}>
+                <NotificationCenter />
+              </ProtectedRoute>
+            } />
           </Route>
 
-          {/* Staff Section: Pages for the workers to register customers and sell parts. */}
+          {/* Staff Section — Staff + Admin */}
           <Route path="staff">
-            <Route path="dashboard" element={<StaffDashboard />} />
-            <Route path="customer-registration" element={<StaffCustomerRegistration />} />
-            <Route path="customers" element={<CustomerInsights />} />
-            <Route path="sales" element={<SalesAndInvoice />} />
-            <Route path="reports" element={<StaffReports />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <StaffDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="customer-registration" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <StaffCustomerRegistration />
+              </ProtectedRoute>
+            } />
+            <Route path="customers" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <CustomerInsights />
+              </ProtectedRoute>
+            } />
+            <Route path="sales" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <SalesAndInvoice />
+              </ProtectedRoute>
+            } />
+            <Route path="reports" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <StaffReports />
+              </ProtectedRoute>
+            } />
           </Route>
 
-          {/* Customer Section: Pages for the car owners to see their own history and health. */}
+          {/* Customer Section — All authenticated users */}
           <Route path="customer">
-            <Route path="dashboard" element={<CustomerDashboard />} />
-            <Route path="profile" element={<CustomerProfile />} />
-            <Route path="appointments" element={<Appointments />} />
-            <Route path="parts-request" element={<Appointments />} /> {/* Integrated in Appointments */}
-            <Route path="reviews" element={<Appointments />} /> {/* Integrated in Appointments */}
-            <Route path="history" element={<CustomerHistory />} />
-            <Route path="shop" element={<CustomerShop />} />
-            <Route path="contact" element={<CustomerContact />} />
+            <Route path="dashboard" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <CustomerDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="profile" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <CustomerProfile />
+              </ProtectedRoute>
+            } />
+            <Route path="appointments" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <Appointments />
+              </ProtectedRoute>
+            } />
+            <Route path="history" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <CustomerHistory />
+              </ProtectedRoute>
+            } />
+            <Route path="shop" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <CustomerShop />
+              </ProtectedRoute>
+            } />
+            <Route path="contact" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff', 'Customer']}>
+                <CustomerContact />
+              </ProtectedRoute>
+            } />
           </Route>
 
         </Route>
@@ -78,6 +158,7 @@ function App() {
       </Routes>
     </BrowserRouter>
     </NotificationProvider>
+    </AuthProvider>
   );
 }
 

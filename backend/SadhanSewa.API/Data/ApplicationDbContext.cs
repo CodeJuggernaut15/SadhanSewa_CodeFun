@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SadhanSewa.API.Models;
 
 namespace SadhanSewa.API.Data
@@ -67,12 +67,44 @@ namespace SadhanSewa.API.Data
                 .HasForeignKey(p => p.CreatedById)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<PurchaseInvoice>()
+                .Property(p => p.SessionCode)
+                .HasMaxLength(20)
+                .IsRequired();
+
+            modelBuilder.Entity<PurchaseInvoice>()
+                .Property(p => p.Status)
+                .HasConversion<int>();
+
+            modelBuilder.Entity<PurchaseInvoiceItem>()
+                .Property(i => i.VendorName)
+                .HasMaxLength(200)
+                .IsRequired();
+
             // Seed default roles
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = 1, Name = "Admin", Description = "Full system control — manage staff, vendors, inventory, and generate financial reports" },
                 new Role { Id = 2, Name = "Staff", Description = "Handle customer registrations, part sales, invoicing, and customer reports" },
                 new Role { Id = 3, Name = "Customer", Description = "Self-register, book appointments, track history, and receive AI alerts" }
             );
+
+            /*
+            // Seed default Admin user (password: Admin@123)
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    FullName = "System Administrator",
+                    Email = "admin@sadhansewa.com",
+                    Phone = null,
+                    PasswordHash = "$2a$11$K7pYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYp", // Placeholder
+                    RoleId = 1,
+                    IsActive = true,
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+                }
+            );
+            */
         }
     }
 }

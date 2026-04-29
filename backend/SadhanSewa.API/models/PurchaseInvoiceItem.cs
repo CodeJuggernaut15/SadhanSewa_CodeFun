@@ -2,6 +2,9 @@
 
 namespace SadhanSewa.API.Models
 {
+    /// <summary>
+    /// Represents a line item inside a purchase invoice.
+    /// </summary>
     public class PurchaseInvoiceItem
     {
         public int Id { get; set; }
@@ -21,6 +24,9 @@ namespace SadhanSewa.API.Models
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
+
+        public string VendorName { get; set; } = string.Empty;
+        public bool IsLowStockAlert { get; set; } = false;
 
         [Column(TypeName = "decimal(12,2)")]
         public decimal LineTotal => Quantity * UnitPrice; 

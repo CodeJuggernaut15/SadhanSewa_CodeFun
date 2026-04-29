@@ -1,7 +1,5 @@
-// The Sidebar is the main navigation hub for the entire application. 
-// It dynamically changes what links are visible based on whether you're an Admin, Staff, or Customer.
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, User, ShoppingCart, 
   Calendar, History, Shield, PieChart, 
@@ -10,13 +8,14 @@ import {
   BarChart3, Settings, ShoppingBag, Star,
   Activity, ShieldAlert, CreditCard, Mail
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
-  // For the demo, we have a role switcher. In a real app, this would be determined after login.
-  const [role, setRole] = useState('Admin'); 
+  const navigate = useNavigate();
+  const { user, isAuthenticated, logout } = useAuth();
   
-  // Helper to check if a link is the one currently being viewed.
+  const role = user?.role || 'Customer';
   const isActive = (path) => location.pathname === path;
 
   const adminMenu = [
@@ -69,9 +68,12 @@ const Sidebar = () => {
     ]}
   ];
 
-  // We pick the menu to show based on the user's role. 
-  // It ensures everyone only sees what they're allowed to access.
   const currentMenu = role === 'Admin' ? adminMenu : role === 'Staff' ? staffMenu : customerMenu;
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <aside style={{ 
@@ -79,24 +81,20 @@ const Sidebar = () => {
       position: 'fixed', left: 0, top: 0, borderRight: '1px solid rgba(255,255,255,0.05)',
       display: 'flex', flexDirection: 'column', zIndex: 1000, boxShadow: '10px 0 30px rgba(0,0,0,0.1)'
     }}>
-      {/* Role Switcher: Only here so we can easily test different views during development. */}
-      <div style={{ padding: '1rem', background: '#1D9E7510', borderBottom: '1px solid #1D9E7520', display: 'flex', gap: '8px', justifyContent: 'center' }}>
-        {['Admin', 'Staff', 'Customer'].map(r => (
-          <button 
-            key={r} 
-            onClick={() => setRole(r)}
-            style={{ 
-              fontSize: '9px', fontWeight: 800, padding: '4px 8px', borderRadius: '4px',
-              background: role === r ? '#1D9E75' : 'transparent',
-              color: role === r ? '#fff' : '#64748b',
-              border: '1px solid' + (role === r ? '#1D9E75' : '#64748b20'),
-              cursor: 'pointer'
-            }}
-          >
-            {r}
-          </button>
-        ))}
-      </div>
+      {/* User Role Badge */}
+      {isAuthenticated && (
+        <div style={{ padding: '0.75rem 1rem', background: '#1D9E7510', borderBottom: '1px solid #1D9E7520', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span style={{ 
+            fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px',
+            background: '#1D9E75', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em'
+          }}>
+            {role}
+          </span>
+          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+            {user?.fullName}
+          </span>
+        </div>
+      )}
 
       {/* BRANDING */}
       <div style={{ padding: '1.5rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -117,39 +115,65 @@ const Sidebar = () => {
         </Link>
       </div>
 
-      {/* Navigation Groups: Iterates through the menu sections and creates links. */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '2rem 1.15rem' }} className="custom-scrollbar">
-        {currentMenu.map((group, i) => (
-          <div key={i} style={{ marginBottom: '2.2rem' }}>
-            <p style={{ 
-              fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', 
-              color: 'rgba(255,255,255,0.25)', marginBottom: '1rem', paddingLeft: '0.85rem'
-            }}>
-              {group.title}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-              {group.links.map((link, j) => (
-                <Link
-                  key={j}
-                  to={link.path}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px',
-                    borderRadius: '11px', fontSize: '13px', fontWeight: isActive(link.path) ? 700 : 500,
-                    textDecoration: 'none', transition: 'all 0.2s',
-                    background: isActive(link.path) ? 'rgba(29, 158, 117, 0.15)' : 'transparent',
-                    color: isActive(link.path) ? '#1D9E75' : '#94a3b8',
-                    border: isActive(link.path) ? '1px solid rgba(29, 158, 117, 0.1)' : '1px solid transparent'
-                  }}
-                >
-                  <link.icon size={18} />
-                  {link.name}
-                </Link>
-              ))}
+        {isAuthenticated ? (
+          currentMenu.map((group, i) => (
+            <div key={i} style={{ marginBottom: '2.2rem' }}>
+              <p style={{ 
+                fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', 
+                color: 'rgba(255,255,255,0.25)', marginBottom: '1rem', paddingLeft: '0.85rem'
+              }}>
+                {group.title}
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                {group.links.map((link, j) => (
+                  <Link
+                    key={j}
+                    to={link.path}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '12px', padding: '11px 14px',
+                      borderRadius: '11px', fontSize: '13px', fontWeight: isActive(link.path) ? 700 : 500,
+                      textDecoration: 'none', transition: 'all 0.2s',
+                      background: isActive(link.path) ? 'rgba(29, 158, 117, 0.15)' : 'transparent',
+                      color: isActive(link.path) ? '#1D9E75' : '#94a3b8',
+                      border: isActive(link.path) ? '1px solid rgba(29, 158, 117, 0.1)' : '1px solid transparent'
+                    }}
+                  >
+                    <link.icon size={18} />
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
             </div>
+          ))
+        ) : (
+          <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem' }}>Sign in to access your dashboard</p>
+            <Link to="/login" className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '13px' }}>
+              Sign In
+            </Link>
           </div>
-        ))}
+        )}
       </div>
 
+      {/* Logout Button */}
+      {isAuthenticated && (
+        <div style={{ padding: '1.15rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+          <button 
+            onClick={handleLogout}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+              padding: '12px', borderRadius: '12px', fontSize: '12px', fontWeight: 800,
+              textTransform: 'uppercase', letterSpacing: '0.05em',
+              background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444',
+              border: '1px solid rgba(239, 68, 68, 0.15)', cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            <LogOut size={16} /> Sign Out
+          </button>
+        </div>
+      )}
     </aside>
   );
 };
