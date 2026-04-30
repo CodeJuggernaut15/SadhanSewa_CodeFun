@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SadhanSewa.API.Data;
 using SadhanSewa.API.DTOs;
+using SadhanSewa.API.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SadhanSewa.API.Controllers
 {
@@ -12,10 +14,12 @@ namespace SadhanSewa.API.Controllers
     public class FinancialReportsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public FinancialReportsController(ApplicationDbContext db)
+        public FinancialReportsController(ApplicationDbContext db, IHubContext<NotificationHub> hubContext)
         {
             _db = db;
+            _hubContext = hubContext;
         }
 
         // GET /api/financial-reports?period=daily|monthly|yearly
@@ -90,6 +94,12 @@ namespace SadhanSewa.API.Controllers
                     },
                     Transactions = transactions
                 };
+
+                // Real-time Notification
+                await _hubContext.Clients.All.SendAsync("ReceiveNotification", 
+                    "Financial Insights Ready", 
+                    $"The {period} fiscal report has been synthesized successfully.", 
+                    "Finance");
 
                 return Ok(response);
             }

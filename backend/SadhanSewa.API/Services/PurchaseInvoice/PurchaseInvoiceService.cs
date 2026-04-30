@@ -2,18 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using SadhanSewa.API.Data;
 using SadhanSewa.API.DTOs.PurchaseInvoice;
 using SadhanSewa.API.Models;
+using SadhanSewa.API.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace SadhanSewa.API.Services.PurchaseInvoice;
 
 /// <summary>
 /// Provides purchase invoice business operations.
 /// </summary>
-public class PurchaseInvoiceService(ApplicationDbContext db, ILogger<PurchaseInvoiceService> logger) : IPurchaseInvoiceService
+public class PurchaseInvoiceService(
+    ApplicationDbContext db, 
+    ILogger<PurchaseInvoiceService> logger,
+    IHubContext<NotificationHub> hubContext) : IPurchaseInvoiceService
 {
     private const string SessionPrefix = "PRQ-";
     private const string ActiveVendorStatus = "Active";
     private readonly ApplicationDbContext _db = db;
     private readonly ILogger<PurchaseInvoiceService> _logger = logger;
+    private readonly IHubContext<NotificationHub> _hubContext = hubContext;
 
     /// <summary>
     /// Returns all purchase invoices sorted by newest first.
@@ -105,6 +111,13 @@ public class PurchaseInvoiceService(ApplicationDbContext db, ILogger<PurchaseInv
         invoice.TotalAmount = invoice.Items.Sum(i => i.LineTotal);
         _db.PurchaseInvoices.Add(invoice);
         await _db.SaveChangesAsync();
+
+        // Real-time Notification
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", 
+            "New Procurement Draft", 
+            $"Session {invoice.SessionCode} has been initialized for intake.", 
+            "Inventory");
+
         return invoice.Id;
     }
 
@@ -175,6 +188,13 @@ public class PurchaseInvoiceService(ApplicationDbContext db, ILogger<PurchaseInv
         invoice.Status = PurchaseInvoiceStatus.Finalized;
         invoice.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
+        
+        // Real-time Notification
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", 
+            "Inventory Finalized", 
+            $"Procurement session {invoice.SessionCode} is now locked and synced.", 
+            "Inventory");
+
         _logger.LogInformation("Purchase invoice {InvoiceId} finalized.", invoiceId);
         return true;
     }
