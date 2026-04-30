@@ -21,33 +21,13 @@ const Navbar = () => {
   return (
     <nav className="glass-dark" style={{ background: '#0f172a', padding: '1rem', color: 'white', position: 'sticky', top: 0, zIndex: 100, borderBottom: '1.5px solid rgba(255,255,255,0.05)' }}>
       <div className="container flex justify-between items-center" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Brand Link */}
-        <Link to="/" className="flex items-center gap-3 group transition-all" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: 'var(--primary-gradient)', padding: '0.5rem', borderRadius: '10px' }} className="shadow-lg group-hover:scale-110 transition-transform">
-            <LayoutDashboard size={20} />
-          </div>
-          <span style={{ fontWeight: 900, fontSize: '1.3rem', letterSpacing: '-0.8px' }} className="text-white">VEHICLE<span style={{ color: 'var(--primary)' }}>CORE</span></span>
-        </Link>
+        {/* Left Side Spacer (since logo is in sidebar) */}
+        <div style={{ width: '40px' }}></div>
 
-        {/* Feature Links */}
-        <div className="flex gap-8 items-center" style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link to="/" style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1.2px' }}>
-            Home
-          </Link>
-          <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }}></div>
-          
+        {/* Right Side Icons & User Profile */}
+        <div className="flex gap-6 items-center" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
           {isAuthenticated ? (
             <>
-              <Link to={getDashboardPath()} style={{ fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1.2px' }}>
-                Dashboard
-              </Link>
-
-              <Link to="/customer/contact" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1.2px' }}>
-                <Mail size={15} /> Contact
-              </Link>
-
-              <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.1)' }}></div>
-
               {/* Notifications Bell */}
               <div style={{ position: 'relative' }}>
                 <button 
