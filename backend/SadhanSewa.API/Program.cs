@@ -7,6 +7,7 @@ using SadhanSewa.API.Data;
 using SadhanSewa.API.Middleware;
 using SadhanSewa.API.Services.Auth;
 using SadhanSewa.API.Services.PurchaseInvoice;
+using SadhanSewa.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,15 +86,16 @@ builder.Services.AddCors(options =>
     options.AddPolicy("FrontendPolicy", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
-// Application services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+builder.Services.AddSignalR();
 
 // ── Middleware pipeline ─────────────────────────────────────
 
@@ -118,6 +120,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/", () => "SadhanSewa API is running");
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllers();
 

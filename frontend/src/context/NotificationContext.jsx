@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useCallback, useEffect } from 'react';
+import * as signalR from '@microsoft/signalr';
 
 const NotificationContext = createContext();
 
@@ -12,17 +13,46 @@ export const useNotification = () => {
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([
-    { id: 1, title: 'Welcome to VehicleCore', message: 'Your infrastructure protocol is now active.', read: false, time: 'Just now' },
-    { id: 2, title: 'Low Stock Alert', message: 'Engine Oil (5W-30) is below 10 units.', read: true, time: '2h ago' }
+    { id: 1, title: 'Inventory Reorder', message: 'Synthetic Oil threshold reached. Manifest PRQ-8821 suggested.', read: false, time: '10:15 AM', category: 'Inventory', group: 'TODAY' },
+    { id: 2, title: 'Payment Settled', message: 'Invoice #INV-3821 from Manish K. confirmed.', read: false, time: '09:30 AM', category: 'Finance', group: 'TODAY' },
+    { id: 3, title: 'Profile Synced', message: 'Vehicle diagnostic profiles successfully updated.', read: true, time: '08:45 AM', category: 'System', group: 'TODAY' },
+    { id: 4, title: 'Audit Alert', message: 'Mandatory bi-weekly security audit required for Admin roles.', read: true, time: 'Yesterday', category: 'Security', group: 'YESTERDAY' },
+    { id: 5, title: 'Vendor Sync', message: 'Parts catalogue synchronized with Global Vendor Node.', read: true, time: '2d ago', category: 'Inventory', group: 'YESTERDAY' }
   ]);
   const [activeToast, setActiveToast] = useState(null);
 
-  const addNotification = useCallback((title, message, type = 'info', duration = 3000) => {
+  // SignalR Connection
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:7119/notificationHub", { // Match your backend URL/Port
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    connection.start()
+      .then(() => console.log('SignalR Connected'))
+      .catch(err => console.error('SignalR Connection Error: ', err));
+
+    connection.on("ReceiveNotification", (title, message, category) => {
+      addNotification(title, message, category);
+    });
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
+
+  const addNotification = useCallback((title, message, category = 'System', duration = 5000) => {
     const id = Date.now();
-    const newNotification = { id, title, message, read: false, time: 'Just now', type };
+    const newNotification = { 
+      id, title, message, read: false, 
+      time: 'Just now', category, group: 'TODAY' 
+    };
     
     setNotifications(prev => [newNotification, ...prev]);
-    setActiveToast({ title, message, type });
+    setActiveToast({ title, message, type: category.toLowerCase() === 'security' || category.toLowerCase() === 'inventory' ? 'warning' : 'info' });
     
     setTimeout(() => {
       setActiveToast(null);
@@ -42,8 +72,8 @@ export const NotificationProvider = ({ children }) => {
       notifications, 
       addNotification, 
       markAllAsRead, 
-      notification: activeToast, // For the Toast component
-      hideNotification: hideToast // For the Toast component
+      notification: activeToast,
+      hideNotification: hideToast
     }}>
       {children}
     </NotificationContext.Provider>

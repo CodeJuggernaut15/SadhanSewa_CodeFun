@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, ShoppingCart, Bell, Mail, LogIn, User 
+  LayoutDashboard, ShoppingCart, Bell, Mail, LogIn, User, ShieldAlert, Zap, ArrowRight, Package, Check, CreditCard
 } from 'lucide-react';
 import { useNotification } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,7 @@ const Navbar = () => {
   const { user, isAuthenticated, logout, getDashboardPath } = useAuth();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [activeTab, setActiveTab] = useState('Direct');
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const handleLogout = () => {
@@ -43,23 +44,121 @@ const Navbar = () => {
                 </button>
 
                 {showNotifications && (
-                  <div style={{ position: 'absolute', top: '40px', right: 0, width: '300px', background: '#1e293b', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', padding: '1rem', border: '1px solid rgba(255,255,255,0.1)', zIndex: 1000 }}>
-                    <h4 style={{ fontSize: '14px', fontWeight: 800, marginBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Notifications</h4>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '300px', overflowY: 'auto' }}>
-                      {notifications.length === 0 ? (
-                        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', textAlign: 'center' }}>No notifications</p>
-                      ) : (
-                        notifications.map(n => (
-                          <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ fontSize: '13px', fontWeight: 800, color: n.read ? 'rgba(255,255,255,0.5)' : 'var(--primary)' }}>{n.title}</span>
-                              <span style={{ fontSize: '10px', opacity: 0.5 }}>{n.time}</span>
-                            </div>
-                            <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', margin: 0 }}>{n.message}</p>
-                          </div>
-                        ))
-                      )}
+                  <div className="glass-dark animate-in fade-in zoom-in-95 duration-200" style={{ 
+                    position: 'absolute', top: '55px', right: 0, width: '420px', 
+                    background: 'rgba(15, 23, 42, 0.98)', backdropFilter: 'blur(24px)',
+                    borderRadius: '28px', boxShadow: '0 30px 60px -12px rgba(0,0,0,0.6)', 
+                    padding: '0', border: '1.5px solid rgba(255,255,255,0.1)', zIndex: 1000,
+                    overflow: 'hidden'
+                  }}>
+                    {/* Header with Mark All as Read */}
+                    <div style={{ padding: '1.75rem 1.75rem 1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#fff', margin: 0 }}>Notifications</h4>
+                      <button 
+                        onClick={markAllAsRead}
+                        style={{ background: 'none', color: 'var(--primary)', fontSize: '12px', fontWeight: 700, padding: 0 }}
+                      >
+                        Mark all as read
+                      </button>
                     </div>
+
+                    {/* Tabs */}
+                    <div style={{ padding: '0 1.75rem', display: 'flex', gap: '2rem', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                      {['Direct', 'Overall'].map(tab => (
+                        <button 
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          style={{ 
+                            padding: '0.75rem 0', fontSize: '13px', fontWeight: 700,
+                            color: activeTab === tab ? 'var(--primary)' : 'rgba(255,255,255,0.4)',
+                            borderBottom: activeTab === tab ? '2px solid var(--primary)' : '2px solid transparent',
+                            background: 'none', cursor: 'pointer'
+                          }}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div style={{ maxHeight: '480px', overflowY: 'auto', padding: '1rem 0' }} className="custom-scrollbar">
+                      {['TODAY', 'YESTERDAY'].map(group => {
+                        // Filter by Group (Today/Yesterday) AND Tab (Direct = Recent/Today, Overall = All)
+                        if (activeTab === 'Direct' && group !== 'TODAY') return null;
+                        
+                        const groupNotifications = notifications.filter(n => n.group === group);
+                        if (groupNotifications.length === 0) return null;
+
+                        return (
+                          <div key={group}>
+                            <div style={{ 
+                              padding: '1.25rem 1.75rem 0.5rem', fontSize: '10px', fontWeight: 800, 
+                              color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.1em' 
+                            }}>
+                              {group}
+                            </div>
+                            {groupNotifications.map(n => (
+                              <div key={n.id} style={{ 
+                                display: 'flex', gap: '16px', padding: '1rem 1.75rem',
+                                background: n.read ? 'transparent' : 'rgba(29, 158, 117, 0.03)',
+                                transition: 'background 0.2s', position: 'relative'
+                              }}>
+                                {!n.read && (
+                                  <div style={{ 
+                                    position: 'absolute', left: '8px', top: '50%', transform: 'translateY(-50%)',
+                                    width: '6px', height: '6px', background: 'var(--primary)', borderRadius: '50%'
+                                  }}></div>
+                                )}
+                                
+                                {/* Avatar/Icon System */}
+                                <div style={{ position: 'relative', flexShrink: 0 }}>
+                                  <div style={{ 
+                                    width: '44px', height: '44px', borderRadius: '50%', 
+                                    background: n.category === 'Finance' ? '#f59e0b20' : n.category === 'Inventory' ? '#ef444420' : '#1D9E7520',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    color: n.category === 'Finance' ? '#f59e0b' : n.category === 'Inventory' ? '#ef4444' : '#1D9E75'
+                                  }}>
+                                    {n.category === 'Finance' ? <CreditCard size={20} /> : n.category === 'Inventory' ? <Package size={20} /> : <Zap size={20} />}
+                                  </div>
+                                  <div style={{ 
+                                    position: 'absolute', bottom: '-2px', right: '-2px', 
+                                    width: '18px', height: '18px', borderRadius: '50%', background: '#0f172a',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    border: '1.5px solid #0f172a'
+                                  }}>
+                                    <div style={{ 
+                                      width: '100%', height: '100%', borderRadius: '50%', 
+                                      background: n.read ? 'rgba(255,255,255,0.1)' : 'var(--primary)',
+                                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                    }}>
+                                      <Check size={10} color="white" strokeWidth={4} />
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
+                                    <p style={{ fontSize: '13px', color: '#fff', margin: 0, lineHeight: 1.4 }}>
+                                      <span style={{ fontWeight: 800 }}>{n.category} Update:</span> {n.title}
+                                    </p>
+                                    <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)', fontWeight: 600, flexShrink: 0, marginLeft: '10px' }}>{n.time}</span>
+                                  </div>
+                                  <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', margin: 0, lineHeight: 1.5 }}>{n.message}</p>
+                                  {n.category === 'Inventory' && (
+                                    <span style={{ 
+                                      display: 'inline-block', marginTop: '8px', padding: '3px 8px', borderRadius: '6px', 
+                                      background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontSize: '10px', fontWeight: 800 
+                                    }}>
+                                      MANI-8821
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    
                   </div>
                 )}
               </div>
