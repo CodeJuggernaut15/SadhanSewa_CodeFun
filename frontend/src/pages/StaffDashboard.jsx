@@ -43,7 +43,7 @@ const StaffDashboard = () => {
           { l: "Today's Sales", v: 'Rs. 42,800', c: '+15%', i: DollarSign, color: 'var(--primary)' },
           { l: 'Transactions', v: '24', c: 'Active', i: ShoppingCart, color: '#3b82f6' },
           { l: 'New Customers', v: '08', c: '+2', i: Users, color: '#8b5cf6' },
-          { l: 'Pending Tasks', v: '05', c: 'High', i: Clock, color: '#f59e0b' }
+          { l: 'Pending Tasks', v: '05', c: 'High', i: Clock, color: 'var(--warning)' }
         ].map((s, i) => (
           <div key={i} style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
@@ -51,7 +51,7 @@ const StaffDashboard = () => {
               <span style={{ fontSize: '10px', fontWeight: 800, color: s.color, background: `${s.color}10`, padding: '4px 10px', borderRadius: '6px' }}>{s.c}</span>
             </div>
             <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{s.l}</p>
-            <p style={{ fontSize: '1.8rem', fontWeight: 800, margin: '4px 0' }}>{s.v}</p>
+            <p style={{ fontSize: '1.8rem', fontWeight: 800, margin: '4px 0', color: 'var(--text-primary)' }}>{s.v}</p>
           </div>
         ))}
       </div>
@@ -60,7 +60,7 @@ const StaffDashboard = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>Recent Transactions</h3>
+              <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>Recent Transactions</h3>
               <button className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '12px' }}>View All</button>
             </div>
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -77,8 +77,8 @@ const StaffDashboard = () => {
                 {transactions.map(tx => (
                   <tr key={tx.id}>
                     <td style={S.td}><span style={{ color: 'var(--primary)', fontWeight: 800 }}>{tx.id}</span></td>
-                    <td style={S.td}>{tx.customer}</td>
-                    <td style={S.td}><span style={{ fontWeight: 800 }}>{tx.amount}</span></td>
+                    <td style={S.td}><span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{tx.customer}</span></td>
+                    <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{tx.amount}</span></td>
                     <td style={S.td}>
                       <span className={`chip ${tx.status === 'Completed' ? 'chip-success' : ''}`}>
                         {tx.status === 'Completed' ? <CheckCircle size={12} /> : <Clock size={12} />} {tx.status}
@@ -93,7 +93,7 @@ const StaffDashboard = () => {
         </div>
 
         <aside>
-          <div style={{ ...S.card, background: 'var(--bg-nav)', color: '#fff' }}>
+          <div style={{ ...S.card, background: 'var(--bg-nav)', color: 'var(--text-on-nav)' }}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               <Search size={20} /> Quick Search
             </h4>
@@ -104,27 +104,27 @@ const StaffDashboard = () => {
                 <input 
                   className="input" 
                   placeholder="ID, Name or Phone..." 
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', paddingLeft: '40px' }} 
+                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-on-nav)', paddingLeft: '40px' }} 
                 />
               </div>
             </div>
             <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '20px', border: '1.5px solid rgba(255,255,255,0.06)' }}>
-              <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-on-nav)', opacity: 0.6, lineHeight: 1.6, marginBottom: '1.5rem' }}>
                 Search through active customer profiles or scan product SKUs for instant POS integration.
               </p>
-              <button className="btn btn-primary" style={{ width: '100%', background: '#fff', color: 'var(--bg-nav)' }}>Initialize POS <ArrowRight size={16} /></button>
+              <button className="btn btn-primary" style={{ width: '100%', background: 'var(--text-on-nav)', color: 'var(--bg-nav)', border: 'none' }}>Initialize POS <ArrowRight size={16} /></button>
             </div>
           </div>
           
-          <div style={{ ...S.card, marginTop: '1.5rem', background: '#fef3c7', borderColor: '#fde68a' }}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '1rem', color: '#d97706' }}>
+          <div style={{ ...S.card, marginTop: '1.5rem', background: 'var(--warning-bg)', borderColor: 'var(--warning)' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '1rem', color: 'var(--warning)' }}>
               <AlertCircle size={20} />
               <h4 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Action Required</h4>
             </div>
-            <p style={{ fontSize: '13px', color: '#92400e', lineHeight: 1.5, marginBottom: '1rem' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '1rem' }}>
               3 credit balances have exceeded the 30-day threshold. Automated reminders scheduled for dispatch.
             </p>
-            <button className="btn btn-outline" style={{ width: '100%', borderColor: '#d9770620', color: '#d97706' }}>Review Credit Hub</button>
+            <button className="btn btn-outline" style={{ width: '100%', borderColor: 'var(--warning)', color: 'var(--warning)', background: 'transparent' }}>Review Credit Hub</button>
           </div>
         </aside>
       </div>

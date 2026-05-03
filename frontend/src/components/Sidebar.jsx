@@ -77,20 +77,20 @@ const Sidebar = () => {
 
   return (
     <aside style={{ 
-      width: '275px', height: '100vh', background: '#0f172a', color: 'white', 
+      width: '275px', height: '100vh', background: 'var(--bg-nav)', color: 'var(--text-on-nav)', 
       position: 'fixed', left: 0, top: 0, borderRight: '1px solid rgba(255,255,255,0.05)',
       display: 'flex', flexDirection: 'column', zIndex: 1000, boxShadow: '10px 0 30px rgba(0,0,0,0.1)'
     }}>
       {/* User Role Badge */}
       {isAuthenticated && (
-        <div style={{ padding: '0.75rem 1rem', background: '#1D9E7510', borderBottom: '1px solid #1D9E7520', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+        <div style={{ padding: '0.75rem 1rem', background: 'rgba(29, 158, 117, 0.1)', borderBottom: '1px solid rgba(29, 158, 117, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
           <span style={{ 
             fontSize: '9px', fontWeight: 800, padding: '4px 10px', borderRadius: '4px',
-            background: '#1D9E75', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em'
+            background: 'var(--primary)', color: '#fff', textTransform: 'uppercase', letterSpacing: '0.05em'
           }}>
             {role}
           </span>
-          <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-on-nav)', opacity: 0.7, fontWeight: 600 }}>
             {user?.fullName}
           </span>
         </div>
@@ -100,17 +100,17 @@ const Sidebar = () => {
       <div style={{ padding: '1.5rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <Link to="/" style={{ 
           display: 'flex', alignItems: 'center', gap: '15px', textDecoration: 'none', color: 'inherit',
-          background: '#000000', padding: '1.25rem 1rem', borderRadius: '18px',
-          border: '1.5px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)',
+          background: 'rgba(0,0,0,0.2)', padding: '1.25rem 1rem', borderRadius: '18px',
+          border: '1.5px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
         }}>
           <div style={{ 
-            background: '#1D9E75', width: '44px', height: '44px', borderRadius: '12px', 
+            background: 'var(--primary)', width: '44px', height: '44px', borderRadius: '12px', 
             display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(29, 158, 117, 0.4)',
           }}>
             <Shield size={24} color="white" strokeWidth={2.5} />
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.1rem', letterSpacing: '-1px', textTransform: 'uppercase', lineHeight: 1 }}>
-            VEHICLE<span style={{color: '#1D9E75'}}>CORE</span>
+            VEHICLE<span style={{color: 'var(--primary)'}}>CORE</span>
           </span>
         </Link>
       </div>
@@ -121,7 +121,7 @@ const Sidebar = () => {
             <div key={i} style={{ marginBottom: '2.2rem' }}>
               <p style={{ 
                 fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', 
-                color: 'rgba(255,255,255,0.25)', marginBottom: '1rem', paddingLeft: '0.85rem'
+                color: 'var(--text-on-nav)', opacity: 0.3, marginBottom: '1rem', paddingLeft: '0.85rem'
               }}>
                 {group.title}
               </p>
@@ -135,7 +135,8 @@ const Sidebar = () => {
                       borderRadius: '11px', fontSize: '13px', fontWeight: isActive(link.path) ? 700 : 500,
                       textDecoration: 'none', transition: 'all 0.2s',
                       background: isActive(link.path) ? 'rgba(29, 158, 117, 0.15)' : 'transparent',
-                      color: isActive(link.path) ? '#1D9E75' : '#94a3b8',
+                      color: isActive(link.path) ? 'var(--primary)' : 'var(--text-on-nav)',
+                      opacity: isActive(link.path) ? 1 : 0.7,
                       border: isActive(link.path) ? '1px solid rgba(29, 158, 117, 0.1)' : '1px solid transparent'
                     }}
                   >
@@ -148,7 +149,7 @@ const Sidebar = () => {
           ))
         ) : (
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem' }}>Sign in to access your dashboard</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-on-nav)', opacity: 0.5, marginBottom: '1.5rem' }}>Sign in to access your dashboard</p>
             <Link to="/login" className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '13px' }}>
               Sign In
             </Link>

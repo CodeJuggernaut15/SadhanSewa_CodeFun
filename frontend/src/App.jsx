@@ -19,6 +19,7 @@ import PurchaseInvoice from './pages/PurchaseInvoice';
 import AiDiagnostics from './pages/AiDiagnostics';
 import { NotificationProvider } from './context/NotificationContext';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Notification from './components/Notification';
 
 // New Pages
@@ -32,9 +33,10 @@ import CustomerContact from './pages/CustomerContact';
 
 function App() {
   return (
-    <AuthProvider>
-    <NotificationProvider>
-      <Notification />
+    <ThemeProvider>
+      <AuthProvider>
+      <NotificationProvider>
+        <Notification />
       <BrowserRouter>
       <Routes>
         {/* Public standalone pages (no sidebar/navbar) */}
@@ -157,8 +159,9 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
-    </NotificationProvider>
-    </AuthProvider>
+      </NotificationProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

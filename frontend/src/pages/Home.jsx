@@ -99,14 +99,14 @@ const Home = () => {
       {/* Hero Section */}
       <section style={S.hero}>
         <div style={S.badge}>
-          <span style={{width: 8, height: 8, borderRadius: '50%', background: '#1D9E75'}}></span>
+          <span style={{width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)'}}></span>
           Vehicle Parts & Service Platform
         </div>
-        <h1 style={S.heroTitle}>
+        <h1 style={{ ...S.heroTitle, color: 'var(--text-primary)' }}>
           Smarter inventory.<br />
-          Faster <span style={{color: '#1D9E75'}}>service.</span>
+          Faster <span style={{color: 'var(--primary)'}}>service.</span>
         </h1>
-        <p style={S.heroSub}>
+        <p style={{ ...S.heroSub, color: 'var(--text-secondary)' }}>
           VehicleCore unifies inventory management, sales operations, and AI-powered diagnostics for modern vehicle service centers.
         </p>
         <div style={S.btnRow}>
@@ -122,18 +122,18 @@ const Home = () => {
           { v: '16+', l: 'Core features', desc: 'Integrated workflows' },
           { v: 'AI', l: 'Diagnostics', desc: 'Failure prediction' }
         ].map((s, i) => (
-          <div key={i} style={S.statCard}>
-            <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: '#1D9E75', marginBottom: '8px'}}>{s.v}</h2>
-            <p style={{fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: '#0f172a', marginBottom: '4px'}}>{s.l}</p>
-            <p style={{fontSize: '12px', color: '#64748b'}}>{s.desc}</p>
+          <div key={i} style={{ ...S.statCard, background: 'var(--bg-card)', borderColor: 'var(--border-color)' }}>
+            <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '8px'}}>{s.v}</h2>
+            <p style={{fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)', marginBottom: '4px'}}>{s.l}</p>
+            <p style={{fontSize: '12px', color: 'var(--text-muted)'}}>{s.desc}</p>
           </div>
         ))}
       </div>
 
       {/* User Roles Section */}
       <section style={S.sectionHeader}>
-        <p style={{fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>User Roles</p>
-        <h2 style={{fontSize: '2.5rem', fontWeight: 800}}>Built for every<br/><span style={{color: '#1D9E75'}}>team member</span></h2>
+        <p style={{fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>User Roles</p>
+        <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)'}}>Built for every<br/><span style={{color: 'var(--primary)'}}>team member</span></h2>
       </section>
 
       <div style={S.roleGrid}>
@@ -142,13 +142,13 @@ const Home = () => {
            { icon: Users, title: 'Staff', desc: 'Handle customer registrations, part sales, invoicing, and generate customer reports.', badge: 'Operations', color: '#d1fae5' },
            { icon: Award, title: 'Customer', desc: 'Self-register, book appointments, track purchase history, and receive AI alerts.', badge: 'Self-service', color: '#fef3c7' }
          ].map((r, i) => (
-           <div key={i} className="card" style={{padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%'}}>
-              <div style={{width: 44, height: 44, borderRadius: 12, background: 'rgba(29, 158, 117, 0.1)', color: '#1D9E75', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem'}}>
+           <div key={i} className="card" style={{padding: '2rem', display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-card)', border: '1.5px solid var(--border-color)'}}>
+              <div style={{width: 44, height: 44, borderRadius: 12, background: 'rgba(29, 158, 117, 0.1)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem'}}>
                  <r.icon size={22} />
               </div>
-              <h3 style={{fontSize: '1.25rem', marginBottom: '0.75rem'}}>{r.title}</h3>
-              <p style={{fontSize: '14px', color: '#64748b', lineHeight: 1.6, marginBottom: '2rem', flex: 1}}>{r.desc}</p>
-              <span style={{fontSize: '10px', fontWeight: 800, color: '#1D9E75', textTransform: 'uppercase', padding: '4px 10px', background: 'rgba(29, 158, 117, 0.05)', borderRadius: 4, width: 'fit-content'}}>
+              <h3 style={{fontSize: '1.25rem', marginBottom: '0.75rem', color: 'var(--text-primary)'}}>{r.title}</h3>
+              <p style={{fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem', flex: 1}}>{r.desc}</p>
+              <span style={{fontSize: '10px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', padding: '4px 10px', background: 'rgba(29, 158, 117, 0.05)', borderRadius: 4, width: 'fit-content'}}>
                  {r.badge}
               </span>
            </div>
@@ -157,8 +157,8 @@ const Home = () => {
 
       {/* Everything You Need Section */}
       <section style={S.sectionHeader}>
-        <p style={{fontSize: '11px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Features</p>
-        <h2 style={{fontSize: '2.5rem', fontWeight: 800}}>Everything <span style={{color: '#1D9E75'}}>you need</span></h2>
+        <p style={{fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px'}}>Features</p>
+        <h2 style={{fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)'}}>Everything <span style={{color: 'var(--primary)'}}>you need</span></h2>
       </section>
 
       <div style={S.featureList}>
@@ -172,11 +172,11 @@ const Home = () => {
           { icon: Star, title: 'Part requests', desc: 'Customers can request unavailable parts through the system', color: '#06b6d4' },
           { icon: Briefcase, title: 'Vendor management', desc: 'Full CRUD operations on vendor and supplier records', color: '#6366f1' }
         ].map((f, i) => (
-          <div key={i} style={S.featureItem} className="hover:border-primary group">
+          <div key={i} style={{ ...S.featureItem, background: 'var(--bg-card)', borderColor: 'var(--border-color)' }} className="hover:border-primary group">
             <div style={{color: f.color}}><f.icon size={24} /></div>
             <div>
-              <h4 style={{fontSize: '1rem', fontWeight: 700, marginBottom: '4px', color: '#0f172a'}}>{f.title}</h4>
-              <p style={{fontSize: '13px', color: '#64748b', lineHeight: 1.5}}>{f.desc}</p>
+              <h4 style={{fontSize: '1rem', fontWeight: 700, marginBottom: '4px', color: 'var(--text-primary)'}}>{f.title}</h4>
+              <p style={{fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5}}>{f.desc}</p>
             </div>
           </div>
         ))}
@@ -184,57 +184,58 @@ const Home = () => {
 
       {/* AI Diagnostics Banner */}
       <div style={{
-        background: 'rgba(29, 158, 117, 0.05)',
+        background: 'var(--bg-nav)',
         borderRadius: '32px',
         padding: '4rem',
-        border: '1.5px solid rgba(29, 158, 117, 0.1)',
+        border: '1.5px solid rgba(255, 255, 255, 0.1)',
         marginBottom: '2rem',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        color: 'var(--text-on-nav)'
       }}>
         <div style={{maxWidth: '650px', position: 'relative', zIndex: 10}}>
            <h3 style={{fontSize: '1.75rem', fontWeight: 800, marginBottom: '1rem'}}>AI-powered diagnostics</h3>
-           <p style={{color: '#1D9E75', fontWeight: 600, fontSize: '15px', marginBottom: '2.5rem', lineHeight: 1.6}}>
+           <p style={{color: 'var(--primary)', fontWeight: 600, fontSize: '15px', marginBottom: '2.5rem', lineHeight: 1.6}}>
              The system analyzes your vehicle's condition and usage patterns to predict potential part failures before they happen — keeping you one step ahead.
            </p>
            <div style={{display: 'flex', gap: '10px'}}>
              {['Failure prediction', 'Usage analysis', 'Proactive alerts'].map(tag => (
-               <span key={tag} style={{fontSize: '11px', fontWeight: 800, background: 'rgba(29, 158, 117, 0.1)', padding: '6px 12px', borderRadius: '100px', color: '#1D9E75'}}>
+               <span key={tag} style={{fontSize: '11px', fontWeight: 800, background: 'rgba(255, 255, 255, 0.1)', padding: '6px 12px', borderRadius: '100px', color: 'var(--text-on-nav)'}}>
                  {tag}
                </span>
              ))}
            </div>
         </div>
-        <Zap size={180} style={{position: 'absolute', right: '40px', bottom: '-40px', color: '#1D9E75', opacity: 0.05}} />
+        <Zap size={180} style={{position: 'absolute', right: '40px', bottom: '-40px', color: 'var(--primary)', opacity: 0.1}} />
       </div>
 
       {/* Alerts Row */}
       <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2rem'}}>
-         <div style={{background: '#fef3c7', padding: '2.5rem', borderRadius: '24px', border: '1px solid #fde68a'}}>
-            <div style={{color: '#d97706', marginBottom: '1rem'}}><Zap size={24} /></div>
-            <h4 style={{fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem'}}>Low stock alerts</h4>
-            <p style={{fontSize: '13px', color: '#92400e', lineHeight: 1.5}}>Admin is automatically notified when any part drops below 10 units in inventory.</p>
+         <div style={{background: 'var(--warning-bg)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--warning)'}}>
+            <div style={{color: 'var(--warning)', marginBottom: '1rem'}}><Zap size={24} /></div>
+            <h4 style={{fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)'}}>Low stock alerts</h4>
+            <p style={{fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5}}>Admin is automatically notified when any part drops below 10 units in inventory.</p>
          </div>
-         <div style={{background: '#dbeafe', padding: '2.5rem', borderRadius: '24px', border: '1px solid #bfdbfe'}}>
-            <div style={{color: '#2563eb', marginBottom: '1rem'}}><Mail size={24} /></div>
-            <h4 style={{fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem'}}>Credit reminders</h4>
-            <p style={{fontSize: '13px', color: '#1e40af', lineHeight: 1.5}}>Customers with unpaid credit balances over 1 month receive automatic email reminders.</p>
+         <div style={{background: 'var(--error-bg)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--error)'}}>
+            <div style={{color: 'var(--error)', marginBottom: '1rem'}}><Mail size={24} /></div>
+            <h4 style={{fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem', color: 'var(--text-primary)'}}>Credit reminders</h4>
+            <p style={{fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5}}>Customers with unpaid credit balances over 1 month receive automatic email reminders.</p>
          </div>
       </div>
 
       {/* Loyalty Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, #1D9E75 0%, #065f46 100%)',
+        background: 'linear-gradient(135deg, var(--bg-nav) 0%, var(--primary) 100%)',
         borderRadius: '32px',
         padding: '4rem',
-        color: '#fff',
+        color: 'var(--text-on-nav)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
          <div style={{maxWidth: '600px'}}>
             <h3 style={{fontSize: '2rem', fontWeight: 800, marginBottom: '1rem'}}>Loyalty program</h3>
-            <p style={{fontSize: '15px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.6}}>
+            <p style={{fontSize: '15px', color: 'var(--text-on-nav)', opacity: 0.8, lineHeight: 1.6}}>
               Customers who spend more than Rs. 5,000 in a single purchase automatically receive a discount on their order — no vouchers needed.
             </p>
          </div>

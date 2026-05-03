@@ -138,17 +138,18 @@ button {
 .btn-primary {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(29, 158, 117, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  background: #168a66;
-  box-shadow: 0 10px 25px rgba(29, 158, 117, 0.4);
+  background: var(--primary);
+  filter: brightness(1.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .btn-outline {
-  background: white;
+  background: var(--bg-card);
   border: 1.5px solid var(--border-color);
   color: var(--text-secondary);
 }
@@ -336,13 +337,13 @@ button {
 }
 
 .loyalty-card {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--bg-nav) 0%, var(--primary) 100%);
+  color: var(--text-on-nav);
   border-radius: 24px;
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .loyalty-card::before {
