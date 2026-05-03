@@ -74,13 +74,13 @@ const AdminDashboard = () => {
           { l: 'Liquidity Risks', v: 'Rs. 24,000', c: '+2.1%', i: CreditCard, bg: '#ef4444' },
           { l: 'Supply Partners', v: '08 Vendors', c: 'Active', i: Truck, bg: '#8b5cf6' }
         ].map((s, i) => (
-          <div key={i} className="card" style={{ padding: '1.5rem 2rem', background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px' }}>
+          <div key={i} style={{ ...S.card, padding: '1.5rem 2rem' }}>
              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.bg}10`, color: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.i size={22} /></div>
-                <span style={{ fontSize: '10px', fontWeight: 800, color: s.c.startsWith('+') ? '#10b981' : '#64748b', background: s.c.startsWith('+') ? '#10b98110' : '#f1f5f9', padding: '4px 10px', borderRadius: '6px' }}>{s.c}</span>
+                <span style={{ fontSize: '10px', fontWeight: 800, color: s.c.startsWith('+') ? '#10b981' : 'var(--text-muted)', background: s.c.startsWith('+') ? '#10b98110' : 'var(--border-color)', padding: '4px 10px', borderRadius: '6px' }}>{s.c}</span>
              </div>
              <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.l}</p>
-             <p style={{ fontSize: '1.6rem', fontWeight: 800, margin: '4px 0' }}>{s.v}</p>
+             <p style={{ fontSize: '1.6rem', fontWeight: 800, margin: '4px 0', color: 'var(--text-primary)' }}>{s.v}</p>
           </div>
         ))}
       </div>
@@ -88,10 +88,10 @@ const AdminDashboard = () => {
       <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
          <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-               <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800 }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
+               <h3 style={{ fontSize: '1.1rem', margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>Revenue <span style={{ color: 'var(--primary)' }}>Trajectory</span></h3>
                <div style={{ display: 'flex', gap: '8px' }}>
                   {['Daily', 'Monthly', 'Yearly'].map(t => (
-                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: '0.3s' }}>{t}</button>
+                    <button key={t} onClick={() => setPeriod(t)} style={{ padding: '6px 14px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, border: 'none', background: period === t ? 'var(--primary)' : 'rgba(128,128,128,0.1)', color: period === t ? '#fff' : 'var(--text-muted)', cursor: 'pointer', transition: '0.3s' }}>{t}</button>
                   ))}
                </div>
             </div>
@@ -110,7 +110,7 @@ const AdminDashboard = () => {
 
          <div style={S.darkCard}>
             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}><TrendingUp size={20} /> Profit Allocation</h4>
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets.</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-on-nav)', opacity: 0.6, lineHeight: 1.6, marginBottom: '2.5rem' }}>Real-time part throughput against operational expenditure offsets.</p>
             
             {[
               { l: 'Service Margins', p: 45, v: 'Rs. 180,000', c: 'var(--primary)' },
@@ -128,7 +128,7 @@ const AdminDashboard = () => {
                  </div>
               </div>
             ))}
-            <Link to="/admin/financial-reports" className="btn btn-primary" style={{ width: '100%', padding: '14px', background: '#fff', color: 'var(--bg-nav)', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></Link>
+            <Link to="/admin/financial-reports" className="btn btn-primary" style={{ width: '100%', padding: '14px', background: 'var(--text-on-nav)', color: 'var(--bg-nav)', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none', border: 'none' }}>View Full Fiscal Ledger <ArrowUpRight size={18} /></Link>
          </div>
       </div>
 
@@ -161,16 +161,16 @@ const AdminDashboard = () => {
             </table>
          </div>
 
-         <div style={{ background: '#fff', border: '1.5px solid var(--border-color)', borderRadius: '24px', padding: '2rem' }}>
-            <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem', fontWeight: 800, color: '#ef4444', display: 'flex', alignItems: 'center', gap: '10px' }}><AlertTriangle size={20} /> Stock Breaches</h3>
+         <div style={{ ...S.card, padding: '2rem' }}>
+            <h3 style={{ fontSize: '1.1rem', margin: '0 0 1rem', fontWeight: 800, color: 'var(--error)', display: 'flex', alignItems: 'center', gap: '10px' }}><AlertTriangle size={20} /> Stock Breaches</h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '2rem' }}>Automatic threshold triggers detected for high-demand assets.</p>
             {LOW_STOCK.map((item, i) => (
               <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 0', borderBottom: '1px solid var(--border-color)' }}>
                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: item.stock <= 4 ? '#ef444410' : '#f59e0b10', color: item.stock <= 4 ? '#ef4444' : '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={18} /></div>
-                    <div><p style={{ fontWeight: 700, margin: 0, fontSize: '14px' }}>{item.part}</p></div>
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: item.stock <= 4 ? 'var(--error-bg)' : 'var(--warning-bg)', color: item.stock <= 4 ? 'var(--error)' : 'var(--warning)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Package size={18} /></div>
+                    <div><p style={{ fontWeight: 700, margin: 0, fontSize: '14px', color: 'var(--text-primary)' }}>{item.part}</p></div>
                  </div>
-                 <span style={{ fontSize: '10px', fontWeight: 800, color: item.stock <= 4 ? '#ef4444' : '#f59e0b' }}>{item.stock} LEFT</span>
+                 <span style={{ fontSize: '10px', fontWeight: 800, color: item.stock <= 4 ? 'var(--error)' : 'var(--warning)' }}>{item.stock} LEFT</span>
               </div>
             ))}
             <Link to="/admin/purchase-invoices" className="btn btn-primary" style={{ width: '100%', marginTop: '2.5rem', display: 'flex', justifyContent: 'center', textDecoration: 'none' }}>Replenish Assets <Truck size={18} /></Link>

@@ -112,7 +112,7 @@ const FinancialReports = () => {
       </div>
 
       {error && (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', padding: '1rem 1.5rem', marginBottom: '2rem', color: '#dc2626', fontSize: '13px' }}>
+        <div style={{ background: 'var(--error-bg)', border: '1px solid var(--error)', borderRadius: '12px', padding: '1rem 1.5rem', marginBottom: '2rem', color: 'var(--error)', fontSize: '13px' }}>
           {error}
         </div>
       )}
@@ -121,11 +121,11 @@ const FinancialReports = () => {
         {statCards.map((s, i) => (
           <div key={i} style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.color}10`, color: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.icon size={22} /></div>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: `${s.color}15`, color: s.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.icon size={22} /></div>
               <span style={{ fontSize: '10px', fontWeight: 800, color: s.color, background: `${s.color}10`, padding: '4px 10px', borderRadius: '6px' }}>{s.badge}</span>
             </div>
             <p style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{s.label}</p>
-            <p style={{ fontSize: '1.8rem', fontWeight: 800, margin: '4px 0' }}>{s.value}</p>
+            <p style={{ fontSize: '1.8rem', fontWeight: 800, margin: '4px 0', color: 'var(--text-primary)' }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -134,11 +134,11 @@ const FinancialReports = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           <div style={S.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-               <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>Audit Timeline</h3>
+               <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800, color: 'var(--text-primary)' }}>Audit Timeline</h3>
                <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ position: 'relative' }}>
                     <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                    <input className="input" placeholder="Search entries..." style={{ paddingLeft: '40px', fontSize: '12px', width: '200px' }} />
+                    <input className="input" placeholder="Search entries..." style={{ paddingLeft: '40px', fontSize: '12px', width: '200px', background: 'var(--bg-main)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }} />
                   </div>
                   <button className="btn btn-outline" style={{ padding: '8px 16px', fontSize: '12px' }}><Filter size={16} /> Filters</button>
                </div>
@@ -163,8 +163,8 @@ const FinancialReports = () => {
                   {transactions.map((row, i) => (
                     <tr key={i}>
                       <td style={S.td}><span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>{row.date}</span></td>
-                      <td style={S.td}><div style={{ fontWeight: 800 }}>{row.type}</div></td>
-                      <td style={S.td}><span style={{ fontWeight: 800 }}>{row.amount}</span></td>
+                      <td style={S.td}><div style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{row.type}</div></td>
+                      <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{row.amount}</span></td>
                       <td style={S.td}><span style={{ color: 'var(--primary)', fontWeight: 800 }}>{row.margin}</span></td>
                       <td style={{ ...S.td, textAlign: 'right' }}>
                         <span className={`chip ${row.status === 'Paid' || row.status === 'Completed' ? 'chip-success' : ''}`}>
@@ -180,7 +180,7 @@ const FinancialReports = () => {
         </div>
 
         <aside>
-          <div style={{ ...S.card, background: 'var(--bg-nav)', color: '#fff' }}>
+          <div style={{ ...S.card, background: 'var(--bg-nav)', color: 'var(--text-on-nav)' }}>
              <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 <Calendar size={20} /> Report Period
              </h4>
@@ -194,8 +194,10 @@ const FinancialReports = () => {
                     style={{
                       padding: '6px 12px', fontSize: '10px', flex: 1,
                       borderColor: period === p.toLowerCase() ? 'var(--primary)' : 'rgba(255,255,255,0.1)',
-                      color: period === p.toLowerCase() ? 'var(--primary)' : 'rgba(255,255,255,0.6)',
-                      fontWeight: period === p.toLowerCase() ? 800 : 400
+                      color: period === p.toLowerCase() ? 'var(--primary)' : 'var(--text-on-nav)',
+                      opacity: period === p.toLowerCase() ? 1 : 0.6,
+                      fontWeight: period === p.toLowerCase() ? 800 : 400,
+                      background: 'transparent'
                     }}
                   >{p}</button>
                 ))}
@@ -205,17 +207,17 @@ const FinancialReports = () => {
                 <div>
                   <label style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, marginBottom: '8px', display: 'block', textTransform: 'uppercase' }}>Commencement Date</label>
                   <input type="date" className="input"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-on-nav)' }}
                     value={startDate} onChange={e => setStartDate(e.target.value)} />
                 </div>
                 <div>
                   <label style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, marginBottom: '8px', display: 'block', textTransform: 'uppercase' }}>Termination Date</label>
                   <input type="date" className="input"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
+                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-on-nav)' }}
                     value={endDate} onChange={e => setEndDate(e.target.value)} />
                 </div>
                 <button className="btn btn-primary"
-                  style={{ width: '100%', background: '#fff', color: 'var(--bg-nav)', marginTop: '1rem' }}
+                  style={{ width: '100%', background: 'var(--text-on-nav)', color: 'var(--bg-nav)', marginTop: '1rem', border: 'none' }}
                   onClick={fetchReport} disabled={loading}>
                   {loading ? 'Loading...' : <><RefreshCcw size={18} /> Synchronize Report</>}
                 </button>
@@ -223,7 +225,7 @@ const FinancialReports = () => {
           </div>
 
           <div style={{ ...S.card, marginTop: '2rem' }}>
-             <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Insight Analytics</h4>
+             <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-primary)' }}>Insight Analytics</h4>
              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem' }}>
                {summary
                  ? `Total revenue is ${formatAmount(summary.totalRevenue)} with a ${summary.profitMargin}% profit margin for the selected ${period} period.`

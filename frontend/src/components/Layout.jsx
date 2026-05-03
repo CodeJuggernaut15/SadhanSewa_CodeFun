@@ -46,19 +46,19 @@ const Layout = () => {
           position: 'relative', 
           zIndex: 1,
           padding: '4rem 6rem', 
-          borderTop: '1px solid #e2e8f0', 
-          background: 'rgba(255,255,255,0.5)',
+          borderTop: '1px solid var(--border-color)', 
+          background: 'var(--bg-card)',
           backdropFilter: 'blur(10px)'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '1400px', margin: '0 auto' }}>
             <div>
-               <p style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.15em', marginBottom: '4px' }}>Infrastructure Protocol V2.1</p>
-               <p style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>© 2026 VehicleCore Infrastructure. All Rights Reserved.</p>
+               <p style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.15em', marginBottom: '4px' }}>Infrastructure Protocol V2.1</p>
+               <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>© 2026 VehicleCore Infrastructure. All Rights Reserved.</p>
             </div>
             <div style={{ display: 'flex', gap: '2.5rem' }}>
-              <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Privacy Policy</a>
-              <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Service Terms</a>
-              <Link to="/contact" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: '#64748b', textDecoration: 'none' }}>Contact Us</Link>
+              <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', textDecoration: 'none' }}>Privacy Policy</a>
+              <a href="#" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', textDecoration: 'none' }}>Service Terms</a>
+              <Link to="/contact" style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)', textDecoration: 'none' }}>Contact Us</Link>
             </div>
           </div>
         </footer>
