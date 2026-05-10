@@ -93,8 +93,8 @@ const CustomerSelfRegister = () => {
           </div>
 
           <div>
-            <label style={S.label}>Password (min 6 chars)</label>
-            <input className="input" type="password" required minLength={6} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label style={S.label}>Password (min 8 chars)</label>
+            <input className="input" type="password" required minLength={8} placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
 
           <button className="btn btn-primary" disabled={loading} style={{ width: '100%', padding: '16px', fontSize: '15px', marginTop: '1.5rem' }}>

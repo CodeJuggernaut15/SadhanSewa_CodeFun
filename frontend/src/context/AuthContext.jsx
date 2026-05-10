@@ -2,7 +2,17 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 
 const AuthContext = createContext();
 
-const API_BASE = 'http://localhost:5188';
+const API_BASE = 'http://localhost:5184';
+
+const getApiErrorMessage = (json, fallback) => {
+  if (json?.detail) return json.detail;
+  if (json?.message) return json.message;
+  if (json?.errors) {
+    return Object.values(json.errors).flat().join(' ');
+  }
+  if (json?.title) return json.title;
+  return fallback;
+};
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -45,7 +55,7 @@ export const AuthProvider = ({ children }) => {
     const json = await res.json();
 
     if (!res.ok || !json.success) {
-      throw new Error(json.detail || json.message || 'Login failed');
+      throw new Error(getApiErrorMessage(json, 'Login failed'));
     }
 
     const userData = {
@@ -72,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     const json = await res.json();
 
     if (!res.ok || !json.success) {
-      throw new Error(json.detail || json.message || 'Registration failed');
+      throw new Error(getApiErrorMessage(json, 'Registration failed'));
     }
 
     return json.data;

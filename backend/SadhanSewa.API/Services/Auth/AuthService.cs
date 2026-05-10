@@ -19,19 +19,19 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
     private readonly IConfiguration _config = config;
     private readonly ILogger<AuthService> _logger = logger;
 
-    private const int CustomerRoleId = 3;
-    private const int StaffRoleId = 2;
+    private const string CustomerRoleName = "Customer";
+    private const string StaffRoleName = "Staff";
 
     /// <inheritdoc />
     public async Task<AuthResponseDto> RegisterCustomerAsync(RegisterDto dto)
     {
-        return await CreateUserAsync(dto, CustomerRoleId);
+        return await CreateUserAsync(dto, CustomerRoleName);
     }
 
     /// <inheritdoc />
     public async Task<AuthResponseDto> CreateStaffAsync(RegisterDto dto)
     {
-        return await CreateUserAsync(dto, StaffRoleId);
+        return await CreateUserAsync(dto, StaffRoleName);
     }
 
     /// <inheritdoc />
@@ -115,10 +115,12 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
 
     // ── Private helpers ──────────────────────────────────────────
 
-    private async Task<AuthResponseDto> CreateUserAsync(RegisterDto dto, int roleId)
+    private async Task<AuthResponseDto> CreateUserAsync(RegisterDto dto, string roleName)
     {
         if (await _db.Users.AnyAsync(u => u.Email == dto.Email))
             throw new InvalidOperationException("A user with this email already exists.");
+
+        var role = await EnsureRoleAsync(roleName);
 
         var user = new User
         {
@@ -126,7 +128,7 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
             Email = dto.Email,
             Phone = dto.Phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            RoleId = roleId,
+            RoleId = role.Id,
             IsActive = true,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -140,6 +142,28 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
 
         _logger.LogInformation("New {Role} user created: {Email}", user.Role.Name, user.Email);
         return GenerateAuthResponse(user);
+    }
+
+    private async Task<Role> EnsureRoleAsync(string roleName)
+    {
+        var role = await _db.Roles.FirstOrDefaultAsync(r => r.Name == roleName);
+        if (role is not null) return role;
+
+        role = new Role
+        {
+            Name = roleName,
+            Description = roleName switch
+            {
+                CustomerRoleName => "Self-register, book appointments, track history, and receive AI alerts",
+                StaffRoleName => "Handle customer registrations, part sales, invoicing, and customer reports",
+                _ => null
+            },
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _db.Roles.Add(role);
+        await _db.SaveChangesAsync();
+        return role;
     }
 
     private AuthResponseDto GenerateAuthResponse(User user)
@@ -171,7 +195,9 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
             UserId = user.Id,
             FullName = user.FullName,
             Email = user.Email,
+            Phone = user.Phone,
             Role = user.Role.Name,
+            IsActive = user.IsActive,
             ExpiresAt = expiresAt
         };
     }

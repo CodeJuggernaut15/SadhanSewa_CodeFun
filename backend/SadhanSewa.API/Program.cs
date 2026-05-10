@@ -6,12 +6,15 @@ using Microsoft.OpenApi.Models;
 using SadhanSewa.API.Data;
 using SadhanSewa.API.Middleware;
 using SadhanSewa.API.Services.Auth;
-using SadhanSewa.API.Services.Vendor;
 using SadhanSewa.API.Services.PurchaseInvoice;
 using SadhanSewa.API.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 // ── Services ────────────────────────────────────────────────
 
@@ -97,7 +100,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
-builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddSignalR();
 
 // ── Middleware pipeline ─────────────────────────────────────

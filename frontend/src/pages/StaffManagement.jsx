@@ -144,7 +144,7 @@ const StaffManagement = () => {
               <div>
                 <label style={S.label}>Security Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input className="input" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" style={{ paddingRight: '44px' }} />
+                  <input className="input" type={showPassword ? 'text' : 'password'} required minLength={8} value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" style={{ paddingRight: '44px' }} />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>

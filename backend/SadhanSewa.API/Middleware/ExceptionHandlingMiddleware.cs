@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Npgsql;
 
 namespace SadhanSewa.API.Middleware;
 
@@ -27,6 +28,12 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         catch (InvalidOperationException ex)
         {
             await WriteProblemAsync(context, 409, "Conflict", ex.Message, ex, isWarning: true);
+        }
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.InvalidPassword)
+        {
+            await WriteProblemAsync(context, 503, "Database authentication failed",
+                "The API cannot connect to PostgreSQL. Check the DefaultConnection username and password.",
+                ex, isWarning: false);
         }
         catch (Exception ex)
         {
