@@ -177,26 +177,48 @@ public class PurchaseInvoiceService(
     }
 
     /// <summary>
-    /// Finalizes a draft purchase invoice.
+    /// Finalizes a draft purchase invoice and increments part stock for each line item.
     /// </summary>
     public async Task<bool> FinalizeAsync(int invoiceId)
     {
-        var invoice = await _db.PurchaseInvoices.FirstOrDefaultAsync(p => p.Id == invoiceId)
-            ?? throw new KeyNotFoundException("Purchase invoice not found.");
-        if (invoice.Status == PurchaseInvoiceStatus.Finalized)
-            throw new InvalidOperationException("Invoice is already finalized.");
-        invoice.Status = PurchaseInvoiceStatus.Finalized;
-        invoice.UpdatedAt = DateTime.UtcNow;
-        await _db.SaveChangesAsync();
-        
-        // Real-time Notification
-        await _hubContext.Clients.All.SendAsync("ReceiveNotification", 
-            "Inventory Finalized", 
-            $"Procurement session {invoice.SessionCode} is now locked and synced.", 
-            "Inventory");
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        try
+        {
+            var invoice = await _db.PurchaseInvoices
+                .Include(p => p.Items)
+                .FirstOrDefaultAsync(p => p.Id == invoiceId)
+                ?? throw new KeyNotFoundException("Purchase invoice not found.");
+            if (invoice.Status == PurchaseInvoiceStatus.Finalized)
+                throw new InvalidOperationException("Invoice is already finalized.");
 
-        _logger.LogInformation("Purchase invoice {InvoiceId} finalized.", invoiceId);
-        return true;
+            foreach (var line in invoice.Items)
+            {
+                var part = await _db.Parts.FirstOrDefaultAsync(p => p.Id == line.PartId);
+                if (part is null)
+                    throw new KeyNotFoundException($"Part with id {line.PartId} was not found.");
+
+                part.Stock += line.Quantity;
+                part.UpdatedAt = DateTime.UtcNow;
+            }
+
+            invoice.Status = PurchaseInvoiceStatus.Finalized;
+            invoice.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification",
+                "Inventory Finalized",
+                $"Procurement session {invoice.SessionCode} is now locked and synced.",
+                "Inventory");
+
+            _logger.LogInformation("Purchase invoice {InvoiceId} finalized.", invoiceId);
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     private async Task EnsureVendorExistsAsync(int vendorId)

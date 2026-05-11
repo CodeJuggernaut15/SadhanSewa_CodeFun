@@ -105,7 +105,7 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
             UserId = user.Id,
             FullName = user.FullName,
             Email = user.Email,
-            Phone = user.Phone,
+            Phone = user.Phone ?? string.Empty,
             Role = user.Role.Name,
             IsActive = user.IsActive,
             Token = string.Empty,
@@ -117,13 +117,18 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
 
     private async Task<AuthResponseDto> CreateUserAsync(RegisterDto dto, int roleId)
     {
-        if (await _db.Users.AnyAsync(u => u.Email == dto.Email))
+        var normalizedEmail = dto.Email.Trim().ToLowerInvariant();
+
+        if (!await _db.Roles.AnyAsync(r => r.Id == roleId))
+            throw new InvalidOperationException("Role configuration is missing. Please contact support.");
+
+        if (await _db.Users.AnyAsync(u => u.Email.ToLower() == normalizedEmail))
             throw new InvalidOperationException("A user with this email already exists.");
 
         var user = new User
         {
             FullName = dto.FullName,
-            Email = dto.Email,
+            Email = normalizedEmail,
             Phone = dto.Phone,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             RoleId = roleId,
@@ -133,13 +138,30 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
         };
 
         _db.Users.Add(user);
-        await _db.SaveChangesAsync();
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            var dbMessage = ex.InnerException?.Message ?? ex.Message;
+            if (dbMessage.Contains("IX_Users_Email", StringComparison.OrdinalIgnoreCase) ||
+                dbMessage.Contains("duplicate key value", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("A user with this email already exists.");
+            }
 
-        // Reload with Role navigation for token generation
-        await _db.Entry(user).Reference(u => u.Role).LoadAsync();
+            throw new InvalidOperationException("Unable to register user due to a data issue.");
+        }
 
-        _logger.LogInformation("New {Role} user created: {Email}", user.Role.Name, user.Email);
-        return GenerateAuthResponse(user);
+        var createdUser = await _db.Users
+            .AsNoTracking()
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Id == user.Id)
+            ?? throw new InvalidOperationException("User was created but could not be loaded.");
+
+        _logger.LogInformation("New {Role} user created: {Email}", createdUser.Role.Name, createdUser.Email);
+        return GenerateAuthResponse(createdUser);
     }
 
     private AuthResponseDto GenerateAuthResponse(User user)

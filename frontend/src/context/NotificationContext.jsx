@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 import * as signalR from '@microsoft/signalr';
 
 const NotificationContext = createContext();
+const NOTIFICATION_HUB_URL = import.meta.env.VITE_NOTIFICATION_HUB_URL || 'http://localhost:5184/notificationHub';
 
 export const useNotification = () => {
   const context = useContext(NotificationContext);
@@ -24,10 +25,7 @@ export const NotificationProvider = ({ children }) => {
   // SignalR Connection
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7119/notificationHub", { // Match your backend URL/Port
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
+      .withUrl(NOTIFICATION_HUB_URL)
       .withAutomaticReconnect()
       .build();
 

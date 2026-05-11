@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SadhanSewa.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+34df6ee750795414de2d7462f3299c349482c18c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2af094f2f42b7b9e15c4004125d920d2f5fb9228")]
 [assembly: System.Reflection.AssemblyProductAttribute("SadhanSewa.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SadhanSewa.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
