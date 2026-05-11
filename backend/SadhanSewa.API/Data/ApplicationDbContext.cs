@@ -81,15 +81,31 @@ namespace SadhanSewa.API.Data
                 .HasMaxLength(200)
                 .IsRequired();
 
-            // Seed default roles
+            // Seed default roles (CreatedAt must be fixed literals — matches ApplicationDbContextModelSnapshot)
             modelBuilder.Entity<Role>().HasData(
-                new Role { Id = 1, Name = "Admin", Description = "Full system control — manage staff, vendors, inventory, and generate financial reports" },
-                new Role { Id = 2, Name = "Staff", Description = "Handle customer registrations, part sales, invoicing, and customer reports" },
-                new Role { Id = 3, Name = "Customer", Description = "Self-register, book appointments, track history, and receive AI alerts" }
-            );
+                new Role
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Description = "Full system control — manage staff, vendors, inventory, and generate financial reports",
+                    CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(7318)
+                },
+                new Role
+                {
+                    Id = 2,
+                    Name = "Staff",
+                    Description = "Handle customer registrations, part sales, invoicing, and customer reports",
+                    CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(8487)
+                },
+                new Role
+                {
+                    Id = 3,
+                    Name = "Customer",
+                    Description = "Self-register, book appointments, track history, and receive AI alerts",
+                    CreatedAt = new DateTime(2026, 4, 28, 8, 47, 12, 821, DateTimeKind.Utc).AddTicks(8490)
+                });
 
-            /*
-            // Seed default Admin user (password: Admin@123)
+            // Seed default Admin user (password: Admin@123) — matches migration snapshot
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -97,14 +113,12 @@ namespace SadhanSewa.API.Data
                     FullName = "System Administrator",
                     Email = "admin@sadhansewa.com",
                     Phone = null,
-                    PasswordHash = "$2a$11$K7pYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYpYp", // Placeholder
+                    PasswordHash = "$2a$11$dQzjTqlrGG2yxgady5kHCevD3Gd5n/Xk8cZY2r5x.xleP2Ci6EboG",
                     RoleId = 1,
                     IsActive = true,
-                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
-                    UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
-                }
-            );
-            */
+                    CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                    UpdatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)
+                });
         }
     }
 }

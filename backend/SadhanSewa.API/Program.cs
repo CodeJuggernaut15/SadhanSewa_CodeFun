@@ -6,8 +6,9 @@ using Microsoft.OpenApi.Models;
 using SadhanSewa.API.Data;
 using SadhanSewa.API.Middleware;
 using SadhanSewa.API.Services.Auth;
-using SadhanSewa.API.Services.Vendor;
+
 using SadhanSewa.API.Services.PurchaseInvoice;
+using SadhanSewa.API.Services.Parts;
 using SadhanSewa.API.Hubs;
 
 
@@ -85,19 +86,22 @@ builder.Services.AddAuthorization();
 // CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("FrontendPolicy", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy
-            .WithOrigins("http://localhost:5173")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
+        policy.WithOrigins(
+                  "http://localhost:5173",
+                  "http://localhost:5174",
+                  "http://localhost:5175")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPartsService, PartsService>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
-builder.Services.AddScoped<IVendorService, VendorService>();
+
 builder.Services.AddSignalR();
 
 // ── Middleware pipeline ─────────────────────────────────────
@@ -115,17 +119,22 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// In Development the API runs on http://localhost:5184. HTTPS redirect breaks
+// browser CORS preflight (OPTIONS) because the redirect response lacks CORS headers.
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
 
-app.UseCors("FrontendPolicy");
+app.UseRouting();
+
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGet("/", () => "SadhanSewa API is running");
 
-app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<NotificationHub>("/notificationHub").RequireCors("AllowFrontend");
 
-app.MapControllers();
+app.MapControllers().RequireCors("AllowFrontend");
 
 app.Run();

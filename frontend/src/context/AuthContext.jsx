@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useCallback, useEffect } fr
 
 const AuthContext = createContext();
 
-const API_BASE = 'http://localhost:5188';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5184';
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
