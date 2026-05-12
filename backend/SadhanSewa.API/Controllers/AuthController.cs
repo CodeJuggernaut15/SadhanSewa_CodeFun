@@ -54,6 +54,9 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("create-staff")]
     public async Task<ActionResult<ApiResponse<AuthResponseDto>>> CreateStaff([FromBody] RegisterDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Phone))
+            return BadRequest(ApiResponse<AuthResponseDto>.Fail("Staff phone number is required."));
+
         var data = await authService.CreateStaffAsync(dto);
         return StatusCode(StatusCodes.Status201Created,
             ApiResponse<AuthResponseDto>.Ok(data, "Staff account created."));

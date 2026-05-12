@@ -19,6 +19,33 @@ const S = {
   modal: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, backdropFilter: 'blur(4px)' },
   modalContent: { background: 'var(--bg-card)', width: '100%', maxWidth: '500px', borderRadius: '32px', padding: '3rem', boxShadow: 'var(--shadow-float)', position: 'relative' },
   label: { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '10px', display: 'block' },
+  fieldError: { color: '#dc2626', fontSize: '12px', fontWeight: 700, marginTop: '8px' },
+};
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phonePattern = /^(\+977[-\s]?)?(98|97)\d{8}$|^(\+977[-\s]?)?[1-9]\d{6,8}$/;
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+const validateStaffForm = ({ fullName, email, phone, password }) => {
+  const errors = {};
+  const trimmedName = fullName.trim();
+  const trimmedEmail = email.trim();
+  const trimmedPhone = phone.trim().replace(/\s+/g, '');
+
+  if (!trimmedName) errors.fullName = 'Full name is required.';
+  else if (trimmedName.length < 3) errors.fullName = 'Full name must be at least 3 characters.';
+  else if (!/^[A-Za-z][A-Za-z\s.'-]*$/.test(trimmedName)) errors.fullName = 'Use letters, spaces, apostrophes, hyphens, or periods only.';
+
+  if (!trimmedEmail) errors.email = 'Email address is required.';
+  else if (!emailPattern.test(trimmedEmail)) errors.email = 'Enter a valid email address.';
+
+  if (!trimmedPhone) errors.phone = 'Phone number is required.';
+  else if (!phonePattern.test(trimmedPhone)) errors.phone = 'Enter a valid Nepal phone number.';
+
+  if (!password) errors.password = 'Password is required.';
+  else if (!passwordPattern.test(password)) errors.password = 'Use 8+ characters with uppercase, lowercase, number, and symbol.';
+
+  return errors;
 };
 
 const StaffManagement = () => {
@@ -37,6 +64,7 @@ const StaffManagement = () => {
     phone: '',
     password: ''
   });
+  const [formErrors, setFormErrors] = useState({});
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -46,7 +74,7 @@ const StaffManagement = () => {
       if (res.ok) {
         setUsers(json.data);
       }
-    } catch (err) {
+    } catch {
       addNotification('Error', 'Failed to fetch users catalog.', 'error');
     } finally {
       setLoading(false);
@@ -113,22 +141,36 @@ const StaffManagement = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    const errors = validateStaffForm(formData);
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      addNotification('Validation Error', 'Please fix the highlighted staff fields.', 'error');
+      return;
+    }
+
     setRegistering(true);
     try {
+      const payload = {
+        fullName: formData.fullName.trim(),
+        email: formData.email.trim().toLowerCase(),
+        phone: formData.phone.trim(),
+        password: formData.password
+      };
       const res = await authFetch('/api/auth/create-staff', {
         method: 'POST',
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       });
       const json = await res.json();
       if (res.ok) {
         addNotification('Success', `Staff member ${formData.fullName} registered.`);
         setIsModalOpen(false);
         setFormData({ fullName: '', email: '', phone: '', password: '' });
+        setFormErrors({});
         fetchUsers();
       } else {
         addNotification('Error', json.detail || json.message || json.title || 'Registration failed.', 'error');
       }
-    } catch (err) {
+    } catch {
       addNotification('Error', 'Connection error during registration.', 'error');
     } finally {
       setRegistering(false);
@@ -158,26 +200,77 @@ const StaffManagement = () => {
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div>
                 <label style={S.label}>Full Identity Name</label>
-                <input className="input" required value={formData.fullName} onChange={e => setFormData({...formData, fullName: e.target.value})} placeholder="e.g. John Doe" />
+                <input
+                  className="input"
+                  required
+                  minLength={3}
+                  maxLength={150}
+                  pattern="[A-Za-z][A-Za-z\s.'-]*"
+                  value={formData.fullName}
+                  onChange={e => {
+                    setFormData({...formData, fullName: e.target.value});
+                    setFormErrors(prev => ({ ...prev, fullName: undefined }));
+                  }}
+                  placeholder="e.g. John Doe"
+                />
+                {formErrors.fullName && <div style={S.fieldError}>{formErrors.fullName}</div>}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
                   <label style={S.label}>Email Address</label>
-                  <input className="input" type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="john@example.com" />
+                  <input
+                    className="input"
+                    type="email"
+                    required
+                    maxLength={200}
+                    value={formData.email}
+                    onChange={e => {
+                      setFormData({...formData, email: e.target.value});
+                      setFormErrors(prev => ({ ...prev, email: undefined }));
+                    }}
+                    placeholder="john@example.com"
+                  />
+                  {formErrors.email && <div style={S.fieldError}>{formErrors.email}</div>}
                 </div>
                 <div>
                   <label style={S.label}>Phone Number</label>
-                  <input className="input" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+977..." />
+                  <input
+                    className="input"
+                    required
+                    maxLength={20}
+                    inputMode="tel"
+                    value={formData.phone}
+                    onChange={e => {
+                      setFormData({...formData, phone: e.target.value});
+                      setFormErrors(prev => ({ ...prev, phone: undefined }));
+                    }}
+                    placeholder="9800000000"
+                  />
+                  {formErrors.phone && <div style={S.fieldError}>{formErrors.phone}</div>}
                 </div>
               </div>
               <div>
                 <label style={S.label}>Security Password</label>
                 <div style={{ position: 'relative' }}>
-                  <input className="input" type={showPassword ? 'text' : 'password'} required value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} placeholder="••••••••" style={{ paddingRight: '44px' }} />
+                  <input
+                    className="input"
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    minLength={8}
+                    maxLength={100}
+                    value={formData.password}
+                    onChange={e => {
+                      setFormData({...formData, password: e.target.value});
+                      setFormErrors(prev => ({ ...prev, password: undefined }));
+                    }}
+                    placeholder="8+ chars, Aa1!"
+                    style={{ paddingRight: '44px' }}
+                  />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                {formErrors.password && <div style={S.fieldError}>{formErrors.password}</div>}
               </div>
               <button className="btn btn-primary" style={{ width: '100%', padding: '16px', marginTop: '1rem' }} disabled={registering}>
                 {registering ? 'Creating Account...' : <><Shield size={18} /> Finalize Registration</>}

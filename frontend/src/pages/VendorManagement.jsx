@@ -16,6 +16,40 @@ const S = {
   th: { background: 'rgba(0,0,0,0.01)', padding: '1.25rem 1.5rem', textAlign: 'left', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', borderBottom: '1.5px solid var(--border-color)' },
   td: { padding: '1.5rem 1.5rem', fontSize: '14px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
   sidebarCard: { background: 'var(--bg-nav)', borderRadius: '32px', padding: '2.5rem', color: '#fff', position: 'sticky', top: '2.5rem' },
+  fieldError: { color: '#dc2626', fontSize: '12px', fontWeight: 700, marginTop: '8px' },
+};
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phonePattern = /^(\+977[-\s]?)?(98|97)\d{8}$|^(\+977[-\s]?)?[1-9]\d{6,8}$/;
+const namePattern = /^[A-Za-z0-9][A-Za-z0-9\s&.,'()-]*$/;
+
+const validateVendorForm = (form) => {
+  const errors = {};
+  const name = form.name.trim();
+  const category = form.category.trim();
+  const location = form.location.trim();
+  const contact = form.contact.trim().replace(/\s+/g, '');
+  const email = form.email.trim();
+
+  if (!name) errors.name = 'Vendor name is required.';
+  else if (name.length < 3) errors.name = 'Vendor name must be at least 3 characters.';
+  else if (!namePattern.test(name)) errors.name = 'Vendor name contains invalid characters.';
+
+  if (!category) errors.category = 'Category is required.';
+  else if (category.length < 3) errors.category = 'Category must be at least 3 characters.';
+  else if (!namePattern.test(category)) errors.category = 'Category contains invalid characters.';
+
+  if (!location) errors.location = 'Location is required.';
+  else if (location.length < 3) errors.location = 'Location must be at least 3 characters.';
+
+  if (!contact) errors.contact = 'Contact number is required.';
+  else if (!phonePattern.test(contact)) errors.contact = 'Enter a valid Nepal contact number.';
+
+  if (email && !emailPattern.test(email)) errors.email = 'Enter a valid email address.';
+
+  if (!['Active', 'Inactive'].includes(form.status)) errors.status = 'Select a valid vendor status.';
+
+  return errors;
 };
 
 const emptyForm = {
@@ -40,6 +74,7 @@ const VendorManagement = () => {
   const [loading, setLoading] = useState(false);
   const [listLoading, setListLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   // load all vendors from backend
   const loadVendors = useCallback(async () => {
@@ -69,6 +104,7 @@ const VendorManagement = () => {
   const openAdd = () => {
     setEditingId(null);
     setForm(emptyForm);
+    setFormErrors({});
     setModal('add');
   };
 
@@ -82,23 +118,32 @@ const VendorManagement = () => {
       category: v.category || '',
       status: v.status,
     });
+    setFormErrors({});
     setModal('edit');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
+    setFormErrors(prev => ({ ...prev, [name]: undefined }));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const errors = validateVendorForm(form);
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      addNotification('Validation Error', 'Please fix the highlighted vendor fields.', 'error');
+      return;
+    }
+
     setLoading(true);
     const payload = {
       name: form.name.trim(),
-      location: form.location.trim() || null,
-      contact: form.contact.trim() || null,
+      location: form.location.trim(),
+      contact: form.contact.trim(),
       email: form.email.trim() || null,
-      category: form.category.trim() || null,
+      category: form.category.trim(),
       status: form.status,
     };
     try {
@@ -178,36 +223,42 @@ const VendorManagement = () => {
 
               <div>
                 <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Vendor Name *</label>
-                <input className="input" name="name" required placeholder="e.g. Nepal Auto Parts" value={form.name} onChange={handleChange} />
+                <input className="input" name="name" required minLength={3} maxLength={200} pattern="[A-Za-z0-9][A-Za-z0-9\s&.,'()-]*" placeholder="e.g. Nepal Auto Parts" value={form.name} onChange={handleChange} />
+                {formErrors.name && <div style={S.fieldError}>{formErrors.name}</div>}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div>
-                  <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Category</label>
-                  <input className="input" name="category" placeholder="Engine, Tyres…" value={form.category} onChange={handleChange} />
+                  <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Category *</label>
+                  <input className="input" name="category" required minLength={3} maxLength={100} pattern="[A-Za-z0-9][A-Za-z0-9\s&.,'()-]*" placeholder="Engine, Tyres" value={form.category} onChange={handleChange} />
+                  {formErrors.category && <div style={S.fieldError}>{formErrors.category}</div>}
                 </div>
                 <div>
                   <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Status</label>
-                  <select className="input" name="status" value={form.status} onChange={handleChange} style={{ appearance: 'auto' }}>
+                  <select className="input" name="status" required value={form.status} onChange={handleChange} style={{ appearance: 'auto' }}>
                     <option>Active</option>
                     <option>Inactive</option>
                   </select>
+                  {formErrors.status && <div style={S.fieldError}>{formErrors.status}</div>}
                 </div>
               </div>
 
               <div>
-                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Location</label>
-                <input className="input" name="location" placeholder="e.g. Kathmandu" value={form.location} onChange={handleChange} />
+                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Location *</label>
+                <input className="input" name="location" required minLength={3} maxLength={200} placeholder="e.g. Kathmandu" value={form.location} onChange={handleChange} />
+                {formErrors.location && <div style={S.fieldError}>{formErrors.location}</div>}
               </div>
 
               <div>
-                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Contact</label>
-                <input className="input" name="contact" placeholder="+977-1-4234567" value={form.contact} onChange={handleChange} />
+                <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Contact *</label>
+                <input className="input" name="contact" required maxLength={20} inputMode="tel" placeholder="9800000000" value={form.contact} onChange={handleChange} />
+                {formErrors.contact && <div style={S.fieldError}>{formErrors.contact}</div>}
               </div>
 
               <div>
                 <label className="chip" style={{ background: 'none', padding: 0, color: 'var(--text-muted)', marginBottom: '6px' }}>Email</label>
-                <input className="input" type="email" name="email" placeholder="supply@vendor.com" value={form.email} onChange={handleChange} />
+                <input className="input" type="email" name="email" maxLength={200} placeholder="supply@vendor.com" value={form.email} onChange={handleChange} />
+                {formErrors.email && <div style={S.fieldError}>{formErrors.email}</div>}
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '0.5rem' }}>
