@@ -9,6 +9,7 @@ using SadhanSewa.API.Services.Auth;
 
 using SadhanSewa.API.Services.PurchaseInvoice;
 using SadhanSewa.API.Services.Parts;
+using SadhanSewa.API.Services.Vendor;
 using SadhanSewa.API.Hubs;
 
 
@@ -100,6 +101,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPartsService, PartsService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
 
 builder.Services.AddSignalR();
