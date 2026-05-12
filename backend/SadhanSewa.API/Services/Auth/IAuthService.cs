@@ -42,4 +42,9 @@ public interface IAuthService
     /// Permanently removes a user from the system.
     /// </summary>
     Task<bool> DeleteUserAsync(int userId);
+
+    /// <summary>
+    /// Changes a user's role to Admin or Staff.
+    /// </summary>
+    Task<bool> UpdateUserRoleAsync(int userId, int roleId);
 }

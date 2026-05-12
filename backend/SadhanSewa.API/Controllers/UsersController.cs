@@ -39,13 +39,41 @@ public class UsersController(IAuthService authService) : ControllerBase
     }
 
     /// <summary>
-    /// Permanently deletes a user.
+    /// Permanently deletes a user (seed admin is protected).
     /// </summary>
     [HttpDelete("{id}")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteUser(int id)
     {
-        var success = await _authService.DeleteUserAsync(id);
-        if (!success) return NotFound(ApiResponse<bool>.Fail("User not found."));
-        return Ok(ApiResponse<bool>.Ok(true, "User deleted."));
+        try
+        {
+            var success = await _authService.DeleteUserAsync(id);
+            if (!success) return NotFound(ApiResponse<bool>.Fail("User not found."));
+            return Ok(ApiResponse<bool>.Ok(true, "User deleted."));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ApiResponse<bool>.Fail(ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Changes a user's role to Admin (1) or Staff (2).
+    /// </summary>
+    [HttpPut("{id}/role")]
+    public async Task<ActionResult<ApiResponse<bool>>> ChangeRole(int id, [FromBody] ChangeRoleDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ApiResponse<bool>.Fail("Invalid role value."));
+
+        try
+        {
+            var success = await _authService.UpdateUserRoleAsync(id, dto.RoleId);
+            if (!success) return NotFound(ApiResponse<bool>.Fail("User not found."));
+            return Ok(ApiResponse<bool>.Ok(true, "Role updated."));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ApiResponse<bool>.Fail(ex.Message));
+        }
     }
 }

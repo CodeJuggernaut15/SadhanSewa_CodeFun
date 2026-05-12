@@ -60,11 +60,14 @@ const StaffManagement = () => {
   const handleToggleStatus = async (id) => {
     try {
       const res = await authFetch(`/api/users/${id}/toggle-status`, { method: 'PUT' });
+      const json = await res.json();
       if (res.ok) {
-        addNotification('Success', 'User status updated successfully.');
+        addNotification('Success', 'User status updated.');
         fetchUsers();
+      } else {
+        addNotification('Error', json.message || 'Failed to update status.', 'error');
       }
-    } catch (err) {
+    } catch {
       addNotification('Error', 'Failed to update user status.', 'error');
     }
   };
@@ -73,12 +76,38 @@ const StaffManagement = () => {
     if (!window.confirm('Are you sure you want to permanently remove this user?')) return;
     try {
       const res = await authFetch(`/api/users/${id}`, { method: 'DELETE' });
+      const json = await res.json();
       if (res.ok) {
         addNotification('Success', 'User removed from system.');
         fetchUsers();
+      } else {
+        // backend returns conflict message if trying to delete protected account
+        addNotification('Error', json.message || 'Failed to delete user.', 'error');
       }
-    } catch (err) {
+    } catch {
       addNotification('Error', 'Failed to delete user.', 'error');
+    }
+  };
+
+  // change role between Admin (1) and Staff (2)
+  const handleChangeRole = async (id, currentRole) => {
+    const newRoleId = currentRole === 'Admin' ? 2 : 1;
+    const label = newRoleId === 1 ? 'Admin' : 'Staff';
+    if (!window.confirm(`Change this user's role to ${label}?`)) return;
+    try {
+      const res = await authFetch(`/api/users/${id}/role`, {
+        method: 'PUT',
+        body: JSON.stringify({ roleId: newRoleId })
+      });
+      const json = await res.json();
+      if (res.ok) {
+        addNotification('Success', `Role changed to ${label}.`);
+        fetchUsers();
+      } else {
+        addNotification('Error', json.message || 'Failed to change role.', 'error');
+      }
+    } catch {
+      addNotification('Error', 'Failed to change role.', 'error');
     }
   };
 
@@ -238,11 +267,18 @@ const StaffManagement = () => {
                       </button>
                     </td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                        <button onClick={() => handleDeleteUser(member.userId)} style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.5, cursor: 'pointer' }} className="hover:opacity-100">
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
+                        {/* swap role button — shows what role they'll become */}
+                        <button
+                          onClick={() => handleChangeRole(member.userId, member.role)}
+                          title={`Change to ${member.role === 'Admin' ? 'Staff' : 'Admin'}`}
+                          style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '5px 10px', fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                        >
+                          → {member.role === 'Admin' ? 'Staff' : 'Admin'}
+                        </button>
+                        <button onClick={() => handleDeleteUser(member.userId)} style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.5, cursor: 'pointer' }}>
                           <Trash2 size={18} />
                         </button>
-                        <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><MoreVertical size={20} /></button>
                       </div>
                     </td>
                   </tr>

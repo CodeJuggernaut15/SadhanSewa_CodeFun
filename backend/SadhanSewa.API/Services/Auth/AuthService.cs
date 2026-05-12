@@ -93,8 +93,29 @@ public class AuthService(ApplicationDbContext db, IConfiguration config, ILogger
         var user = await _db.Users.FindAsync(userId);
         if (user is null) return false;
 
+        // protect the seed admin account from being deleted
+        if (userId == 1)
+            throw new InvalidOperationException("The system administrator account cannot be deleted.");
+
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdateUserRoleAsync(int userId, int roleId)
+    {
+        var user = await _db.Users.FindAsync(userId);
+        if (user is null) return false;
+
+        // make sure the target role actually exists
+        if (!await _db.Roles.AnyAsync(r => r.Id == roleId))
+            throw new InvalidOperationException("Role not found.");
+
+        user.RoleId = roleId;
+        user.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+        _logger.LogInformation("User {UserId} role changed to RoleId={RoleId}", userId, roleId);
         return true;
     }
 
