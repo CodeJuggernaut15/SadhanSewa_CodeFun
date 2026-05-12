@@ -16,12 +16,12 @@ public static class PurchaseInvoiceValidator
         if (dto.VendorId <= 0) AddError(errors, nameof(dto.VendorId), "VendorId must be greater than zero.");
         if (dto.ExpectedIntakeDate.Date < DateTime.UtcNow.Date)
             AddError(errors, nameof(dto.ExpectedIntakeDate), "ExpectedIntakeDate cannot be in the past.");
-        if (dto.LineItems.Count == 0) AddError(errors, nameof(dto.LineItems), "At least one line item is required.");
 
         for (var i = 0; i < dto.LineItems.Count; i++)
         {
             var item = dto.LineItems[i];
             var prefix = $"{nameof(dto.LineItems)}[{i}]";
+            if (item.PartId <= 0) AddError(errors, $"{prefix}.{nameof(item.PartId)}", "PartId must be greater than zero.");
             if (string.IsNullOrWhiteSpace(item.ComponentName))
                 AddError(errors, $"{prefix}.{nameof(item.ComponentName)}", "ComponentName is required.");
             if (item.Volume <= 0) AddError(errors, $"{prefix}.{nameof(item.Volume)}", "Volume must be greater than zero.");
@@ -37,6 +37,7 @@ public static class PurchaseInvoiceValidator
     public static Dictionary<string, string[]>? ValidateLineItem(CreateLineItemDto dto)
     {
         var errors = new Dictionary<string, List<string>>();
+        if (dto.PartId <= 0) AddError(errors, nameof(dto.PartId), "PartId must be greater than zero.");
         if (string.IsNullOrWhiteSpace(dto.ComponentName))
             AddError(errors, nameof(dto.ComponentName), "ComponentName is required.");
         if (dto.Volume <= 0) AddError(errors, nameof(dto.Volume), "Volume must be greater than zero.");

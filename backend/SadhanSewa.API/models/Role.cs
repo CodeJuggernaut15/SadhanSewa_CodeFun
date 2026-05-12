@@ -11,7 +11,7 @@ namespace SadhanSewa.API.Models
         [MaxLength(255)]
         public string? Description { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         // Navigation
         public ICollection<User> Users { get; set; } = new List<User>();
