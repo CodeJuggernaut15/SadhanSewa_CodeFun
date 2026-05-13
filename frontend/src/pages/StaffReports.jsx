@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { 
   Users, TrendingUp, AlertTriangle, 
   Download, Filter, ArrowUpRight, Search, ArrowRight,
   CheckCircle, Clock, PieChart, BarChart3, Star 
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -15,25 +16,25 @@ const S = {
 };
 
 const StaffReports = () => {
+  const { authFetch } = useAuth();
   const [activeTab, setActiveTab] = useState('High Spenders');
+  const [search, setSearch] = useState('');
+  const [report, setReport] = useState({ highSpenders: [], regularCustomers: [], overdueCredit: [] });
 
-  const highSpenders = [
-    { name: 'Prashiddhika Bhattarai', total: 'Rs. 124,500', frequency: '12 orders', loyalty: 'Gold' },
-    { name: 'Aarav Sharma', total: 'Rs. 98,200', frequency: '8 orders', loyalty: 'Silver' },
-    { name: 'Kriti Bista', total: 'Rs. 82,400', frequency: '15 orders', loyalty: 'Gold' },
-  ];
+  const loadReport = useCallback(async () => {
+    const res = await authFetch('/api/customers/reports');
+    const json = await res.json();
+    if (res.ok && json.data) setReport(json.data);
+  }, [authFetch]);
 
-  const regularCustomers = [
-    { name: 'Sita Thapa', lastVisit: 'Yesterday', totalVisits: '42', status: 'Active' },
-    { name: 'Ram Bahadur', lastVisit: '3 days ago', totalVisits: '28', status: 'Active' },
-    { name: 'Gita Rai', lastVisit: '1 week ago', totalVisits: '35', status: 'Inactive' },
-  ];
+  useEffect(() => {
+    loadReport().catch(() => {});
+  }, [loadReport]);
 
-  const overdueCredit = [
-    { name: 'Nelson Rai', amount: 'Rs. 15,400', overdue: '45 Days', risk: 'High' },
-    { name: 'Paushan Chaudhary', amount: 'Rs. 8,200', overdue: '32 Days', risk: 'Medium' },
-    { name: 'Manish K.', amount: 'Rs. 4,500', overdue: '31 Days', risk: 'Medium' },
-  ];
+  const includes = (value) => String(value || '').toLowerCase().includes(search.toLowerCase());
+  const highSpenders = (report.highSpenders || []).filter(c => includes(c.fullName) || includes(c.email) || includes(c.phone));
+  const regularCustomers = (report.regularCustomers || []).filter(c => includes(c.fullName) || includes(c.email) || includes(c.phone));
+  const overdueCredit = (report.overdueCredit || []).filter(c => includes(c.name) || includes(c.email));
 
   return (
     <div style={S.page} className="page-transition">
@@ -78,7 +79,7 @@ const StaffReports = () => {
                <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>{activeTab} Analytics</h3>
                <div style={{ position: 'relative' }}>
                   <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input className="input" placeholder="Search manifest..." style={{ paddingLeft: '40px', fontSize: '12px', width: '200px' }} />
+                  <input className="input" placeholder="Search reports..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ paddingLeft: '40px', fontSize: '12px', width: '200px' }} />
                </div>
             </div>
 
@@ -112,29 +113,29 @@ const StaffReports = () => {
                   </tr>
                </thead>
                <tbody>
-                  {activeTab === 'High Spenders' && highSpenders.map((h, i) => (
-                    <tr key={i}>
-                       <td style={S.td}><div style={{ fontWeight: 800 }}>{h.name}</div></td>
-                       <td style={S.td}><span style={{ color: 'var(--primary)', fontWeight: 800 }}>{h.total}</span></td>
-                       <td style={S.td}>{h.frequency}</td>
-                       <td style={{ ...S.td, textAlign: 'right' }}><span className="chip chip-success">{h.loyalty}</span></td>
+                  {activeTab === 'High Spenders' && highSpenders.map((h) => (
+                    <tr key={h.id}>
+                       <td style={S.td}><div style={{ fontWeight: 800 }}>{h.fullName}</div></td>
+                       <td style={S.td}><span style={{ color: 'var(--primary)', fontWeight: 800 }}>Rs. {Number(h.totalSpent || 0).toLocaleString()}</span></td>
+                       <td style={S.td}>{h.visits} orders</td>
+                       <td style={{ ...S.td, textAlign: 'right' }}><span className="chip chip-success">{h.loyaltyTier}</span></td>
                     </tr>
                   ))}
-                  {activeTab === 'Regular Customers' && regularCustomers.map((r, i) => (
-                    <tr key={i}>
-                       <td style={S.td}><div style={{ fontWeight: 800 }}>{r.name}</div></td>
-                       <td style={S.td}><span style={{ color: 'var(--text-muted)' }}>{r.lastVisit}</span></td>
-                       <td style={S.td}>{r.totalVisits} sessions</td>
+                  {activeTab === 'Regular Customers' && regularCustomers.map((r) => (
+                    <tr key={r.id}>
+                       <td style={S.td}><div style={{ fontWeight: 800 }}>{r.fullName}</div></td>
+                       <td style={S.td}><span style={{ color: 'var(--text-muted)' }}>{r.email}</span></td>
+                       <td style={S.td}>{r.visits} sessions</td>
                        <td style={{ ...S.td, textAlign: 'right' }}>
-                          <span className={`chip ${r.status === 'Active' ? 'chip-success' : ''}`}>{r.status}</span>
+                          <span className={`chip ${r.isActive ? 'chip-success' : ''}`}>{r.isActive ? 'Active' : 'Inactive'}</span>
                        </td>
                     </tr>
                   ))}
-                  {activeTab === 'Overdue Credit' && overdueCredit.map((o, i) => (
-                    <tr key={i}>
+                  {activeTab === 'Overdue Credit' && overdueCredit.map((o) => (
+                    <tr key={o.customerId}>
                        <td style={S.td}><div style={{ fontWeight: 800 }}>{o.name}</div></td>
-                       <td style={S.td}><span style={{ color: '#ef4444', fontWeight: 800 }}>{o.amount}</span></td>
-                       <td style={S.td}>{o.overdue}</td>
+                       <td style={S.td}><span style={{ color: '#ef4444', fontWeight: 800 }}>Rs. {Number(o.amount || 0).toLocaleString()}</span></td>
+                       <td style={S.td}>{o.daysOverdue} Days</td>
                        <td style={{ ...S.td, textAlign: 'right' }}>
                           <span className={`chip ${o.risk === 'High' ? 'chip-error' : ''}`} style={{ background: o.risk === 'High' ? '#ef4444' : '#f59e0b', color: '#fff' }}>{o.risk}</span>
                        </td>
@@ -168,7 +169,7 @@ const StaffReports = () => {
            <div style={{ ...S.card, marginTop: '2rem', background: 'var(--bg-nav)', color: '#fff' }}>
               <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem', textTransform: 'uppercase' }}>Automated Actions</h4>
               <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                 Dispatched 12 loyalty rewards and 3 credit escalations based on current intelligence cycle.
+                 Review loyalty discounts and pending credit follow-ups from this page.
               </p>
               <button className="btn btn-primary" style={{ width: '100%', background: '#fff', color: 'var(--bg-nav)' }}>Review System Logs <ArrowRight size={16} /></button>
            </div>

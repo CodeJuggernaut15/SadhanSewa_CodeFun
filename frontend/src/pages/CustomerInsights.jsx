@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { 
   Users, TrendingUp, Star, Mail, ArrowRight, Activity, 
   ArrowUpRight, ShieldAlert, AlertCircle, CheckCircle, RefreshCcw, Bell, Search
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
@@ -16,26 +17,36 @@ const S = {
 };
 
 const CustomerInsights = () => {
+  const { authFetch } = useAuth();
   const [isSuccess, setIsSuccess] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState('');
+  const [customers, setCustomers] = useState([]);
+  const [report, setReport] = useState({ highSpenders: [], overdueCredit: [] });
 
-  const topSpenders = [
-    { id: 1, name: "Nelson Rai", vehicle: "Toyota Prado", spent: 125000, visits: 8, loyalty: "Platinum" },
-    { id: 2, name: "Prashiddhika B.", vehicle: "Nissan Leaf", spent: 85200, visits: 6, loyalty: "Gold" },
-    { id: 3, name: "Bishal Tamang", vehicle: "Honda CB650R", spent: 45000, visits: 3, loyalty: "Silver" }
-  ];
+  const loadData = useCallback(async () => {
+    const [customersRes, reportsRes] = await Promise.all([
+      authFetch(`/api/customers?search=${encodeURIComponent(search)}`),
+      authFetch('/api/customers/reports')
+    ]);
+    const [customersJson, reportsJson] = await Promise.all([customersRes.json(), reportsRes.json()]);
+    if (customersRes.ok && Array.isArray(customersJson.data)) setCustomers(customersJson.data);
+    if (reportsRes.ok && reportsJson.data) setReport(reportsJson.data);
+  }, [authFetch, search]);
 
-  const creditAlerts = [
-    { id: "C-102", name: "Paushan Chaudhary", amount: 15400, age: "45 Days", status: "Overdue", email: "p.chaudhary@gmail.com" },
-    { id: "C-115", name: "Rupesh Dahal", amount: 8200, age: "12 Days", status: "Pending", email: "rupesh.d@outlook.com" }
-  ];
+  useEffect(() => {
+    loadData().catch(() => {});
+  }, [loadData]);
+
+  const topSpenders = search ? customers : report.highSpenders || [];
+  const creditAlerts = report.overdueCredit || [];
 
   const handleNotify = (email) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setSuccessMsg(`Remittance manifest successfully dispatched to ${email || 'all delinquent accounts'} via SMTP protocol.`);
+      setSuccessMsg(`Reminder sent to ${email || 'all selected credit accounts'}.`);
       setIsSuccess(true);
     }, 1500);
   };
@@ -58,15 +69,15 @@ const CustomerInsights = () => {
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
-            <Activity size={16} /> Consumer Intelligence Terminal
+            <Activity size={16} /> Customer Overview
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Behavioral <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Granular profiling of high-value consumers and liquidity risk assessment.</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>View customer spending, visits, and pending credit balances.</p>
         </div>
         <div style={{ display: 'flex', gap: '15px', alignItems: 'flex-end' }}>
           <div style={{ position: 'relative', width: '350px' }}>
              <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-             <input className="input" placeholder="Search by Name, Phone, ID, or Plate..." style={{ paddingLeft: '50px', paddingRight: '16px' }} />
+             <input className="input" placeholder="Search by Name, Phone, ID, or Plate..." value={search} onChange={(e) => setSearch(e.target.value)} style={{ paddingLeft: '50px', paddingRight: '16px' }} />
           </div>
           <button className="btn btn-outline" onClick={() => handleNotify()} disabled={loading} style={{ color: '#ef4444', borderColor: '#ef444420', background: '#ef444405', height: 'fit-content' }}>
             {loading ? 'Dispatching...' : <><Bell size={18} /> Notify Delinquents</>}
@@ -95,14 +106,14 @@ const CustomerInsights = () => {
                 {topSpenders.map(user => (
                   <tr key={user.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
                     <td style={S.td}>
-                       <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.1rem' }}>{user.name}</div>
-                       <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginTop: '4px' }}>{user.vehicle}</div>
+                       <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.1rem' }}>{user.fullName}</div>
+                       <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginTop: '4px' }}>{user.vehicles?.[0]?.model || 'No vehicle'} {user.vehicles?.[0]?.licensePlate ? `- ${user.vehicles[0].licensePlate}` : ''}</div>
                     </td>
                     <td style={S.td}><span style={{ fontWeight: 700, opacity: 0.7 }}>{user.visits} Visits</span></td>
-                    <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rs. {user.spent.toLocaleString()}</span></td>
+                    <td style={S.td}><span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>Rs. {Number(user.totalSpent || 0).toLocaleString()}</span></td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
-                       <span className={`chip ${user.loyalty === 'Platinum' ? 'chip-success' : 'chip-warning'}`} style={{ padding: '6px 14px' }}>
-                          <Star size={12} fill="currentColor" /> {user.loyalty}
+                       <span className={`chip ${user.loyaltyTier === 'Platinum' ? 'chip-success' : 'chip-warning'}`} style={{ padding: '6px 14px' }}>
+                          <Star size={12} fill="currentColor" /> {user.loyaltyTier}
                        </span>
                     </td>
                   </tr>
@@ -116,7 +127,7 @@ const CustomerInsights = () => {
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '1.5rem', letterSpacing: '0.12em' }}>Algorithmic Projection</div>
                 <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.1 }}>Sustained <span style={{ color: 'var(--primary)' }}>Growth Flow</span></h2>
                 <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.6)', maxWidth: '450px', lineHeight: 1.7, marginBottom: '3rem' }}>
-                   Systematic part liquidation and retention strategies have resulted in 15% upward trajectory across the Emerald Loyalty syndicate.
+                   Use customer spending and visit history to identify regular buyers and high-value customers.
                 </p>
                 <button className="btn btn-primary" style={{ padding: '16px 36px', fontSize: '14px' }}>Execute Structural Growth Audit <ArrowRight size={20} /></button>
              </div>
@@ -127,16 +138,16 @@ const CustomerInsights = () => {
         <aside>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444' }}><ShieldAlert size={20} /> Overdue Risk</h3>
           {creditAlerts.map(alert => (
-            <div key={alert.id} style={S.riskCard} className="hover:border-primary group card">
+            <div key={alert.customerId} style={S.riskCard} className="hover:border-primary group card">
                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                  <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>MANIFEST: {alert.id}</span>
-                  <span className={`chip ${alert.status === 'Overdue' ? 'chip-error' : 'chip-warning'}`}>{alert.status}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>CUSTOMER: {alert.customerId}</span>
+                  <span className={`chip ${alert.risk === 'High' ? 'chip-error' : 'chip-warning'}`}>{alert.risk}</span>
                </div>
                <h4 style={{ fontSize: '1.1rem', marginBottom: '4px' }}>{alert.name}</h4>
-               <p style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ef4444', margin: '8px 0' }}>Rs. {alert.amount.toLocaleString()}</p>
+               <p style={{ fontSize: '2.2rem', fontWeight: 800, color: '#ef4444', margin: '8px 0' }}>Rs. {Number(alert.amount || 0).toLocaleString()}</p>
                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem', background: 'rgba(0,0,0,0.03)', borderRadius: '14px', border: '1.5px solid var(--border-color)', marginTop: '1.5rem' }}>
                   <span style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, textTransform: 'uppercase' }}>DEBT AGE</span>
-                  <span style={{ fontSize: '14px', fontWeight: 800 }}>{alert.age}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 800 }}>{alert.daysOverdue} Days</span>
                </div>
                <button className="btn btn-outline" onClick={() => handleNotify(alert.email)} disabled={loading} style={{ width: '100%', marginTop: '1.5rem', padding: '12px', fontSize: '12px' }}>
                   {loading ? 'Sending...' : <><Mail size={16} /> Dispatch Remittance</>}
@@ -148,7 +159,7 @@ const CustomerInsights = () => {
              <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '1rem', color: 'var(--primary)' }}>
                 <AlertCircle size={20} /> <h4 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Staff Directive</h4>
              </div>
-             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Automatic credit verification suggests manual outreach for clients exceeding the 30-day liquidity threshold. Real-time audit logs are synced with the Admin control center.</p>
+             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>Review customers with pending credit and follow up when balances remain unpaid for more than 30 days.</p>
              <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 800, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginTop: '1.5rem' }}>Review Data Integrity <ArrowUpRight size={16} /></button>
           </div>
         </aside>

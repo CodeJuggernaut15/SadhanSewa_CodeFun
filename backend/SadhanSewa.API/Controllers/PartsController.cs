@@ -10,7 +10,7 @@ namespace SadhanSewa.API.Controllers;
 /// Admin CRUD for inventory parts.
 /// </summary>
 [ApiController]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Staff")]
 [Route("api/parts")]
 public class PartsController(IPartsService partsService) : ControllerBase
 {
@@ -39,6 +39,7 @@ public class PartsController(IPartsService partsService) : ControllerBase
     /// Creates a new part.
     /// </summary>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<PartDto>>> CreateAsync([FromBody] CreatePartDto dto)
     {
         if (!ModelState.IsValid)
@@ -60,6 +61,7 @@ public class PartsController(IPartsService partsService) : ControllerBase
     /// Updates an existing part.
     /// </summary>
     [HttpPut("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<PartDto>>> UpdateAsync(int id, [FromBody] UpdatePartDto dto)
     {
         if (!ModelState.IsValid)
@@ -81,6 +83,7 @@ public class PartsController(IPartsService partsService) : ControllerBase
     /// Deletes a part when it is not referenced on invoices.
     /// </summary>
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<string>>> DeleteAsync(int id)
     {
         try

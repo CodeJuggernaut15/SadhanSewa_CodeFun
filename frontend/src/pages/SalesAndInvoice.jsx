@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { 
   ShoppingCart, Search, Trash2, Printer, Mail, 
   Heart, Plus, Minus, CheckCircle, User, 
   CreditCard, Package, ArrowRight, Zap, RefreshCcw
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 
 const S = {
   page: { padding: '3rem 2.5rem', maxWidth: '1600px', margin: '0 auto', paddingBottom: '8rem' },
@@ -17,24 +19,47 @@ const S = {
 };
 
 const SalesAndInvoice = () => {
-  const [partsInventory] = useState([
-    { id: 1, name: 'Engine Oil (5L)', price: 4500, stock: 25, category: 'Maintenance', sku: 'EO-001' },
-    { id: 2, name: 'Brake Pads - Rear', price: 1200, stock: 15, category: 'Braking', sku: 'BP-502' },
-    { id: 3, name: 'Air Filter', price: 850, stock: 9, category: 'Maintenance', sku: 'AF-109' },
-    { id: 4, name: 'LED Headlamp', price: 2100, stock: 40, category: 'Electrical', sku: 'LH-992' },
-    { id: 5, name: 'Fuel Filter', price: 1450, stock: 12, category: 'Maintenance', sku: 'FF-301' },
-    { id: 6, name: 'Spark Plug (Set)', price: 3200, stock: 4, category: 'Engine', sku: 'SP-104' },
-  ]);
-
+  const { authFetch } = useAuth();
+  const { addNotification } = useNotification();
+  const [partsInventory, setPartsInventory] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [customerId, setCustomerId] = useState('');
   const [cart, setCart] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('Cash');
   const [isSuccess, setIsSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [invoiceNumber, setInvoiceNumber] = useState('');
+
+  const loadData = useCallback(async () => {
+    try {
+      const [partsRes, customersRes] = await Promise.all([
+        authFetch('/api/parts'),
+        authFetch('/api/customers')
+      ]);
+      const [partsJson, customersJson] = await Promise.all([partsRes.json(), customersRes.json()]);
+      if (partsRes.ok && Array.isArray(partsJson.data)) setPartsInventory(partsJson.data);
+      if (customersRes.ok && Array.isArray(customersJson.data)) setCustomers(customersJson.data);
+    } catch {
+      addNotification('Error', 'Failed to load POS data.', 'error');
+    }
+  }, [authFetch, addNotification]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const addToCart = (part) => {
+    if (part.stock <= 0) {
+      addNotification('Error', `${part.name} is out of stock.`, 'error');
+      return;
+    }
     const existing = cart.find(item => item.id === part.id);
     if (existing) {
+      if (existing.quantity >= part.stock) {
+        addNotification('Error', `Only ${part.stock} units available.`, 'error');
+        return;
+      }
       setCart(cart.map(item => item.id === part.id ? { ...item, quantity: item.quantity + 1 } : item));
     } else {
       setCart([...cart, { ...part, quantity: 1 }]);
@@ -47,6 +72,7 @@ const SalesAndInvoice = () => {
     setCart(cart.map(item => {
       if (item.id === id) {
         const newQty = Math.max(1, item.quantity + delta);
+        if (newQty > item.stock) return item;
         return { ...item, quantity: newQty };
       }
       return item;
@@ -54,7 +80,7 @@ const SalesAndInvoice = () => {
   };
 
   const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const discount = subtotal > 5000 ? subtotal * 0.1 : 0; // Feature 16: Loyalty Discount
+  const discount = subtotal > 5000 ? subtotal * 0.1 : 0;
   const total = subtotal - discount;
 
   const filteredParts = partsInventory.filter(p => 
@@ -63,25 +89,44 @@ const SalesAndInvoice = () => {
     p.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleFinalize = () => {
+  const handleFinalize = async () => {
     if (cart.length === 0) return;
     setLoading(true);
-    // Simulate SMTP dispatch & DB update
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const res = await authFetch('/api/sales-invoices', {
+        method: 'POST',
+        body: JSON.stringify({
+          customerId: customerId ? Number(customerId) : null,
+          paymentMethod,
+          paymentStatus: paymentMethod === 'Credit' ? 'Pending' : 'Paid',
+          emailSent: !!customerId,
+          items: cart.map(item => ({ partId: item.id, quantity: item.quantity }))
+        })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || json.detail || 'Failed to create invoice.');
+      }
+      setInvoiceNumber(json.data.invoiceNumber);
       setIsSuccess(true);
-    }, 1500);
+      await loadData();
+    } catch (error) {
+      addNotification('Error', error.message || 'Failed to create invoice.', 'error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetSession = () => {
     setCart([]);
     setIsSuccess(false);
     setSearchTerm('');
+    setCustomerId('');
+    setInvoiceNumber('');
   };
 
   return (
     <div style={S.page} className="page-transition">
-      {/* Requirement 11: Success State & Email Notification Confirmation */}
       {isSuccess && (
         <div className="success-overlay">
           <div className="success-card">
@@ -90,7 +135,7 @@ const SalesAndInvoice = () => {
             </div>
             <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Invoice Dispatched!</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2.5rem', lineHeight: 1.6 }}>
-              The digital manifest #VX-8892 has been successfully transmitted via SMTP to <strong>bhattaraipracdka@gmail.com</strong>.
+              Invoice <strong>{invoiceNumber || 'created invoice'}</strong> has been saved, stock has been updated, and the customer record is ready for history and reports.
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <button className="btn btn-outline" onClick={() => setIsSuccess(false)}><Printer size={18} /> Print Copy</button>
@@ -106,7 +151,7 @@ const SalesAndInvoice = () => {
             <ShoppingCart size={16} /> Retail Settlement Interface
           </div>
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Point of <span style={{ color: 'var(--primary)' }}>Sale (POS)</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Executing real-time parts liquidation and digital manifest generation.</p>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Create sales invoices and update stock from one checkout screen.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn btn-outline"><Printer size={18} /> Print Draft</button>
@@ -118,7 +163,6 @@ const SalesAndInvoice = () => {
 
       <div style={S.layout}>
         <div>
-          {/* Requirement 10: Multi-field Search */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
              <h3 style={{ fontSize: '1.25rem', margin: 0, fontWeight: 800 }}>Component <span style={{ color: 'var(--primary)' }}>Catalog</span></h3>
              <div style={{ position: 'relative' }}>
@@ -149,7 +193,7 @@ const SalesAndInvoice = () => {
 
           <div style={S.card}>
              <div style={{ padding: '1.5rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Active Manifest Table</h3>
+                <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Current Cart</h3>
                 <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)' }}>{cart.length} LINE ITEMS</span>
              </div>
              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -167,7 +211,7 @@ const SalesAndInvoice = () => {
                      <tr>
                         <td colSpan="5" style={{ padding: '4rem', textAlign: 'center' }}>
                            <Package size={48} style={{ opacity: 0.1, marginBottom: '1rem' }} />
-                           <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>Manifest session is currently empty.</p>
+                           <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>No parts have been added yet.</p>
                         </td>
                      </tr>
                    ) : cart.map(item => (
@@ -206,12 +250,14 @@ const SalesAndInvoice = () => {
                    <p style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>Telemetry Syncing</p>
                 </div>
              </div>
-             <select className="input" style={{ appearance: 'auto' }}>
-                <option>Prashiddhika Bhattarai [BA 1 PA 1234]</option>
-                <option>Walk-in / Guest Client</option>
-                <option>Add New Intake Profile</option>
+             <select className="input" style={{ appearance: 'auto' }} value={customerId} onChange={(e) => setCustomerId(e.target.value)}>
+                <option value="">Walk-in / Guest Client</option>
+                {customers.map(customer => (
+                  <option key={customer.id} value={customer.id}>
+                    {customer.fullName} {customer.vehicles?.[0] ? `[${customer.vehicles[0].licensePlate}]` : ''}
+                  </option>
+                ))}
              </select>
-             {/* Requirement 16: Loyalty Active Visual */}
              <div style={{ marginTop: '1rem', padding: '12px', background: 'var(--primary)05', borderRadius: '10px', border: '1px solid var(--primary)20', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <Heart size={14} fill="var(--primary)" color="var(--primary)" />
                 <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)' }}>LOYALTY ACTIVE: 10% SMART DISCOUNT</span>
@@ -221,7 +267,7 @@ const SalesAndInvoice = () => {
           <div style={S.summaryCard}>
              <div style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '4px' }}>Review Checkout</h3>
-                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2rem' }}>Smart loyalty logic detected high-volume intent. A 10% efficiency discount has been applied to the gross total.</p>
+                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '2rem' }}>Orders above Rs. 5,000 receive a 10% loyalty discount.</p>
              </div>
 
              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -229,7 +275,6 @@ const SalesAndInvoice = () => {
                    <span>Gross Subtotal</span>
                    <span style={{ fontWeight: 800 }}>Rs. {subtotal}</span>
                 </div>
-                {/* Requirement 16: Applied Discount Display */}
                 {discount > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: 'var(--primary-light)' }}>
                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><Zap size={14} fill="var(--primary-light)" /> Smart Reward (-10%)</span>
@@ -239,11 +284,11 @@ const SalesAndInvoice = () => {
              </div>
 
              <div style={{ margin: '2rem 0', paddingTop: '2rem', borderTop: '1px dashed rgba(255,255,255,0.1)' }}>
-                <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Payable Manifest Total</p>
+             <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Amount Due</p>
                 <h2 style={{ fontSize: '2.8rem', fontWeight: 800, color: 'var(--primary-light)' }}>Rs. {total}</h2>
              </div>
 
-             <label style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Settlement Logic</label>
+             <label style={{ fontSize: '10px', fontWeight: 800, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '10px', display: 'block' }}>Payment Method</label>
              <div style={{ display: 'flex', gap: '10px', marginBottom: '2.5rem' }}>
                 {['Cash', 'Digital', 'Credit'].map(m => (
                    <button key={m} onClick={() => setPaymentMethod(m)} style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '12px', fontWeight: 800, border: '1.5px solid rgba(255,255,255,0.05)', background: paymentMethod === m ? 'var(--primary)' : 'rgba(255,255,255,0.02)', color: '#fff', cursor: 'pointer', transition: 'all 0.2s' }}>{m}</button>
@@ -253,7 +298,7 @@ const SalesAndInvoice = () => {
              <button className="btn btn-primary" onClick={handleFinalize} disabled={loading || cart.length === 0} style={{ width: '100%', background: 'var(--primary)', color: '#fff', padding: '16px', fontSize: '14px' }}>
                 {loading ? 'Processing...' : <><Mail size={18} /> Finalize & Dispatch <ArrowRight size={18} /></>}
              </button>
-             <p style={{ fontSize: '11px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '1.5rem', lineHeight: 1.6 }}>Feature 11: Real-time manifest dispatch to customer email via SMTP protocol.</p>
+             <p style={{ fontSize: '11px', textAlign: 'center', color: 'rgba(255,255,255,0.4)', marginTop: '1.5rem', lineHeight: 1.6 }}>The invoice is saved to the customer record after checkout.</p>
           </div>
         </aside>
       </div>

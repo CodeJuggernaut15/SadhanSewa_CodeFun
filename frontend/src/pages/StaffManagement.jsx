@@ -8,14 +8,15 @@ import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 
 const S = {
-  page: { padding: '3rem 2.5rem', maxWidth: '1400px', margin: '0 auto', paddingBottom: '8rem' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3.5rem', paddingBottom: '2.5rem', borderBottom: '1.5px solid var(--border-color)' },
-  layout: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 340px', gap: '3.5rem', alignItems: 'start' },
-  card: { background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '24px', overflow: 'hidden' },
-  avatar: { width: '44px', height: '44px', borderRadius: '12px', background: 'var(--bg-nav)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '15px' },
-  th: { background: 'rgba(0,0,0,0.01)', padding: '1.25rem 1.5rem', textAlign: 'left', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--text-muted)', borderBottom: '1.5px solid var(--border-color)' },
-  td: { padding: '1.5rem 1.5rem', fontSize: '14px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
-  sidebarCard: { background: 'var(--bg-nav)', borderRadius: '32px', padding: '2.5rem', color: '#fff', position: 'sticky', top: '2.5rem' },
+  page: { padding: '2rem 2rem 6rem', maxWidth: '1360px', margin: '0 auto' },
+  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', paddingBottom: '1.75rem', borderBottom: '1.5px solid var(--border-color)' },
+  layout: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: '2rem', alignItems: 'start' },
+  card: { background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '18px', overflow: 'hidden' },
+  tableWrap: { width: '100%', overflowX: 'auto' },
+  avatar: { width: '40px', height: '40px', borderRadius: '10px', background: 'var(--bg-nav)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '14px', flex: '0 0 auto' },
+  th: { background: 'rgba(0,0,0,0.01)', padding: '1rem 1.1rem', textAlign: 'left', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', borderBottom: '1.5px solid var(--border-color)', whiteSpace: 'nowrap' },
+  td: { padding: '1.15rem 1.1rem', fontSize: '14px', borderBottom: '1.5px solid var(--border-color)', verticalAlign: 'middle' },
+  sidebarCard: { background: 'var(--bg-nav)', borderRadius: '22px', padding: '2rem', color: '#fff', position: 'sticky', top: '1.5rem' },
   modal: { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, backdropFilter: 'blur(4px)' },
   modalContent: { background: 'var(--bg-card)', width: '100%', maxWidth: '500px', borderRadius: '32px', padding: '3rem', boxShadow: 'var(--shadow-float)', position: 'relative' },
   label: { fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)', marginBottom: '10px', display: 'block' },
@@ -109,7 +110,6 @@ const StaffManagement = () => {
         addNotification('Success', 'User removed from system.');
         fetchUsers();
       } else {
-        // backend returns conflict message if trying to delete protected account
         addNotification('Error', json.message || 'Failed to delete user.', 'error');
       }
     } catch {
@@ -117,7 +117,6 @@ const StaffManagement = () => {
     }
   };
 
-  // change role between Admin (1) and Staff (2)
   const handleChangeRole = async (id, currentRole) => {
     const newRoleId = currentRole === 'Admin' ? 2 : 1;
     const label = newRoleId === 1 ? 'Admin' : 'Staff';
@@ -184,7 +183,6 @@ const StaffManagement = () => {
 
   return (
     <div style={S.page} className="page-transition">
-      {/* Registration Modal */}
       {isModalOpen && (
         <div style={S.modal} onClick={() => setIsModalOpen(false)}>
           <div style={S.modalContent} onClick={e => e.stopPropagation()} className="page-transition">
@@ -194,7 +192,7 @@ const StaffManagement = () => {
                 <UserPlus size={28} />
               </div>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800 }}>Register <span style={{ color: 'var(--primary)' }}>Personnel</span></h2>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>Create a new functional staff account.</p>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '8px' }}>Create a new staff account.</p>
             </div>
 
             <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -285,20 +283,20 @@ const StaffManagement = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <Shield size={16} /> Executive Personnel Control
           </div>
-          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Staff</span> Catalog</h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Managing functional credentials and privilege hierarchies.</p>
+          <h1 style={{ fontSize: '2.35rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Staff</span> Catalog</h1>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Manage staff accounts, roles, and access status.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)} style={{ whiteSpace: 'nowrap' }}>
           <UserPlus size={18} /> Register Personnel
         </button>
       </div>
 
       <div style={S.layout}>
         <div style={S.card}>
-          <div style={{ padding: '1.25rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '1rem 1.5rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
              <div style={{ position: 'relative' }}>
                 <Search size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                <input className="input" placeholder="Filter personnel by identity..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ padding: '10px 10px 10px 38px', width: '320px', fontSize: '13px' }} />
+                <input className="input" placeholder="Search staff by name or email..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} style={{ padding: '10px 10px 10px 38px', width: '280px', maxWidth: '100%', fontSize: '13px' }} />
              </div>
              <div style={{ display: 'flex', gap: '20px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -313,7 +311,8 @@ const StaffManagement = () => {
           {loading ? (
             <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}><RefreshCcw className="spin" size={32} /></div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div style={S.tableWrap} className="custom-scrollbar">
+            <table style={{ width: '100%', minWidth: '760px', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   <th style={S.th}>Staff Personnel</th>
@@ -329,11 +328,11 @@ const StaffManagement = () => {
                 ) : filteredStaff.map(member => (
                   <tr key={member.userId} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
                     <td style={S.td}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
                          <div style={S.avatar}>{member.fullName[0]}</div>
-                         <div>
-                            <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem' }}>{member.fullName}</div>
-                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>{member.email}</div>
+                         <div style={{ minWidth: 0 }}>
+                            <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{member.fullName}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '210px' }}>{member.email}</div>
                          </div>
                       </div>
                     </td>
@@ -344,7 +343,7 @@ const StaffManagement = () => {
                        </div>
                     </td>
                     <td style={S.td}>
-                      <span className={`chip ${member.role === 'Admin' ? 'chip-success' : ''}`} style={{ padding: '6px 12px' }}>
+                      <span className={`chip ${member.role === 'Admin' ? 'chip-success' : ''}`} style={{ padding: '6px 10px', whiteSpace: 'nowrap' }}>
                          <Key size={12} /> {member.role} LEVEL
                       </span>
                     </td>
@@ -360,16 +359,15 @@ const StaffManagement = () => {
                       </button>
                     </td>
                     <td style={{ ...S.td, textAlign: 'right' }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', alignItems: 'center' }}>
-                        {/* swap role button — shows what role they'll become */}
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', alignItems: 'center' }}>
                         <button
                           onClick={() => handleChangeRole(member.userId, member.role)}
                           title={`Change to ${member.role === 'Admin' ? 'Staff' : 'Admin'}`}
-                          style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '5px 10px', fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                          style={{ background: 'none', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '5px 9px', fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}
                         >
                           → {member.role === 'Admin' ? 'Staff' : 'Admin'}
                         </button>
-                        <button onClick={() => handleDeleteUser(member.userId)} style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.5, cursor: 'pointer' }}>
+                        <button onClick={() => handleDeleteUser(member.userId)} style={{ background: 'none', border: 'none', color: '#ef4444', opacity: 0.5, cursor: 'pointer', padding: '4px' }}>
                           <Trash2 size={18} />
                         </button>
                       </div>
@@ -378,16 +376,17 @@ const StaffManagement = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
 
         <aside>
           <div style={S.sidebarCard}>
-             <h4 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '2.5rem', letterSpacing: '0.1em' }}>
+             <h4 style={{ color: 'var(--primary)', fontSize: '0.95rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '1.75rem', letterSpacing: '0.1em' }}>
                 <Activity size={20} /> Integrity Audit
              </h4>
              
-             <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '20px', border: '1.5px solid rgba(255,255,255,0.1)', marginBottom: '1.5rem' }}>
+             <div style={{ padding: '1.25rem', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1.5px solid rgba(255,255,255,0.1)', marginBottom: '1.25rem' }}>
                 <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>Global Asset Oversight</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                    <span style={{ fontSize: '14px', fontWeight: 800 }}>Node Activity</span>
@@ -395,7 +394,7 @@ const StaffManagement = () => {
                 </div>
              </div>
 
-             <div style={{ padding: '1.5rem', background: 'var(--primary)15', borderRadius: '20px', border: '1.5px solid var(--primary)30', marginBottom: '2.5rem' }}>
+             <div style={{ padding: '1.25rem', background: 'var(--primary)15', borderRadius: '16px', border: '1.5px solid var(--primary)30', marginBottom: '1.75rem' }}>
                 <h5 style={{ fontSize: '11px', textTransform: 'uppercase', fontWeight: 800, color: 'var(--primary)', marginBottom: '1.5rem' }}>Personnel Distribution</h5>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                    <div>
