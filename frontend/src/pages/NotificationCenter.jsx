@@ -1,148 +1,144 @@
-import React from 'react';
-import { Bell, AlertTriangle, Mail, ShieldAlert, Package, CheckCircle, Clock, Settings, ArrowRight, Zap, Activity, Info } from 'lucide-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Bell, Mail, Package, CheckCircle, Clock, Settings, Activity, RefreshCcw } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNotification } from '../context/NotificationContext';
 
 const S = {
-  page: {
-    padding: '3rem 2.5rem',
-    maxWidth: '1350px',
-    margin: '0 auto',
-    paddingBottom: '8rem',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: '3.5rem',
-    paddingBottom: '2.5rem',
-    borderBottom: '1.5px solid var(--border-color)',
-  },
-  alertCard: {
-    background: 'var(--bg-card)',
-    border: '1.5px solid var(--border-color)',
-    borderRadius: '24px',
-    padding: '2rem',
-    display: 'flex',
-    gap: '2rem',
-    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-  },
-  iconBox: {
-    width: '64px',
-    height: '64px',
-    borderRadius: '18px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-    boxShadow: '0 8px 20px rgba(0,0,0,0.04)',
-  },
-  badge: {
-    padding: '6px 14px',
-    borderRadius: '8px',
-    fontSize: '10px',
-    fontWeight: 800,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  sidebarCard: {
-    background: 'var(--bg-nav)',
-    borderRadius: '32px',
-    padding: '2.5rem',
-    color: '#fff',
-    position: 'sticky',
-    top: '2.5rem',
-    boxShadow: '0 30px 60px -12px rgba(15, 23, 42, 0.2)',
-  },
+  page: { padding: '3rem 2.5rem', maxWidth: '1250px', margin: '0 auto', paddingBottom: '8rem' },
+  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2.5rem', paddingBottom: '2rem', borderBottom: '1.5px solid var(--border-color)' },
+  alertCard: { background: 'var(--bg-card)', border: '1.5px solid var(--border-color)', borderRadius: '18px', padding: '1.5rem', display: 'flex', gap: '1.25rem' },
+  iconBox: { width: '52px', height: '52px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  badge: { padding: '6px 12px', borderRadius: '8px', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase' },
+};
+
+const iconByType = {
+  LowStock: Package,
+  CreditReminder: Mail,
+  System: Bell
+};
+
+const colorByType = {
+  LowStock: '#ef4444',
+  CreditReminder: '#f59e0b',
+  System: '#1D9E75'
 };
 
 const NotificationCenter = () => {
-  const alerts = [
-    { id: 1, type: "Inventory", priority: "High", title: "Automatic Reorder Threshold: Synthetic Oil", desc: "System detected 4 units remaining. Procurement manifest PRQ-8821 suggested for replenish.", icon: Package, color: '#ef4444', time: '10:15 AM' },
-    { id: 2, type: "Liquidity", priority: "Critical", title: "Automated Credit Reminder Dispatched", desc: "Escalated reminder sent to Manish K. for Rs. 15,400 overdue balance.", icon: Mail, color: '#f59e0b', time: '09:30 AM' },
-    { id: 3, type: "Telemetry", priority: "Normal", title: "Vehicle Profile Synchronization Complete", desc: "Successfully synchronized 248 diagnostic profiles across service nodes.", icon: CheckCircle, color: '#1D9E75', time: '08:45 AM' },
-    { id: 4, type: "Security", priority: "Critical", title: "System Audit: Admin Role Verification", desc: "Mandatory bi-weekly security audit of administrative access privileges.", icon: ShieldAlert, color: '#ef4444', time: 'Yesterday' }
-  ];
+  const { authFetch } = useAuth();
+  const { addNotification } = useNotification();
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const loadNotifications = useCallback(async () => {
+    const res = await authFetch('/api/notifications');
+    const json = await res.json();
+    if (res.ok && Array.isArray(json.data)) setAlerts(json.data);
+  }, [authFetch]);
+
+  useEffect(() => {
+    loadNotifications().catch(() => addNotification('Error', 'Failed to load notifications.', 'error'));
+  }, [loadNotifications, addNotification]);
+
+  const syncNotifications = async () => {
+    setLoading(true);
+    try {
+      const res = await authFetch('/api/notifications/sync', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.message || 'Sync failed.');
+      addNotification('Success', `${json.data} notification(s) created.`);
+      await loadNotifications();
+    } catch (error) {
+      addNotification('Error', error.message || 'Sync failed.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const markRead = async (id) => {
+    await authFetch(`/api/notifications/${id}/read`, { method: 'PUT' });
+    await loadNotifications();
+  };
+
+  const markAllRead = async () => {
+    await authFetch('/api/notifications/read-all', { method: 'PUT' });
+    await loadNotifications();
+  };
+
+  const unread = alerts.filter(a => !a.isRead).length;
+  const lowStock = alerts.filter(a => a.type === 'LowStock' && !a.isRead).length;
+  const credit = alerts.filter(a => a.type === 'CreditReminder' && !a.isRead).length;
 
   return (
     <div style={S.page} className="page-transition">
       <div style={S.header}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
-            <Activity size={16} /> Notification & Event Protocol
+            <Activity size={16} /> Notification Center
           </div>
-          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Alerts</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Automated maintenance logs and high-priority business escalations.</p>
+          <h1 style={{ fontSize: '2.5rem', margin: 0 }}>System <span style={{ color: 'var(--primary)' }}>Alerts</span></h1>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Check low stock alerts and pending credit reminders.</p>
         </div>
-        <button className="btn btn-outline">
-          <Settings size={18} /> Global Trigger Settings
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button className="btn btn-outline" onClick={markAllRead}>
+            <CheckCircle size={18} /> Mark All Read
+          </button>
+          <button className="btn btn-primary" onClick={syncNotifications} disabled={loading}>
+            {loading ? 'Checking...' : <><RefreshCcw size={18} /> Check Alerts</>}
+          </button>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '3.5rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-           {alerts.map(alert => (
-             <div key={alert.id} style={S.alertCard} className="hover:border-primary group">
-                <div style={{ ...S.iconBox, background: `${alert.color}10`, color: alert.color }}>
-                   <alert.icon size={28} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {alerts.length === 0 ? (
+            <div style={S.alertCard}>No notifications found.</div>
+          ) : alerts.map(alert => {
+            const Icon = iconByType[alert.type] || Bell;
+            const color = colorByType[alert.type] || '#1D9E75';
+            return (
+              <div key={alert.id} style={S.alertCard}>
+                <div style={{ ...S.iconBox, background: `${color}15`, color }}>
+                  <Icon size={24} />
                 </div>
                 <div style={{ flex: 1 }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                         <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{alert.type}</span>
-                         <span style={{
-                           ...S.badge,
-                           background: alert.priority === 'Critical' ? '#ef4444' : alert.priority === 'High' ? 'rgba(239, 68, 68, 0.08)' : 'rgba(0,0,0,0.03)',
-                           color: alert.priority === 'Critical' ? '#fff' : alert.priority === 'High' ? '#ef4444' : 'var(--text-secondary)'
-                         }}>
-                            {alert.priority} Priority
-                         </span>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                         <Clock size={14} /> {alert.time}
-                      </div>
-                   </div>
-                   <h4 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '8px' }}>{alert.title}</h4>
-                   <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '2rem' }}>{alert.desc}</p>
-                   
-                   <div style={{ display: 'flex', gap: '12px' }}>
-                      <button className="btn btn-primary" style={{ padding: '8px 24px', fontSize: '12px' }}>Acknowledge</button>
-                      <button className="btn btn-outline" style={{ padding: '8px 24px', fontSize: '12px' }}>Dispatch Protocol</button>
-                   </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{alert.type}</span>
+                      <span style={{ ...S.badge, background: alert.isRead ? 'rgba(0,0,0,0.04)' : `${color}15`, color }}>
+                        {alert.isRead ? 'Read' : 'New'}
+                      </span>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                      <Clock size={13} /> {new Date(alert.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <h4 style={{ fontSize: '1.05rem', color: 'var(--text-primary)', marginBottom: '6px' }}>{alert.title}</h4>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '1rem' }}>{alert.message}</p>
+                  {!alert.isRead && (
+                    <button className="btn btn-outline" onClick={() => markRead(alert.id)} style={{ padding: '8px 18px', fontSize: '12px' }}>
+                      Mark Read
+                    </button>
+                  )}
                 </div>
-             </div>
-           ))}
+              </div>
+            );
+          })}
         </div>
 
-        <aside>
-          <div style={S.sidebarCard}>
-             <h4 style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)', marginBottom: '2.5rem', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                <Zap size={20} /> System Pulse
-             </h4>
-             
-             {[
-               { l: 'Inventory Health', v: '06', d: 'RELOAD REQUIRED', p: 60, c: '#ef4444' },
-               { l: 'Liquidity Risk', v: 'Rs. 54,000', d: 'OVERDUE > 45D', p: 35, c: '#ef4444' }
-             ].map((s, i) => (
-               <div key={i} style={{ marginBottom: '2rem' }}>
-                  <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.5, marginBottom: '10px' }}>{s.l}</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                     <span style={{ fontSize: '2rem', fontWeight: 800 }}>{s.v}</span>
-                     <span style={{ fontSize: '9px', fontWeight: 800, opacity: 0.6, letterSpacing: '0.05em' }}>{s.d}</span>
-                  </div>
-                  <div style={{ width: '100%', height: '5px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', marginTop: '12px', overflow: 'hidden' }}>
-                     <div style={{ width: `${s.p}%`, height: '100%', background: s.c }}></div>
-                  </div>
-               </div>
-             ))}
-
-             <div style={{ marginTop: '3rem', padding: '2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '24px', border: '1.5px solid rgba(255,255,255,0.06)' }}>
-                <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                   "Automatic email dispatch is currently synchronization with the Customer Hub."
-                </p>
-                <button style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   System Integrity Logs <ArrowRight size={14} />
-                </button>
-             </div>
-          </div>
+        <aside style={{ background: 'var(--bg-nav)', borderRadius: '24px', padding: '2rem', color: '#fff', height: 'fit-content' }}>
+          <h4 style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Settings size={18} /> Summary
+          </h4>
+          {[
+            ['Unread Alerts', unread],
+            ['Low Stock', lowStock],
+            ['Credit Reminders', credit]
+          ].map(([label, value]) => (
+            <div key={label} style={{ marginBottom: '1.5rem' }}>
+              <p style={{ fontSize: '10px', textTransform: 'uppercase', fontWeight: 800, opacity: 0.55, marginBottom: '4px' }}>{label}</p>
+              <p style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>{value}</p>
+            </div>
+          ))}
         </aside>
       </div>
     </div>
