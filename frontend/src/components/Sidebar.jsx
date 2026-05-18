@@ -6,7 +6,7 @@ import {
   TrendingUp, Bell, Users, Truck,
   LogOut, Package, FileText, Zap,
   BarChart3, Settings, ShoppingBag, Star,
-  Activity, ShieldAlert, CreditCard, Mail
+  Activity, ShieldAlert, CreditCard, Mail, AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -40,14 +40,15 @@ const Sidebar = () => {
   const staffMenu = [
     { title: "Command", links: [
       { name: "Staff Dashboard", path: "/staff/dashboard", icon: TrendingUp },
-      { name: "POS Terminal", path: "/staff/sales", icon: ShoppingCart },
+      { name: "Sales Invoice", path: "/staff/sales", icon: ShoppingCart },
     ]},
     { title: "Customers", links: [
       { name: "Customer Intake", path: "/staff/customer-registration", icon: User },
       { name: "Client Insights", path: "/staff/customers", icon: Users },
     ]},
     { title: "Intelligence", links: [
-      { name: "Operational Reports", path: "/staff/reports", icon: FileText },
+      { name: "Service Issues", path: "/staff/issues", icon: AlertCircle },
+      { name: "Customer Reports", path: "/staff/reports", icon: FileText },
     ]}
   ];
 

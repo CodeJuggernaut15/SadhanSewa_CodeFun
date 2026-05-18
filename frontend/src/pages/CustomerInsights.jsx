@@ -24,6 +24,8 @@ const CustomerInsights = () => {
   const [search, setSearch] = useState('');
   const [customers, setCustomers] = useState([]);
   const [report, setReport] = useState({ highSpenders: [], overdueCredit: [] });
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [history, setHistory] = useState([]);
 
   const loadData = useCallback(async () => {
     const [customersRes, reportsRes] = await Promise.all([
@@ -42,13 +44,32 @@ const CustomerInsights = () => {
   const topSpenders = search ? customers : report.highSpenders || [];
   const creditAlerts = report.overdueCredit || [];
 
-  const handleNotify = (email) => {
+  const handleNotify = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccessMsg(`Reminder sent to ${email || 'all selected credit accounts'}.`);
+    try {
+      const res = await authFetch('/api/notifications/sync', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Reminder sync failed.');
+      setSuccessMsg(`${json.data ?? 0} reminder notification(s) prepared.`);
       setIsSuccess(true);
-    }, 1500);
+    } catch (error) {
+      setSuccessMsg(error.message || 'Reminder sync failed.');
+      setIsSuccess(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openCustomer = async (customer) => {
+    setSelectedCustomer(customer);
+    setHistory([]);
+    try {
+      const res = await authFetch(`/api/customers/${customer.id}/history`);
+      const json = await res.json();
+      if (res.ok && Array.isArray(json.data)) setHistory(json.data);
+    } catch {
+      setHistory([]);
+    }
   };
 
   return (
@@ -104,7 +125,7 @@ const CustomerInsights = () => {
               </thead>
               <tbody>
                 {topSpenders.map(user => (
-                  <tr key={user.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
+                  <tr key={user.id} onClick={() => openCustomer(user)} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s', cursor: 'pointer' }}>
                     <td style={S.td}>
                        <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1.1rem' }}>{user.fullName}</div>
                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginTop: '4px' }}>{user.vehicles?.[0]?.model || 'No vehicle'} {user.vehicles?.[0]?.licensePlate ? `- ${user.vehicles[0].licensePlate}` : ''}</div>
@@ -136,6 +157,41 @@ const CustomerInsights = () => {
         </div>
 
         <aside>
+          {selectedCustomer && (
+            <div style={{ ...S.riskCard, marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginBottom: '1rem' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{selectedCustomer.fullName}</h3>
+                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>{selectedCustomer.email} | {selectedCustomer.phone}</p>
+                </div>
+                <span className="chip chip-success">{selectedCustomer.loyaltyTier}</span>
+              </div>
+
+              <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.03)', borderRadius: '14px', marginBottom: '1rem' }}>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Vehicle Info</div>
+                {selectedCustomer.vehicles?.length ? selectedCustomer.vehicles.map(vehicle => (
+                  <div key={vehicle.id} style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                    <strong>{vehicle.model}</strong> - {vehicle.licensePlate}
+                    {vehicle.engineType ? ` | ${vehicle.engineType}` : ''}
+                    {vehicle.mileage != null ? ` | ${vehicle.mileage} km` : ''}
+                  </div>
+                )) : <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No vehicle linked.</div>}
+              </div>
+
+              <div>
+                <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Sales History</div>
+                {history.length === 0 ? (
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No records found.</p>
+                ) : history.slice(0, 5).map(item => (
+                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', padding: '0.65rem 0', borderBottom: '1px solid var(--border-color)', fontSize: '13px' }}>
+                    <span>{item.name}</span>
+                    <strong>Rs. {Number(item.amount || 0).toLocaleString()}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <h3 style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#ef4444' }}><ShieldAlert size={20} /> Overdue Risk</h3>
           {creditAlerts.map(alert => (
             <div key={alert.customerId} style={S.riskCard} className="hover:border-primary group card">
@@ -149,7 +205,7 @@ const CustomerInsights = () => {
                   <span style={{ fontSize: '10px', fontWeight: 800, opacity: 0.5, textTransform: 'uppercase' }}>DEBT AGE</span>
                   <span style={{ fontSize: '14px', fontWeight: 800 }}>{alert.daysOverdue} Days</span>
                </div>
-               <button className="btn btn-outline" onClick={() => handleNotify(alert.email)} disabled={loading} style={{ width: '100%', marginTop: '1.5rem', padding: '12px', fontSize: '12px' }}>
+               <button className="btn btn-outline" onClick={handleNotify} disabled={loading} style={{ width: '100%', marginTop: '1.5rem', padding: '12px', fontSize: '12px' }}>
                   {loading ? 'Sending...' : <><Mail size={16} /> Dispatch Remittance</>}
                </button>
             </div>

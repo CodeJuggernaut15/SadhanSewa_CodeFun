@@ -20,6 +20,7 @@ import AiDiagnostics from './pages/AiDiagnostics';
 import { NotificationProvider } from './context/NotificationContext';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ConfirmProvider } from './context/ConfirmContext';
 import Notification from './components/Notification';
 
 // New Pages
@@ -28,6 +29,7 @@ import CustomerDashboard from './pages/CustomerDashboard';
 import CustomerProfile from './pages/CustomerProfile';
 import FinancialReports from './pages/FinancialReports';
 import StaffReports from './pages/StaffReports';
+import StaffIssues from './pages/StaffIssues';
 import CustomerShop from './pages/CustomerShop';
 import CustomerContact from './pages/CustomerContact';
 
@@ -36,6 +38,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
       <NotificationProvider>
+      <ConfirmProvider>
         <Notification />
       <BrowserRouter>
       <Routes>
@@ -119,6 +122,11 @@ function App() {
                 <StaffReports />
               </ProtectedRoute>
             } />
+            <Route path="issues" element={
+              <ProtectedRoute allowedRoles={['Admin', 'Staff']}>
+                <StaffIssues />
+              </ProtectedRoute>
+            } />
           </Route>
 
           {/* Customer Section — All authenticated users */}
@@ -159,6 +167,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+      </ConfirmProvider>
       </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>

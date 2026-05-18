@@ -23,6 +23,7 @@ const SalesAndInvoice = () => {
   const { addNotification } = useNotification();
   const [partsInventory, setPartsInventory] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [invoiceHistory, setInvoiceHistory] = useState([]);
   const [customerId, setCustomerId] = useState('');
   const [cart, setCart] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,6 +41,9 @@ const SalesAndInvoice = () => {
       const [partsJson, customersJson] = await Promise.all([partsRes.json(), customersRes.json()]);
       if (partsRes.ok && Array.isArray(partsJson.data)) setPartsInventory(partsJson.data);
       if (customersRes.ok && Array.isArray(customersJson.data)) setCustomers(customersJson.data);
+      const invoicesRes = await authFetch('/api/sales-invoices');
+      const invoicesJson = await invoicesRes.json();
+      if (invoicesRes.ok && Array.isArray(invoicesJson.data)) setInvoiceHistory(invoicesJson.data);
     } catch {
       addNotification('Error', 'Failed to load POS data.', 'error');
     }
@@ -83,11 +87,13 @@ const SalesAndInvoice = () => {
   const discount = subtotal > 5000 ? subtotal * 0.1 : 0;
   const total = subtotal - discount;
 
-  const filteredParts = partsInventory.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Use optional chaining — sku/category can be undefined or null
+  const filteredParts = partsInventory.filter(p => {
+    const term = searchTerm.toLowerCase();
+    return (p.name?.toLowerCase() ?? '').includes(term) ||
+           (p.sku?.toLowerCase() ?? '').includes(term) ||
+           (p.category?.toLowerCase() ?? '').includes(term);
+  });
 
   const handleFinalize = async () => {
     if (cart.length === 0) return;
@@ -150,8 +156,8 @@ const SalesAndInvoice = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)', fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '0.75rem' }}>
             <ShoppingCart size={16} /> Retail Settlement Interface
           </div>
-          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Point of <span style={{ color: 'var(--primary)' }}>Sale (POS)</span></h1>
-          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Create sales invoices and update stock from one checkout screen.</p>
+          <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Sales <span style={{ color: 'var(--primary)' }}>Invoice</span></h1>
+          <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Create invoices, update stock, and save customer purchase history.</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <button className="btn btn-outline"><Printer size={18} /> Print Draft</button>
@@ -234,6 +240,34 @@ const SalesAndInvoice = () => {
                         </td>
                      </tr>
                    ))}
+                </tbody>
+             </table>
+          </div>
+
+          <div style={{ ...S.card, marginTop: '2rem' }}>
+             <div style={{ padding: '1.5rem 2rem', background: 'rgba(0,0,0,0.01)', borderBottom: '1.5px solid var(--border-color)' }}>
+                <h3 style={{ fontSize: '1.1rem', margin: 0 }}>Recent Sales Invoices</h3>
+             </div>
+             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                   <tr>
+                      <th style={S.th}>Invoice</th>
+                      <th style={S.th}>Customer</th>
+                      <th style={S.th}>Status</th>
+                      <th style={{ ...S.th, textAlign: 'right' }}>Total</th>
+                   </tr>
+                </thead>
+                <tbody>
+                  {invoiceHistory.length === 0 ? (
+                    <tr><td colSpan={4} style={{ ...S.td, textAlign: 'center', color: 'var(--text-muted)' }}>No records found.</td></tr>
+                  ) : invoiceHistory.slice(0, 8).map(invoice => (
+                    <tr key={invoice.id}>
+                      <td style={S.td}><strong>{invoice.invoiceNumber}</strong></td>
+                      <td style={S.td}>{invoice.customerName || 'Walk-in'}</td>
+                      <td style={S.td}><span className={`chip ${invoice.paymentStatus === 'Paid' ? 'chip-success' : ''}`}>{invoice.paymentStatus}</span></td>
+                      <td style={{ ...S.td, textAlign: 'right', fontWeight: 800 }}>Rs. {Number(invoice.totalAmount || 0).toLocaleString()}</td>
+                    </tr>
+                  ))}
                 </tbody>
              </table>
           </div>

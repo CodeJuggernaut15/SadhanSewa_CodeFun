@@ -8,14 +8,24 @@ using SadhanSewa.API.Models;
 
 namespace SadhanSewa.API.Controllers;
 
+/// <summary>
+/// Customer registration, search, history, and reports (Staff and Admin only).
+/// </summary>
 [ApiController]
 [Authorize(Roles = "Admin,Staff")]
 [Route("api/customers")]
+[Tags("Customers")]
 public class CustomersController(ApplicationDbContext db) : ControllerBase
 {
     private const int CustomerRoleId = 3;
 
+    /// <summary>
+    /// Search customers by name, email, phone, ID, or vehicle plate/model. Returns up to 50 results.
+    /// </summary>
     [HttpGet]
+    [ProducesResponseType(typeof(ApiResponse<List<CustomerSummaryDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse<List<CustomerSummaryDto>>>> SearchAsync([FromQuery] string? search = null)
     {
         var query = db.Users
@@ -46,7 +56,14 @@ public class CustomersController(ApplicationDbContext db) : ControllerBase
         return Ok(ApiResponse<List<CustomerSummaryDto>>.Ok(data, "Customers retrieved."));
     }
 
+    /// <summary>
+    /// Register a new customer with their first vehicle in one step.
+    /// </summary>
     [HttpPost]
+    [ProducesResponseType(typeof(ApiResponse<CustomerSummaryDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse<CustomerSummaryDto>>> CreateAsync([FromBody] CreateCustomerWithVehicleDto dto)
     {
         if (!ModelState.IsValid)
@@ -99,7 +116,12 @@ public class CustomersController(ApplicationDbContext db) : ControllerBase
             ApiResponse<CustomerSummaryDto>.Ok((await MapCustomersAsync([created])).Single(), "Customer registered."));
     }
 
+    /// <summary>
+    /// Returns the full sales invoice history for a customer.
+    /// </summary>
     [HttpGet("{id:int}/history")]
+    [ProducesResponseType(typeof(ApiResponse<List<CustomerHistoryItemDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse<List<CustomerHistoryItemDto>>>> GetHistoryAsync(int id)
     {
         var vehicle = await db.Vehicles
@@ -132,7 +154,12 @@ public class CustomersController(ApplicationDbContext db) : ControllerBase
         return Ok(ApiResponse<List<CustomerHistoryItemDto>>.Ok(invoices, "Customer history retrieved."));
     }
 
+    /// <summary>
+    /// Returns customer reports: top spenders, most frequent visitors, and overdue credit list.
+    /// </summary>
     [HttpGet("reports")]
+    [ProducesResponseType(typeof(ApiResponse<CustomerReportDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<ApiResponse<CustomerReportDto>>> GetReportsAsync()
     {
         var customers = await db.Users
@@ -143,10 +170,13 @@ public class CustomersController(ApplicationDbContext db) : ControllerBase
             .ToListAsync();
 
         var summaries = await MapCustomersAsync(customers);
-        var overdue = await db.SalesInvoices
+        var pendingInvoices = await db.SalesInvoices
             .AsNoTracking()
             .Include(i => i.Customer)
             .Where(i => i.CustomerId != null && (i.PaymentStatus == "Pending" || i.PaymentStatus == "Overdue"))
+            .ToListAsync();
+
+        var overdue = pendingInvoices
             .GroupBy(i => new { i.CustomerId, i.Customer!.FullName, i.Customer.Email })
             .Select(g => new OverdueCreditDto
             {
@@ -158,7 +188,7 @@ public class CustomersController(ApplicationDbContext db) : ControllerBase
                 Risk = g.Sum(i => i.TotalAmount) >= 10000 ? "High" : "Medium"
             })
             .OrderByDescending(x => x.Amount)
-            .ToListAsync();
+            .ToList();
 
         var data = new CustomerReportDto
         {

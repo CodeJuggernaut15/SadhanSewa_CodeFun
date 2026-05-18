@@ -20,11 +20,22 @@ const StaffReports = () => {
   const [activeTab, setActiveTab] = useState('High Spenders');
   const [search, setSearch] = useState('');
   const [report, setReport] = useState({ highSpenders: [], regularCustomers: [], overdueCredit: [] });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const loadReport = useCallback(async () => {
-    const res = await authFetch('/api/customers/reports');
-    const json = await res.json();
-    if (res.ok && json.data) setReport(json.data);
+    setLoading(true);
+    setError('');
+    try {
+      const res = await authFetch('/api/customers/reports');
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message || 'Could not load customer reports.');
+      if (json.data) setReport(json.data);
+    } catch (err) {
+      setError(err.message || 'Could not load customer reports.');
+    } finally {
+      setLoading(false);
+    }
   }, [authFetch]);
 
   useEffect(() => {
@@ -35,6 +46,23 @@ const StaffReports = () => {
   const highSpenders = (report.highSpenders || []).filter(c => includes(c.fullName) || includes(c.email) || includes(c.phone));
   const regularCustomers = (report.regularCustomers || []).filter(c => includes(c.fullName) || includes(c.email) || includes(c.phone));
   const overdueCredit = (report.overdueCredit || []).filter(c => includes(c.name) || includes(c.email));
+  const creditExposure = (report.overdueCredit || []).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const activeRows = activeTab === 'High Spenders' ? highSpenders : activeTab === 'Regular Customers' ? regularCustomers : overdueCredit;
+
+  const exportReport = () => {
+    const rows = activeTab === 'Overdue Credit'
+      ? [['Customer', 'Email', 'Outstanding', 'Days Overdue', 'Risk'], ...overdueCredit.map(o => [o.name, o.email, o.amount, o.daysOverdue, o.risk])]
+      : [['Customer', 'Email', 'Phone', 'Total Spent', 'Visits', 'Tier'], ...activeRows.map(c => [c.fullName, c.email, c.phone, c.totalSpent, c.visits, c.loyaltyTier])];
+
+    const csv = rows.map(row => row.map(value => `"${String(value ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `customer-report-${activeTab.toLowerCase().replaceAll(' ', '-')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div style={S.page} className="page-transition">
@@ -46,8 +74,14 @@ const StaffReports = () => {
           <h1 style={{ fontSize: '2.8rem', margin: 0 }}>Customer <span style={{ color: 'var(--primary)' }}>Insights</span></h1>
           <p style={{ margin: '8px 0 0', color: 'var(--text-secondary)', fontSize: '15px' }}>Analytical overview of customer behavior and fiscal loyalty.</p>
         </div>
-        <button className="btn btn-primary"><Download size={18} /> Export Intelligence Bundle</button>
+        <button className="btn btn-primary" onClick={exportReport} disabled={activeRows.length === 0}><Download size={18} /> Export Intelligence Bundle</button>
       </div>
+
+      {error && (
+        <div style={{ color: '#ef4444', padding: '1rem', background: '#fef2f2', borderRadius: '12px', border: '1px solid #fecaca', marginBottom: '2rem' }}>
+          {error}
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: '12px', marginBottom: '3rem' }}>
         {['High Spenders', 'Regular Customers', 'Overdue Credit'].map(tab => (
@@ -113,7 +147,13 @@ const StaffReports = () => {
                   </tr>
                </thead>
                <tbody>
-                  {activeTab === 'High Spenders' && highSpenders.map((h) => (
+                  {loading && (
+                    <tr><td colSpan={4} style={{ ...S.td, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</td></tr>
+                  )}
+                  {!loading && activeRows.length === 0 && (
+                    <tr><td colSpan={4} style={{ ...S.td, textAlign: 'center', color: 'var(--text-muted)' }}>No records found.</td></tr>
+                  )}
+                  {!loading && activeTab === 'High Spenders' && highSpenders.map((h) => (
                     <tr key={h.id}>
                        <td style={S.td}><div style={{ fontWeight: 800 }}>{h.fullName}</div></td>
                        <td style={S.td}><span style={{ color: 'var(--primary)', fontWeight: 800 }}>Rs. {Number(h.totalSpent || 0).toLocaleString()}</span></td>
@@ -121,7 +161,7 @@ const StaffReports = () => {
                        <td style={{ ...S.td, textAlign: 'right' }}><span className="chip chip-success">{h.loyaltyTier}</span></td>
                     </tr>
                   ))}
-                  {activeTab === 'Regular Customers' && regularCustomers.map((r) => (
+                  {!loading && activeTab === 'Regular Customers' && regularCustomers.map((r) => (
                     <tr key={r.id}>
                        <td style={S.td}><div style={{ fontWeight: 800 }}>{r.fullName}</div></td>
                        <td style={S.td}><span style={{ color: 'var(--text-muted)' }}>{r.email}</span></td>
@@ -131,7 +171,7 @@ const StaffReports = () => {
                        </td>
                     </tr>
                   ))}
-                  {activeTab === 'Overdue Credit' && overdueCredit.map((o) => (
+                  {!loading && activeTab === 'Overdue Credit' && overdueCredit.map((o) => (
                     <tr key={o.customerId}>
                        <td style={S.td}><div style={{ fontWeight: 800 }}>{o.name}</div></td>
                        <td style={S.td}><span style={{ color: '#ef4444', fontWeight: 800 }}>Rs. {Number(o.amount || 0).toLocaleString()}</span></td>
@@ -151,9 +191,9 @@ const StaffReports = () => {
               <h4 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Summary Metrics</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                  {[
-                   { l: 'Retention Rate', v: '84%', i: TrendingUp, c: 'var(--primary)' },
-                   { l: 'Credit Exposure', v: 'Rs. 42,000', i: AlertTriangle, c: '#ef4444' },
-                   { l: 'Loyalty Growth', v: '+24%', i: Star, c: '#3b82f6' }
+                   { l: 'High Spenders', v: (report.highSpenders || []).length, i: TrendingUp, c: 'var(--primary)' },
+                   { l: 'Credit Exposure', v: `Rs. ${creditExposure.toLocaleString('en-IN')}`, i: AlertTriangle, c: '#ef4444' },
+                   { l: 'Regular Customers', v: (report.regularCustomers || []).length, i: Star, c: '#3b82f6' }
                  ].map((s, i) => (
                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>

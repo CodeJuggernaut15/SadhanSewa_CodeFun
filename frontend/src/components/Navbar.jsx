@@ -229,7 +229,7 @@ const Navbar = () => {
               {/* User info + POS */}
               {(user.role === 'Admin' || user.role === 'Staff') && (
                 <Link to="/staff/sales" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1.2px' }}>
-                  <ShoppingCart size={16} /> POS Terminal
+                  <ShoppingCart size={16} /> Sales Invoice
                 </Link>
               )}
 

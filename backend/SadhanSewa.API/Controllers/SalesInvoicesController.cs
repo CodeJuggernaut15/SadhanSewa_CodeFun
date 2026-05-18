@@ -6,15 +6,68 @@ using SadhanSewa.API.Data;
 using SadhanSewa.API.DTOs;
 using SadhanSewa.API.DTOs.Sales;
 using SadhanSewa.API.Models;
+using SadhanSewa.API.Services.Email;
 
 namespace SadhanSewa.API.Controllers;
 
+/// <summary>
+/// Create sales invoices, apply loyalty discounts, and send invoice emails to customers.
+/// </summary>
 [ApiController]
 [Authorize(Roles = "Admin,Staff")]
 [Route("api/sales-invoices")]
-public class SalesInvoicesController(ApplicationDbContext db) : ControllerBase
+[Tags("Sales")]
+public class SalesInvoicesController(ApplicationDbContext db, IEmailService emailService) : ControllerBase
 {
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponse<List<SalesInvoiceDto>>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<ApiResponse<List<SalesInvoiceDto>>>> GetAllAsync()
+    {
+        var invoices = await db.SalesInvoices
+            .AsNoTracking()
+            .Include(i => i.Customer)
+            .Include(i => i.Items)
+                .ThenInclude(i => i.Part)
+            .OrderByDescending(i => i.CreatedAt)
+            .Take(100)
+            .ToListAsync();
+
+        var data = invoices.Select(Map).ToList();
+
+        return Ok(ApiResponse<List<SalesInvoiceDto>>.Ok(data, "Sales invoices retrieved."));
+    }
+
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(ApiResponse<SalesInvoiceDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<ActionResult<ApiResponse<SalesInvoiceDto>>> GetByIdAsync(int id)
+    {
+        var invoice = await db.SalesInvoices
+            .AsNoTracking()
+            .Include(i => i.Customer)
+            .Include(i => i.Items)
+                .ThenInclude(i => i.Part)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (invoice is null)
+            return NotFound(ApiResponse<SalesInvoiceDto>.Fail("Sales invoice not found."));
+
+        return Ok(ApiResponse<SalesInvoiceDto>.Ok(Map(invoice), "Sales invoice retrieved."));
+    }
+
+    /// <summary>
+    /// Create a new sales invoice. Auto-applies 10% discount if subtotal exceeds Rs. 5000.
+    /// If customer has an email and emailSent is true, an invoice email is sent automatically.
+    /// </summary>
     [HttpPost]
+    [ProducesResponseType(typeof(ApiResponse<SalesInvoiceDto>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<ApiResponse<SalesInvoiceDto>>> CreateAsync([FromBody] CreateSalesInvoiceDto dto)
     {
         if (!ModelState.IsValid)
@@ -78,8 +131,33 @@ public class SalesInvoicesController(ApplicationDbContext db) : ControllerBase
                 .ThenInclude(i => i.Part)
             .FirstAsync(i => i.Id == invoice.Id);
 
+        // send invoice email if customer has an email and emailSent flag was requested
+        if (dto.EmailSent && saved.Customer?.Email is not null)
+        {
+            var sent = await emailService.SendInvoiceEmailAsync(
+                Map(saved),
+                saved.Customer.Email,
+                saved.Customer.FullName);
+
+            // update flag only if email actually went through
+            if (sent)
+            {
+                var tracked = await db.SalesInvoices.FindAsync(invoice.Id);
+                tracked!.EmailSent = true;
+                await db.SaveChangesAsync();
+            }
+        }
+
+        // reload to get the updated EmailSent value
+        var final = await db.SalesInvoices
+            .AsNoTracking()
+            .Include(i => i.Customer)
+            .Include(i => i.Items)
+                .ThenInclude(i => i.Part)
+            .FirstAsync(i => i.Id == invoice.Id);
+
         return StatusCode(StatusCodes.Status201Created,
-            ApiResponse<SalesInvoiceDto>.Ok(Map(saved), "Sales invoice created."));
+            ApiResponse<SalesInvoiceDto>.Ok(Map(final), "Sales invoice created."));
     }
 
     private static SalesInvoiceDto Map(SalesInvoice invoice)
